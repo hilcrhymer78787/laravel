@@ -2,14 +2,8 @@ import VueRouter from 'vue-router';
 
 import AppComponent from "./components/AppComponent";
 
-import HeaderComponent from "./components/organisms/HeaderComponent";
+import HeaderComponent from "./components/HeaderComponent";
 
-import UserListComponent from "./components/user/UserListComponent";
-import UserCreateComponent from "./components/user/UserCreateComponent";
-import UserShowComponent from "./components/user/UserShowComponent";
-import UserEditComponent from "./components/user/UserEditComponent";
-
-import CalendarListComponent from "./components/calendar/CalendarListComponent";
 
 /**
  * First we will load all of this project's JavaScript dependencies which
@@ -29,29 +23,23 @@ const router = new VueRouter({
         {
             path: '/users',
             name: 'user.list',
-            component: UserListComponent
+            component: () => import('./components/user/UserListComponent'),
         },
         {
             path: '/users/create',
             name: 'user.create',
-            component: UserCreateComponent
-        },
-        {
-            path: '/users/userId',
-            name: 'user.show',
-            component: UserShowComponent,
-            props: true
+            component: () => import('./components/user/UserCreateComponent'),
         },
         {
             path: '/users/:userId/edit',
             name: 'user.edit',
-            component: UserEditComponent,
+            component: () => import('./components/user/UserEditComponent'),
             props: true
         },
         {
             path: '/calendar/:year/:month',
             name: 'calendar',
-            component: CalendarListComponent,
+            component: () => import('./components/calendar/CalendarListComponent'),
             props: true
         },
     ]
