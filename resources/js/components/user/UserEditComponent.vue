@@ -1,53 +1,49 @@
 <template>
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-sm-6">
-                <form v-on:submit.prevent="submit">
-                    <div class="form-group row">
-                        <label for="id" class="col-sm-3 col-form-label">ID</label>
-                        <input type="text" class="col-sm-9 form-control-plaintext" readonly id="id" v-model="user.id">
-                    </div>
-                    <div class="form-group row">
-                        <label for="name" class="col-sm-3 col-form-label">name</label>
-                        <input type="text" class="col-sm-9 form-control" id="name" v-model="user.name">
-                    </div>
-                    <div class="form-group row">
-                        <label for="email" class="col-sm-3 col-form-label">email</label>
-                        <input type="text" class="col-sm-9 form-control" id="email" v-model="user.email">
-                    </div>
-                    <button type="submit" class="btn btn-primary">Submit</button>
-                </form>
-            </div>
+    <div>
+        <div class="form">
+            <ul class="form_list">
+                <li class="form_list_item">
+                    <dt class="form_list_item_label">ID</dt>
+                    <dd><input class="form_list_item_input" type="text" v-model="user.id"></dd>
+                </li>
+                <li class="form_list_item">
+                    <dt class="form_list_item_label">名前</dt>
+                    <dd><input class="form_list_item_input" type="text" v-model="user.name"></dd>
+                </li>
+                <li class="form_list_item">
+                    <dt class="form_list_item_label">メール</dt>
+                    <dd><input class="form_list_item_input" type="text" v-model="user.email"></dd>
+                </li>
+            </ul>
+            <button @click="putuser()" class="form_btn cmn_btn_sub">編集を確定</button>
         </div>
     </div>
 </template>
 
 <script>
     export default {
-        props: {
-            userId: String
-        },
+        props: ['val'],
+
         data: function () {
             return {
                 user: {}
             }
         },
         methods: {
-            getuser() {
-                axios.get('/api/users/' + this.userId)
+            putuser() {
+                axios.put('/api/users/' + this.user.id, this.user)
                     .then((res) => {
-                        this.user = res.data;
-                    });
-            },
-            submit() {
-                axios.put('/api/users/' + this.userId, this.user)
-                    .then((res) => {
-                        this.$router.push({name: 'user.list'})
+                        this.$parent.editmodal = false;
                     });
             }
         },
+        watch: {
+            val:function(){
+                this.user = this.val;
+            }
+        },
         mounted() {
-            this.getuser();
+            // this.getuser();
         }
     }
 </script>
