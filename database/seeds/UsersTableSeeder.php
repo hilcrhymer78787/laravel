@@ -17,6 +17,7 @@ class UsersTableSeeder extends Seeder
                 'name' => 'name' . $i,
                 'email' => 'email' . $i . '@gmail.com',
                 'password' => 'password' . $i,
+                'salary' => $i*1000,
             ]);
         }
     }

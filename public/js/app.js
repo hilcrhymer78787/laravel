@@ -53731,26 +53731,19 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_0__["default"]({
     path: '/users',
     name: 'user.list',
     component: function component() {
-      return __webpack_require__.e(/*! import() */ 0).then(__webpack_require__.bind(null, /*! ./components/user/UserListComponent */ "./resources/js/components/user/UserListComponent.vue"));
+      return Promise.all(/*! import() */[__webpack_require__.e(0), __webpack_require__.e(1)]).then(__webpack_require__.bind(null, /*! ./components/user/UserListComponent */ "./resources/js/components/user/UserListComponent.vue"));
     }
   }, {
     path: '/users/create',
     name: 'user.create',
     component: function component() {
-      return __webpack_require__.e(/*! import() */ 2).then(__webpack_require__.bind(null, /*! ./components/user/UserCreateComponent */ "./resources/js/components/user/UserCreateComponent.vue"));
+      return __webpack_require__.e(/*! import() */ 3).then(__webpack_require__.bind(null, /*! ./components/user/UserCreateComponent */ "./resources/js/components/user/UserCreateComponent.vue"));
     }
-  }, {
-    path: '/users/:userId/edit',
-    name: 'user.edit',
-    component: function component() {
-      return __webpack_require__.e(/*! import() */ 3).then(__webpack_require__.bind(null, /*! ./components/user/UserEditComponent */ "./resources/js/components/user/UserEditComponent.vue"));
-    },
-    props: true
   }, {
     path: '/calendar/:year/:month',
     name: 'calendar',
     component: function component() {
-      return __webpack_require__.e(/*! import() */ 1).then(__webpack_require__.bind(null, /*! ./components/calendar/CalendarListComponent */ "./resources/js/components/calendar/CalendarListComponent.vue"));
+      return __webpack_require__.e(/*! import() */ 2).then(__webpack_require__.bind(null, /*! ./components/calendar/CalendarListComponent */ "./resources/js/components/calendar/CalendarListComponent.vue"));
     },
     props: true
   }]

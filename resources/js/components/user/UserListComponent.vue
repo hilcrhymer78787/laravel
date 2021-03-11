@@ -13,7 +13,7 @@
                 <li class="table_row_list email d-none d-md-block">{{ user.email }}</li>
                 <li class="table_row_list btn" style="text-align:right;">
                     <button class="cmn_btn_sub mr-1" @click="edit(user)">編集</button>
-                    <button class="cmn_btn_delete" @click="deleteuser(user.id)">削除</button>
+                    <button class="cmn_btn_delete" @click="deleteuser(user.id, user.name)">削除</button>
                 </li>
             </ul>
         </div>
@@ -48,11 +48,13 @@ export default {
                     this.users = res.data;
                 });
         },
-        deleteuser(id) {
-            axios.delete('/api/users/' + id)
-                .then((res) => {
-                    this.getusers();
-                });
+        deleteuser(id, name) {
+            if(confirm("「" + name + "」を削除しますか？")){
+                axios.delete('/api/users/' + id)
+                    .then((res) => {
+                        this.getusers();
+                    });
+            }  
         },
         edit(user){
             this.edituser = user;

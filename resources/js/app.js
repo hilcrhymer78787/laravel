@@ -1,3 +1,4 @@
+
 import VueRouter from 'vue-router';
 
 import AppComponent from "./components/AppComponent";
@@ -29,12 +30,6 @@ const router = new VueRouter({
             path: '/users/create',
             name: 'user.create',
             component: () => import('./components/user/UserCreateComponent'),
-        },
-        {
-            path: '/users/:userId/edit',
-            name: 'user.edit',
-            component: () => import('./components/user/UserEditComponent'),
-            props: true
         },
         {
             path: '/calendar/:year/:month',
