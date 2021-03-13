@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="table">
-            <ul class="table_row">
+            <ul class="table_row ar">
                 <li class="table_row_list id">ID</li>
                 <li class="table_row_list name">名前</li>
                 <li class="table_row_list email d-none d-md-block">メール</li>
@@ -17,12 +17,23 @@
                 </li>
             </ul>
         </div>
-        
-        <div :class="{active:editmodal}" class="edit_modal">
-            <div class="edit_modal_inner">
-                <div @click="closeEditModal()" class="edit_modal_inner_close">×</div>
-                <UserEditComponent :val="edituser" />
+
+        <div class="footbar">
+            <div class="container">
+                <button class="footbar_btn" @click="create()">新規登録</button>
             </div>
+        </div>
+
+        <div :class="{active:editmodal}" class="cmn_modal">
+            <div class="cmn_modal_inner">
+                <div @click="closeEditModal()" class="cmn_modal_inner_close">×</div>
+                <UserEditComponent v-show="mode === 'edit'" ref="userEdit"/>
+                <UserCreateComponent v-show="mode === 'create'" ref="userCreate"/>
+            </div>
+        </div>
+
+        <div v-if="loading" class="vue-loading-wrap">
+            <vue-loading type="spin" color="#333" :size="{ width: '80px', height: '80px'}"></vue-loading>
         </div>
         <pre>{{$data}}</pre>
     </div>
@@ -30,34 +41,60 @@
 
 <script>
 import UserEditComponent from './UserEditComponent'
+import UserCreateComponent from './UserCreateComponent'
+import { VueLoading } from 'vue-loading-template'
 export default {
     components: {
         UserEditComponent,
+        UserCreateComponent,
+        VueLoading
     },
     data: function () {
         return {
+            loading:false,
             editmodal:false,
-            edituser:{},
+            mode:"",
             users: []
         }
     },
     methods: {
         getusers() {
+            this.loading = true;
             axios.get('/api/users')
                 .then((res) => {
                     this.users = res.data;
+                    this.loading = false;
                 });
         },
         deleteuser(id, name) {
             if(confirm("「" + name + "」を削除しますか？")){
+                this.loading = true;
                 axios.delete('/api/users/' + id)
                     .then((res) => {
                         this.getusers();
+                        this.loading = false;
                     });
             }  
         },
+        create(){
+            this.mode = "create";
+            this.editmodal = true;
+            this.$refs.userCreate.setuser()
+        },
         edit(user){
-            this.edituser = user;
+            this.mode = "edit";
+            let edituser = {};
+
+            this.$set(edituser, 'id', user.id);
+            this.$set(edituser, 'name', user.name);
+            this.$set(edituser, 'email', user.email);
+            this.$set(edituser, 'email_verified_at', user.email_verified_at);
+            this.$set(edituser, 'password', user.password);
+            this.$set(edituser, 'salary', user.salary);
+            this.$set(edituser, 'created_at', user.created_at);
+            this.$set(edituser, 'updated_at', user.updated_at);
+
+            this.$refs.userEdit.setuser(edituser)
             this.editmodal = true;
         },
         closeEditModal(){
@@ -78,6 +115,9 @@ export default {
         align-items: center;
         padding: 5px;
         border-bottom: 1px solid gray;
+        &.ar{
+            font-weight: bold;
+        }
         &_list {
             padding: 5px;
             &.id {
@@ -95,73 +135,50 @@ export default {
         }
 	}
 }
-.edit_modal{
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.footbar{
     position: fixed;
-    top: 0;
-    left: 0;
     right: 0;
+    left: 0;
     bottom: 0;
+    height: 50px;
     background-color: rgba(0, 0, 0, 0.5);
-    z-index: 10;
-    transform: scale(0);
-    &.active{
-        transform: scale(1);
-        .edit_modal_inner{
-            transform: scale(1);
-            opacity: 1;
-        }
-    }
-    &_inner{
-        transform: scale(0);
-        opacity: 0;
-        transition: .5s;
-        position: relative;
+    .container{
+        height: 100%;
         display: flex;
         justify-content: center;
         align-items: center;
-        width: 80%;
-        max-width: 870px;
-        height: 80%;
+    }
+    &_btn{
+        padding: 5px 10px;
+        border-radius: 5px;
         background-color: white;
-        padding: 20px;
-        &_close{
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            width: 40px;
-            height: 40px;
-            font-size: 40px;
-            font-weight: bold;
-            cursor: pointer;
-        }
     }
 }
 @media (min-width: 768px) {
-.table {
-	&_row {
-        &_list {
-            padding: 5px;
-            &.id {
-                width: 20%;
-            }
-            &.name {
-                width: 20%;
-            }
-            &.email {
-                width: 40%;
-            }
-            &.btn {
-                width: 20%;
-                text-align: right;
+    .table {
+        &_row {
+            &_list {
+                padding: 5px;
+                &.id {
+                    width: 20%;
+                }
+                &.name {
+                    width: 20%;
+                }
+                &.email {
+                    width: 40%;
+                }
+                &.btn {
+                    width: 20%;
+                    text-align: right;
+                }
             }
         }
-	}
-}
+    }
+    .footbar{
+        .container{
+            justify-content: flex-end;
+        }
+    }
 }
 </style>

@@ -43,6 +43,71 @@ body{
 .container {
   max-width: 900px;
 }
+.vue-loading-wrap{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 100;
+    .vue-loading{
+
+    }
+}
+.router-link-active {
+  color: #f3920b !important;
+}
+.cmn_modal{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 10;
+    transform: scale(0);
+    &.active{
+        transform: scale(1);
+        .cmn_modal_inner{
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+    &_inner{
+        overflow-y: scroll;
+        transform: scale(0);
+        opacity: 0;
+        transition: .5s;
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 80%;
+        max-width: 870px;
+        height: 80%;
+        background-color: white;
+        padding: 0 20px;
+        &_close{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    }
+}
 .cmn_btn {
   display: block;
   background-color: #f3920b;
@@ -79,7 +144,7 @@ body{
 }
 table {
   background-color: white;
-  box-shadow: 0 0 10px rgb(99, 99, 99);
+  box-shadow: 0 0 10px rgb(100, 100, 100);
 }
 input {
   background-color: white;
