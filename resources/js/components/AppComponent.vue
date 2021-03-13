@@ -180,78 +180,7 @@ input[type=radio]:checked:before {
 
 
 
-/* calendar sp
---------------------------------------------- */
-.calendar_indents {
-  display: flex;
-}
-.calendar_indent {
-  width: calc(100% / 7);
-  text-align: center;
-  padding-bottom: 5px;
-}
-.calendar_contents{
-  display: flex;
-  flex-wrap: wrap;
-  padding: 0;
-  background-color: white;
-  box-shadow: 0 0 10px rgb(99, 99, 99);
-}
-.calendar_content{
-  width: calc(100% / 7);
-  height: 65px;
-  padding:15px 0 0;
-  position: relative;
-  border-right: 1px solid #e9e9e9;
-  border-top: 1px solid #e9e9e9;
-  overflow: hidden;
-}
-.calendar_content_name{
-  font-size: 12px;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.calendar_content:nth-child(7n){
-border-right: none;
-}
-.calendar_content:nth-child(1),.calendar_content:nth-child(2),.calendar_content:nth-child(3),.calendar_content:nth-child(4),.calendar_content:nth-child(5),.calendar_content:nth-child(6),.calendar_content:nth-child(7){
-border-top: none;
-}
-.calendar_content.blank{
-  background-color:rgb(213, 213, 213);
-}
-.calendar_content.color {
-  background-color: #fccc88;
-}
-.calendar_content_icn{
-  font-size: 14px;
-  position:absolute;
-  top:1px;
-  left:3px;
-}
-.calendar_content:nth-child(7n) .calendar_content_icn, .calendar_indent:nth-child(7n){
-  color: blue;
-}
-.calendar_content:nth-child(7n-6) .calendar_content_icn, .calendar_indent:nth-child(7n-6){
-  color: red;
-}
-.calendar_pager{
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 30px;
-}
-.calendar_pager_prev {
-  font-size: 20px;
-  margin-right: 10px;
-}
-.calendar_pager_next {
-  font-size: 20px;
-  margin-left: 10px;
-}
+
 
 /* update_modal sp
 --------------------------------------------- */
@@ -315,7 +244,7 @@ border-top: none;
     font-size: 15px;
   }
   .cmn_pageTitle {
-    font-size: 50px;
+    font-size: 40px;
     margin-bottom: 40px;
   }
   .cmn_pageSecondTitle {

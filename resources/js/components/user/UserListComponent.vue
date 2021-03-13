@@ -1,5 +1,6 @@
 <template>
     <div>
+        <div class="cmn_pageTitle">出勤者一覧</div>
         <div class="table">
             <ul class="table_row ar">
                 <li class="table_row_list id">ID</li>
