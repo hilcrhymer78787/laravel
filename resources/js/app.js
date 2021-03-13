@@ -22,7 +22,12 @@ const router = new VueRouter({
     mode: 'history',
     routes: [
         {
-            path: '/users',
+            path: '/place',
+            name: 'place',
+            component: () => import('./components/place/PlaceListComponent'),
+        },
+        {
+            path: '/user',
             name: 'user',
             component: () => import('./components/user/UserListComponent'),
         },

@@ -18,9 +18,15 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::get('/places', 'PlaceController@index');
+Route::post('/places', 'PlaceController@store');
+// Route::get('/places/{place}', 'PlaceController@show');
+Route::put('/places/{place}', 'PlaceController@update');
+Route::delete('/places/{place}', 'PlaceController@destroy');
+
 Route::get('/users', 'UserController@index');
 Route::post('/users', 'UserController@store');
-Route::get('/users/{user}', 'UserController@show');
+// Route::get('/users/{user}', 'UserController@show');
 Route::put('/users/{user}', 'UserController@update');
 Route::delete('/users/{user}', 'UserController@destroy');
 
