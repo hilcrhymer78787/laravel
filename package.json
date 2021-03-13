@@ -25,6 +25,7 @@
     },
     "dependencies": {
         "moment": "^2.29.1",
+        "vue-loading-template": "^1.3.2",
         "vue-router": "^3.4.9"
     }
 }
