@@ -89,6 +89,8 @@
 export default {
   data: function () {
     return {
+      nowyear: new Date().getFullYear(),
+      nowmonth: new Date().getMonth()+1,
       calendars: [],
       users: [],
       year: 0,
@@ -145,6 +147,7 @@ export default {
       '$route':'createcalendar'
   },
   mounted() {
+    this.$router.push(`/calendar/${this.nowyear}/${this.nowmonth}`);
     this.createcalendar();
   },
 };

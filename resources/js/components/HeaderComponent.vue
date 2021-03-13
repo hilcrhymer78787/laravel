@@ -7,8 +7,8 @@
         </ul>
         <div :class="{active:hamburger}" class="header">
             <div class="header_nav d-flex justify-content-center">
-                <router-link @click.native="hamburgerFalse()" v-bind:to="{name: 'user.list'}">user</router-link>
-                <router-link @click.native="hamburgerFalse()"  :to="`/calendar/${year}/${month}`">calendar</router-link>
+                <router-link @click.native="hamburgerFalse()" :to="{name: 'user'}">user</router-link>
+                <router-link @click.native="hamburgerFalse()" :to="{name: 'calendar'}">calendar</router-link>
             </div>
         </div>
     </div>

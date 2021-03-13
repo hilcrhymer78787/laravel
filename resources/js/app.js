@@ -23,17 +23,17 @@ const router = new VueRouter({
     routes: [
         {
             path: '/users',
-            name: 'user.list',
+            name: 'user',
             component: () => import('./components/user/UserListComponent'),
         },
         {
-            path: '/users/create',
-            name: 'user.create',
-            component: () => import('./components/user/UserCreateComponent'),
+            path: '/calendar',
+            name: 'calendar',
+            component: () => import('./components/calendar/CalendarListComponent'),
+            props: true
         },
         {
             path: '/calendar/:year/:month',
-            name: 'calendar',
             component: () => import('./components/calendar/CalendarListComponent'),
             props: true
         },
