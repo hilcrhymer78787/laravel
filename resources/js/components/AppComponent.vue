@@ -273,26 +273,6 @@ input[type=radio]:checked:before {
   .header .nav_list:last-child{
     margin-right: 0;
   }
-/* calendar pc
---------------------------------------------- */
-.calendar_content{
-  height: 70px;
-  padding:10px 0;
-}
-.calendar_content_name{
-  font-size: 16px;
-}
-.calendar_pager{
-  margin-bottom: 50px;
-}
-.calendar_pager_prev {
-  font-size: 40px;
-  margin-right: 20px;
-}
-.calendar_pager_next {
-  font-size: 40px;
-  margin-left: 20px;
-}
 
 }
 

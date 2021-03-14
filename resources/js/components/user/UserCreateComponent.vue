@@ -1,6 +1,6 @@
 <template>        
     <form class="form" v-on:submit.prevent="postuser">
-        <div class="form_ttl">ユーザー登録</div>
+        <div class="form_ttl">出勤者登録</div>
         <ul class="form_list">
             <li class="form_list_item">
                 <dt class="form_list_item_ttl">名前</dt>

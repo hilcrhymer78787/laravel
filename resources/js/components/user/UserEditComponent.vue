@@ -1,6 +1,6 @@
 <template>        
     <form class="form" v-on:submit.prevent="putuser">
-        <div class="form_ttl">ユーザー編集</div>
+        <div class="form_ttl">出勤者編集</div>
         <ul class="form_list">
             <li class="form_list_item">
                 <dt class="form_list_item_ttl">ID</dt>

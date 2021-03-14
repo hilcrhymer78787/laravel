@@ -12,6 +12,11 @@
 
       <!-- カレンダー -->
       <form v-on:submit.prevent="submit">
+
+        <div v-if="loading" class="vue-loading-wrap">
+          <vue-loading type="spin" color="#333" :size="{ width: '80px', height: '80px'}"></vue-loading>
+        </div>
+
         <ul class="indent">
           <li class="indent_item">日</li>
           <li class="indent_item">月</li>
@@ -46,49 +51,22 @@
           <li v-for="n in last_day_cnt" class="content_item blank" ></li>
         </ul>
       </form>
-      <!-- <h2 class="cmn_pageSecondTitle">給与</h2>
-    <table border="1" class="salary_table">
-    <tbody><tr>
-        <th>名前</th>
-        <th>出演</th>
-        <th>合計</th>
-      </tr>
-                  <tr>
-        <td>YU</td>
-        <td>5回</td>
-        <td>50000円</td>
-      </tr>
-              <tr>
-        <td>KOICHI</td>
-        <td>5回</td>
-        <td>30000円</td>
-      </tr>
-              <tr>
-        <td>HIRO</td>
-        <td>5回</td>
-        <td>35000円</td>
-      </tr>
-        </tbody>
-        </table> -->
     </div>
-
-    <!-- <pre>{{"year:"+year}}</pre>
-    <pre>{{"month:"+month}}</pre>
-    <pre>{{"users:"+users}}</pre>
-    <pre>{{"first_day:"+first_day}}</pre>
-    <pre>{{"lastday:"+lastday}}</pre>
-    <pre>{{"last_day_cnt:"+last_day_cnt}}</pre> -->
-    <!-- <pre>{{users}}</pre> -->
     
-    <!-- <pre>{{calendars}}</pre> -->
+    <pre>{{$data}}</pre>
     
   </div>
 </template>
 
 <script>
+import { VueLoading } from 'vue-loading-template'
 export default {
+    components: {
+      VueLoading
+  },
   data: function () {
     return {
+      loading:false,
       nowyear: new Date().getFullYear(),
       nowmonth: new Date().getMonth()+1,
       calendars: [],
@@ -108,28 +86,34 @@ export default {
       });
     },
     getcalendars() {
+      this.loading = true;
       axios.get('/api/calendars/' + this.year + '/' + this.month)
       .then((res) => {
-        for(let i = 0; i < res.data.calendars.length; i++){
-          let calendar = res.data.calendars[i];
-          this.calendars.splice(calendar.day-1,1,calendar);
+        if(res.data.calendars.length != 0){
+          if(Number(this.month) === res.data.calendars[0].month){
+            for(let i = 0; i < res.data.calendars.length; i++){
+              let calendar = res.data.calendars[i];
+              this.calendars.splice(calendar.day-1,1,calendar);
+            }
+          }
         }
+        this.loading = false;
       });
     },
     submit(day) {
         axios.post('/api/calendars', this.calendars[day-1])
         .then((res) => {
-          this.getcalendars();
+          // this.getcalendars();
         });
     },
     createcalendar(){
-      this.calendars=[];
       this.year = this.$route.params.year;
       this.month = this.$route.params.month;
       this.lastday = new Date(this.year, this.month, 0).getDate();
       this.first_day = new Date(this.year, this.month - 1, 1).getDay();
       this.last_day_cnt = 6 - new Date(this.year, this.month - 1, this.lastday).getDay();
-      this.getusers();
+
+      this.calendars.splice(0, this.calendars.length);
       for(let i = 0; i < this.lastday; i++){
         this.calendars.push({
           id:0,
@@ -144,10 +128,10 @@ export default {
     }
   },
   watch: {
-      '$route':'createcalendar'
+    '$route':'createcalendar'
   },
   mounted() {
-    this.$router.push(`/calendar/${this.nowyear}/${this.nowmonth}`);
+    this.getusers();
     this.createcalendar();
   },
 };
@@ -158,10 +142,6 @@ input,button {
   border: none;
   outline: none;
 }
-th,td {
-  padding: 15px;
-  text-align: center;
-}
 .cmn_pageTitle {
   margin-bottom: 0;
   // width: 200px;
@@ -169,7 +149,12 @@ th,td {
 .cmn_pageSecondTitle {
   margin-top: 50px;
 }
-
+form{
+  position: relative;
+  .vue-loading-wrap{
+    position: absolute;
+  }
+}
 .pager {
   display: flex;
   justify-content: center;
