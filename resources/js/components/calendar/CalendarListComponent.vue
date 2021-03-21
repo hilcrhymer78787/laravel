@@ -30,26 +30,22 @@
         <ul class="content">
           <li v-for="n in first_day" class="content_item blank"></li>
 
-          <li v-for="calendar in calendars" class="content_item">
-            <span class="content_item_icn">{{ calendar.day }}</span>
-            <div class="content_item_inner">
-              <select class="content_item_input" @change="submit(calendar.day)" v-model="calendar.members_id">
-                <option value="0">−</option>
-                <option v-for="user in users" v-bind:value="user.id">{{user.name}}</option>
-              </select>
-              <div class="content_item_name">
-                <span v-if="calendar.members_id === 0">−</span>
-                <span v-for="user in users">
-                  <span v-if="user.id === calendar.members_id">{{user.name}}</span>
-                </span>
-              </div>
-            </div>
-            <div class="content_item_inner">
-              <input @input="submit(calendar.day)" class="content_item_price" type="text" name="price-1" v-model="calendar.price">
-            </div>
+          <li @click="create()" v-for="calendar in calendars" class="content_item main">
+            <span class="content_item_icn">{{ calendar.date|format }}</span>
+
           </li>
+
           <li v-for="n in last_day_cnt" class="content_item blank" ></li>
         </ul>
+
+        <div :class="{active:editmodal}" class="cmn_modal">
+            <div class="cmn_modal_inner">
+                <div @click="closeEditModal()" class="cmn_modal_inner_close">×</div>
+                <!-- <PlaceEditComponent v-show="mode === 'edit'" ref="placeEdit"/> -->
+                <CalendarCreateComponent v-show="mode === 'create'" ref="calendarCreate"/>
+            </div>
+        </div>
+
       </form>
     </div>
     
@@ -59,17 +55,22 @@
 </template>
 
 <script>
+import CalendarCreateComponent from './CalendarCreateComponent'
 import { VueLoading } from 'vue-loading-template'
+import moment from "moment"
 export default {
-    components: {
-      VueLoading
+  components: {
+    CalendarCreateComponent,
+    VueLoading,
   },
   data: function () {
     return {
       loading:false,
+      editmodal:false,
+      mode:"",
+      calendars: [],
       nowyear: new Date().getFullYear(),
       nowmonth: new Date().getMonth()+1,
-      calendars: [],
       users: [],
       year: 0,
       month: 0,
@@ -79,6 +80,17 @@ export default {
     };
   },
   methods: {
+    edit(){
+      this.editmodal = true;
+    },
+    create(){
+        this.mode = "create";
+        this.editmodal = true;
+        this.$refs.calendarCreate.setcalendar()
+    },
+    closeEditModal(){
+        this.editmodal = false;
+    },
     getusers() {
       axios.get('/api/users')
       .then((res) => {
@@ -86,26 +98,25 @@ export default {
       });
     },
     getcalendars() {
-      this.loading = true;
-      axios.get('/api/calendars/' + this.year + '/' + this.month)
-      .then((res) => {
-        if(res.data.calendars.length != 0){
-          if(Number(this.month) === res.data.calendars[0].month){
-            for(let i = 0; i < res.data.calendars.length; i++){
-              let calendar = res.data.calendars[i];
-              this.calendars.splice(calendar.day-1,1,calendar);
-            }
-          }
-        }
-        this.loading = false;
-      });
+      // this.loading = true;
+      // axios.get('/api/calendars/' + this.year + '/' + this.month)
+      // .then((res) => {
+      //   if(res.data.calendars.length != 0){
+      //     if(Number(this.month) === res.data.calendars[0].month){
+      //       for(let i = 0; i < res.data.calendars.length; i++){
+      //         let calendar = res.data.calendars[i];
+      //         this.calendars.splice(calendar.day-1,1,calendar);
+      //       }
+      //     }
+      //   }
+      //   this.loading = false;
+      // });
     },
-    submit(day) {
-        axios.post('/api/calendars', this.calendars[day-1])
-        .then((res) => {
-          // this.getcalendars();
-        });
-    },
+    // submit(day) {
+    //     axios.post('/api/calendars', this.calendars[day-1])
+    //     .then((res) => {
+    //     });
+    // },
     createcalendar(){
       this.year = this.$route.params.year;
       this.month = this.$route.params.month;
@@ -117,11 +128,22 @@ export default {
       for(let i = 0; i < this.lastday; i++){
         this.calendars.push({
           id:0,
-          year:this.year,
-          month:this.month,
-          day:i+1,
+          date:this.year+"/"+('00' + this.month).slice(-2)+"/"+('00' + Number(i+1)).slice(-2),
+          works:[
+            {
+              price:1000,
+              members_id:1,
+              places_id:1,
+            },
+            {
+              price:2000,
+              members_id:2,
+              places_id:2,
+            },
+          ],
           price:0,
           members_id:0,
+          places_id:0,
         });
       }
       this.getcalendars();
@@ -133,6 +155,11 @@ export default {
   mounted() {
     this.getusers();
     this.createcalendar();
+  },
+  filters: {
+    format:function(value) {
+        return moment(value).format("D");
+    }
   },
 };
 </script>
@@ -213,6 +240,10 @@ form{
     }
     &.blank {
       background-color: rgb(213, 213, 213);
+    }
+    &.main:hover {
+      cursor: pointer;
+      background-color: rgba(255, 255, 0, 0.527);
     }
     &.color {
       background-color: #fccc88;

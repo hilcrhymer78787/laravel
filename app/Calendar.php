@@ -7,9 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Calendar extends Model
 {
     protected $fillable = [
-        'year',
-        'month',
-        'day',
+        'date',
         'price',
         'members_id',
     ];
