@@ -13,22 +13,24 @@ class CalendarController extends Controller
         return Calendar::all();
     }
 
-    public function hoge(Request $request)
+    public function store(Request $request)
     {
-        if($request->input('id') == 0){
+        foreach($request["works"] as $work){
             $calendar = new Calendar;
-            $calendar->year = $request->input('year');
-            $calendar->month = $request->input('month');
-            $calendar->day = $request->input('day');
-            $calendar->price = $request->input('price');
-            $calendar->members_id = $request->input('members_id');
-            $calendar->save();
-        }else{
-            $calendars = DB::table('calendars')
-            ->where('id', $request->input('id'))
-            ->update($request->all());
-            return compact('calendars');
+            $calendar->date = $request["date"];
+            $calendar->price = $work["price"];
+            $calendar->members_id = $work["members_id"];
+            $calendar->places_id = $work["places_id"];
+            if($work["id"] == 0){
+                $calendar->save();
+            }else{
+                // $calendars = DB::table('calendars')
+                // ->where('id', $work["id"])
+                // ->update($calendar);
+                // return compact('calendars');
+            }
         }
+        return $calendar;
     }
 
     public function show($year,$month)

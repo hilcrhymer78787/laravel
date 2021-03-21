@@ -28,14 +28,13 @@
         </ul>
 
         <ul class="content">
-          <li v-for="n in first_day" class="content_item blank"></li>
+          <li v-for="(n, index) in first_day" :key="index+100" class="content_item blank"></li>
 
-          <li @click="create()" v-for="calendar in calendars" class="content_item main">
+          <li @click="create(calendar)" v-for="calendar in calendars" :key="calendar.date" class="content_item main">
             <span class="content_item_icn">{{ calendar.date|format }}</span>
-
           </li>
 
-          <li v-for="n in last_day_cnt" class="content_item blank" ></li>
+          <li v-for="(n, index) in last_day_cnt" :key="index" class="content_item blank" ></li>
         </ul>
 
         <div :class="{active:editmodal}" class="cmn_modal">
@@ -53,7 +52,6 @@
     
   </div>
 </template>
-
 <script>
 import CalendarCreateComponent from './CalendarCreateComponent'
 import { VueLoading } from 'vue-loading-template'
@@ -83,10 +81,10 @@ export default {
     edit(){
       this.editmodal = true;
     },
-    create(){
+    create(calendar){
         this.mode = "create";
         this.editmodal = true;
-        this.$refs.calendarCreate.setcalendar()
+        this.$refs.calendarCreate.setcalendar(calendar)
     },
     closeEditModal(){
         this.editmodal = false;
@@ -127,15 +125,16 @@ export default {
       this.calendars.splice(0, this.calendars.length);
       for(let i = 0; i < this.lastday; i++){
         this.calendars.push({
-          id:0,
           date:this.year+"/"+('00' + this.month).slice(-2)+"/"+('00' + Number(i+1)).slice(-2),
           works:[
             {
+              id:0,
               price:1000,
               members_id:1,
               places_id:1,
             },
             {
+              id:0,
               price:2000,
               members_id:2,
               places_id:2,

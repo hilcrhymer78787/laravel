@@ -10,6 +10,7 @@ class Calendar extends Model
         'date',
         'price',
         'members_id',
+        'places_id',
     ];
 
     

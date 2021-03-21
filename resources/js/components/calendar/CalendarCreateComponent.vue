@@ -1,22 +1,43 @@
 <template>        
     <form class="form" v-on:submit.prevent="postcalendar">
-        <div class="form_ttl">{{calendar.date}}出勤登録</div>
-        <ul class="form_list">
-            <li class="form_list_item">
-                <dt class="form_list_item_ttl">出勤先</dt>
-                <dd class="form_list_item_main"><input type="text" v-model="calendar.name"></dd>
-                <div v-if="error.name" class="error">出勤先を入力してください</div>
+        <div class="form_ttl">
+            出勤登録<br>
+            {{calendar.date}}
+        </div>
+        <ul class="work">
+            <li class="work_list" v-for="(work, index) in calendar.works" :key="index">
+                <div class="form_list_wrap">
+                    <ul class="form_list">
+                        <li class="form_list_item">
+                            <dt class="form_list_item_ttl">出勤者</dt>
+                            <dd class="form_list_item_main">
+                                <select v-model="work.members_id">
+                                    <option value="0">選択してください</option>
+                                    <option v-for="user in users" :key="user.id" :value="user.id">{{user.name}}</option>
+                                </select>
+                            </dd>
+                            <div v-if="error.tel" class="error">出勤者を入力してください</div>
+                        </li>
+                        <li class="form_list_item">
+                            <dt class="form_list_item_ttl">出勤場所</dt>
+                            <dd class="form_list_item_main">
+                                <select v-model="work.places_id">
+                                    <option value="0">選択してください</option>
+                                    <option v-for="place in places" :key="place.id" :value="place.id">{{place.name}}</option>
+                                </select>
+                            </dd>
+                            <div v-if="error.address" class="error">出勤場所を入力してください</div>
+                        </li>
+                        <li class="form_list_item">
+                            <dt class="form_list_item_ttl">日給</dt>
+                            <dd class="form_list_item_main"><input type="text" v-model="work.price"></dd>
+                            <div v-if="error.name" class="error">日給を入力してください</div>
+                        </li>
+                    </ul>
+                    <div class="delete_list" @click="deletelist(index)">×</div>
+                </div>
             </li>
-            <li class="form_list_item">
-                <dt class="form_list_item_ttl">電話番号</dt>
-                <dd class="form_list_item_main"><input type="text" v-model="calendar.tel"></dd>
-                <div v-if="error.tel" class="error">電話番号を入力してください</div>
-            </li>
-            <li class="form_list_item">
-                <dt class="form_list_item_ttl">住所</dt>
-                <dd class="form_list_item_main"><input type="text" v-model="calendar.address"></dd>
-                <div v-if="error.address" class="error">住所を入力してください</div>
-            </li>
+            <div class="addwork" @click="addwork()">出勤を追加</div>
         </ul>
         <div class="form_btn">
             <button type="submit" class="cmn_btn_sub">編集を確定</button>
@@ -38,20 +59,60 @@
                 },
                 calendar: {
                     date:"",
-                    works:[],
+                    works:[
+                        {
+                            id:0,
+                            members_id:0,
+                            places_id:0,
+                            price:0,
+                        }
+                    ],
                 },
+                users: [],
+                places: [],
             }
         },
         methods: {
-            setcalendar() {
-                this.$set(this.calendar, date, "");
-                this.$set(this.calendar, works, []);
+            getusers() {
+                this.loading = true;
+                axios.get('/api/users')
+                    .then((res) => {
+                        this.users = res.data;
+                        this.loading = false;
+                    });
+            },
+            getplaces() {
+                this.loading = true;
+                axios.get('/api/places')
+                    .then((res) => {
+                        this.places = res.data;
+                        this.loading = false;
+                    });
+            },
+            addwork(){
+                let obj = {
+                    id:0,
+                    members_id:0,
+                    places_id:0,
+                    price:0,
+                }
+                this.calendar.works.push(obj);
+            },
+            deletelist(index){
+                this.calendar.works.splice(index,1);
+                if(this.calendar.works.length === 0){
+                    this.addwork();
+                }
+            },
+            setcalendar(calendar) {
+                this.$set(this.calendar, "date", calendar.date);
             },
             postcalendar() {
-                if(this.validation()){
+                // if(this.validation()){
                     this.$parent.loading = true;
                     axios.post('/api/calendars', this.calendar)
                         .then((res) => {
+                            console.log(res.data);
                             this.$parent.editmodal = false;
                             this.$parent.getcalendars();
                             this.$parent.loading = false;
@@ -62,7 +123,7 @@
 
                             this.$parent.loading = false;
                         });
-                }
+                // }
             },
             validation(){
                 let noProblem = true;
@@ -85,6 +146,8 @@
             },
         },
         mounted: function(){
+            this.getusers();
+            this.getplaces();
         },
         filters: {
             format:function(value) {
@@ -99,6 +162,32 @@
     position: relative;
     bottom: 8px;
 }
+.work{
+    &_list{
+        padding-bottom: 15px;
+        border-bottom: 1px solid gray;
+        margin-bottom: 50px;
+    }
+    .addwork{
+        width: 140px;
+        margin: 0 auto;
+        text-align: center;
+        background-color: black;
+        padding: 5px 0;
+        color: white;
+        cursor: pointer;
+        border-radius: 100px;
+        position: relative;
+        &::before{
+            content: "+";
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+    }
+}
+
 .form {
     height: 100%;
     padding-top: 50px;
@@ -108,7 +197,21 @@
         margin-bottom: 15px;
         text-align: center;
     }
+    .form_list_wrap{
+        display: flex;
+        justify-content: space-between;
+        .delete_list{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 16%;
+            background-color: black;
+            color: white;
+            border-radius: 5px;
+        }
+    }
 	&_list {
+        width: 80%;
 		&_item {
             font-size: 15px;
             margin-bottom: 10px;
@@ -118,7 +221,7 @@
 			&_ttl {
 			}
 			&_main {
-                input{
+                input, select{
                     border: 1px solid gray;
                     border-radius: 5px;
                     width: 100%;
@@ -129,6 +232,9 @@
                     }
                 }
 			}
+            &:last-child .form_list_item_main{
+                margin-bottom: 0;
+            }
 		}
 	}
     &_btn {
@@ -141,15 +247,21 @@
         padding: 5px;
     }
     .form {
+        .form_list_wrap{
+            .delete_list{
+                width: 30px;
+            }
+        }
         &_ttl {
             font-size: 35px;
             margin-bottom: 25px;
         }
         &_list {
+            width: 500px;
+            margin-right: 20px;
             &_item {
                 display: flex;
                 flex-wrap: wrap;
-                width: 500px;
                 &_ttl {
                     width: 30%;
                     padding: 5px;
