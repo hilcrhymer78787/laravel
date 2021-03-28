@@ -8,9 +8,9 @@ class Calendar extends Model
 {
     protected $fillable = [
         'date',
-        'price',
         'members_id',
         'places_id',
+        'price',
     ];
 
     

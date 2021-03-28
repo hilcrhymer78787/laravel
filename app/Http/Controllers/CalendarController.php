@@ -35,12 +35,35 @@ class CalendarController extends Controller
 
     public function show($year,$month)
     {
-        $calendars = DB::table('calendars')
-        ->select('id','year','month','day','members_id','price')
-        ->where('year', $year)
-        ->where('month', $month)
+        $datas = DB::table('calendars')
+        ->select('date','id','members_id','places_id','price')
+        ->whereYear('date', $year)
+        ->whereMonth('date', $month)
+        ->orderBy('date', 'asc')
         ->get();
 
+        $calendars = [];
+
+        $key = 0;
+        $compareDate = "0000-00-00";
+        foreach($datas as $data){
+            $date = $data->date;
+            $work = $data;
+            unset($work->date);
+            if($compareDate == $date){
+                $key--;
+                array_push($calendars[$key]["works"], $work);
+            }else{
+                array_push( $calendars,[
+                    "date"=>$date,
+                    "works"=>[],
+                ]);
+                array_push($calendars[$key]["works"], $work);
+            }
+            $key++;
+            $compareDate = $date;
+        }
+        
         return compact('calendars');
     }
 

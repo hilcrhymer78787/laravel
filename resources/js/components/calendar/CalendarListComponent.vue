@@ -32,6 +32,10 @@
 
           <li @click="create(calendar)" v-for="calendar in calendars" :key="calendar.date" class="content_item main">
             <span class="content_item_icn">{{ calendar.date|format }}</span>
+            <ul>
+              <li v-if="!(calendar.works[0].members_id==0)">{{calendar.works[0].members_id}}</li>
+              <li v-if="!(calendar.works[1].members_id==0)">{{calendar.works[1].members_id}}</li>
+            </ul>
           </li>
 
           <li v-for="(n, index) in last_day_cnt" :key="index" class="content_item blank" ></li>
@@ -96,19 +100,25 @@ export default {
       });
     },
     getcalendars() {
-      // this.loading = true;
-      // axios.get('/api/calendars/' + this.year + '/' + this.month)
-      // .then((res) => {
-      //   if(res.data.calendars.length != 0){
-      //     if(Number(this.month) === res.data.calendars[0].month){
-      //       for(let i = 0; i < res.data.calendars.length; i++){
-      //         let calendar = res.data.calendars[i];
-      //         this.calendars.splice(calendar.day-1,1,calendar);
-      //       }
-      //     }
-      //   }
-      //   this.loading = false;
-      // });
+      this.loading = true;
+      axios.get('/api/calendars/' + this.year + '/' + this.month)
+      .then((res) => {
+        if(res.data.calendars.length !== 0){
+          this.calendars.forEach(calendar => {
+            if(res.data.calendars.filter(calendarElm => calendarElm.date === calendar.date).length !== 0){
+              res.data.calendars.filter(calendarElm => calendarElm.date === calendar.date)[0].works.forEach((work,index) => {
+                // ３つ目をまだ考慮してない
+                this.$set(calendar.works[index], 'id', work.id);
+                this.$set(calendar.works[index], 'members_id', work.members_id);
+                this.$set(calendar.works[index], 'places_id', work.places_id);
+                this.$set(calendar.works[index], 'price', work.price);
+              });
+            }
+          });
+        }
+
+        this.loading = false;
+      });
     },
     // submit(day) {
     //     axios.post('/api/calendars', this.calendars[day-1])
@@ -125,24 +135,21 @@ export default {
       this.calendars.splice(0, this.calendars.length);
       for(let i = 0; i < this.lastday; i++){
         this.calendars.push({
-          date:this.year+"/"+('00' + this.month).slice(-2)+"/"+('00' + Number(i+1)).slice(-2),
+          date:this.year+"-"+('00' + this.month).slice(-2)+"-"+('00' + Number(i+1)).slice(-2),
           works:[
             {
-              id:0,
-              price:1000,
-              members_id:1,
-              places_id:1,
+              "id":0,
+              "members_id":0,
+              "places_id":0,
+              "price":0
             },
             {
-              id:0,
-              price:2000,
-              members_id:2,
-              places_id:2,
+              "id":0,
+              "members_id":0,
+              "places_id":0,
+              "price":0
             },
           ],
-          price:0,
-          members_id:0,
-          places_id:0,
         });
       }
       this.getcalendars();
@@ -220,7 +227,7 @@ form{
   &_item {
     width: calc(100% / 7);
     height: 90px;
-    padding: 40px 0 0;
+    padding: 25px 5px 0;
     position: relative;
     border-right: 1px solid #e9e9e9;
     border-top: 1px solid #e9e9e9;
@@ -292,7 +299,7 @@ form{
   }
   .content_item {
     height: 90px;
-    padding: 10px 0;
+    padding: 20px 5px 0;
     &_name {
       font-size: 18px;
     }
