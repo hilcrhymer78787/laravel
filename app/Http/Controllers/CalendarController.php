@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Calendar;
+use App\Place;
+use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -33,6 +35,7 @@ class CalendarController extends Controller
         return $calendar;
     }
 
+    
     public function show($year,$month)
     {
         $datas = DB::table('calendars')
@@ -49,6 +52,8 @@ class CalendarController extends Controller
         foreach($datas as $data){
             $date = $data->date;
             $work = $data;
+            $work->place = Place::find($data->places_id)->name;
+            $work->member = User::find($data->members_id)->name;
             unset($work->date);
             if($compareDate == $date){
                 $key--;
@@ -74,7 +79,7 @@ class CalendarController extends Controller
                 ]);
             }
         }
-        
+        // dd(Place::find(4)->name);
         return compact('calendars');
     }
 

@@ -6,9 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Place extends Model
 {
-    protected $fillable = [
-        'name',
-        'address',
-        'tel',
-    ];
+    // protected $fillable = [
+    //     'name',
+    //     'address',
+    //     'tel',
+    // ];
+    public function calendars(){
+        return $this->hasMany('App\Calendar');
+    }
 }
