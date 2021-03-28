@@ -1,59 +1,57 @@
 <template>
   <div class="calendar">
-    <div class="container">
-      <!-- ページャー -->
-      <div class="pager">
-        <router-link v-if="month == 1" class="pager_prev" :to="`/calendar/${Number(year)-1}/12`">＜</router-link>
-        <router-link v-if="month != 1" class="pager_prev" :to="`/calendar/${year}/${Number(month)-1}`">＜</router-link>
-        <h1 class="cmn_pageTitle">{{ year }}年 {{ month }}月</h1>
-        <router-link v-if="month == 12" class="pager_next" :to="`/calendar/${Number(year)+1}/1`">＞</router-link>
-        <router-link v-if="month != 12" class="pager_next" :to="`/calendar/${year}/${Number(month)+1}`">＞</router-link>
+    <!-- ページャー -->
+    <div class="pager">
+      <router-link v-if="month == 1" class="pager_prev" :to="`/calendar/${Number(year)-1}/12`">＜</router-link>
+      <router-link v-if="month != 1" class="pager_prev" :to="`/calendar/${year}/${Number(month)-1}`">＜</router-link>
+      <h1 class="cmn_pageTitle">{{ year }}年 {{ month }}月</h1>
+      <router-link v-if="month == 12" class="pager_next" :to="`/calendar/${Number(year)+1}/1`">＞</router-link>
+      <router-link v-if="month != 12" class="pager_next" :to="`/calendar/${year}/${Number(month)+1}`">＞</router-link>
+    </div>
+
+    <!-- カレンダー -->
+    <form v-on:submit.prevent="submit">
+
+      <div v-if="loading" class="vue-loading-wrap">
+        <vue-loading type="spin" color="#333" :size="{ width: '80px', height: '80px'}"></vue-loading>
       </div>
 
-      <!-- カレンダー -->
-      <form v-on:submit.prevent="submit">
+      <ul class="indent">
+        <li class="indent_item">日</li>
+        <li class="indent_item">月</li>
+        <li class="indent_item">火</li>
+        <li class="indent_item">水</li>
+        <li class="indent_item">木</li>
+        <li class="indent_item">金</li>
+        <li class="indent_item">土</li>
+      </ul>
 
-        <div v-if="loading" class="vue-loading-wrap">
-          <vue-loading type="spin" color="#333" :size="{ width: '80px', height: '80px'}"></vue-loading>
-        </div>
+      <ul class="content">
+        <li v-for="(n, index) in first_day" :key="index+100" class="content_item blank"></li>
 
-        <ul class="indent">
-          <li class="indent_item">日</li>
-          <li class="indent_item">月</li>
-          <li class="indent_item">火</li>
-          <li class="indent_item">水</li>
-          <li class="indent_item">木</li>
-          <li class="indent_item">金</li>
-          <li class="indent_item">土</li>
-        </ul>
+        <li @click="create(calendar)" v-for="calendar in calendars" :key="calendar.date" class="content_item main">
+          <span class="content_item_icn">{{ calendar.date|format }}</span>
+          <ul>
+            <li v-if="!(calendar.works[0].members_id == 0)">{{calendar.works[0].members_id}}</li>
+            <li v-if="!(calendar.works[1].members_id == 0)">{{calendar.works[1].members_id}}</li>
+            <li v-if="calendar.works.length >= 3">他{{calendar.works.length - 2}}件</li>
+          </ul>
+        </li>
 
-        <ul class="content">
-          <li v-for="(n, index) in first_day" :key="index+100" class="content_item blank"></li>
+        <li v-for="(n, index) in last_day_cnt" :key="index" class="content_item blank" ></li>
+      </ul>
 
-          <li @click="create(calendar)" v-for="calendar in calendars" :key="calendar.date" class="content_item main">
-            <span class="content_item_icn">{{ calendar.date|format }}</span>
-            <ul>
-              <li v-if="!(calendar.works[0].members_id==0)">{{calendar.works[0].members_id}}</li>
-              <li v-if="!(calendar.works[1].members_id==0)">{{calendar.works[1].members_id}}</li>
-            </ul>
-          </li>
+      <div :class="{active:editmodal}" class="cmn_modal">
+          <div class="cmn_modal_inner">
+              <div @click="closeEditModal()" class="cmn_modal_inner_close">×</div>
+              <!-- <PlaceEditComponent v-show="mode === 'edit'" ref="placeEdit"/> -->
+              <CalendarCreateComponent v-show="mode === 'create'" ref="calendarCreate"/>
+          </div>
+      </div>
 
-          <li v-for="(n, index) in last_day_cnt" :key="index" class="content_item blank" ></li>
-        </ul>
-
-        <div :class="{active:editmodal}" class="cmn_modal">
-            <div class="cmn_modal_inner">
-                <div @click="closeEditModal()" class="cmn_modal_inner_close">×</div>
-                <!-- <PlaceEditComponent v-show="mode === 'edit'" ref="placeEdit"/> -->
-                <CalendarCreateComponent v-show="mode === 'create'" ref="calendarCreate"/>
-            </div>
-        </div>
-
-      </form>
-    </div>
+    </form>
     
     <pre>{{$data}}</pre>
-    
   </div>
 </template>
 <script>
@@ -106,25 +104,14 @@ export default {
         if(res.data.calendars.length !== 0){
           this.calendars.forEach(calendar => {
             if(res.data.calendars.filter(calendarElm => calendarElm.date === calendar.date).length !== 0){
-              res.data.calendars.filter(calendarElm => calendarElm.date === calendar.date)[0].works.forEach((work,index) => {
-                // ３つ目をまだ考慮してない
-                this.$set(calendar.works[index], 'id', work.id);
-                this.$set(calendar.works[index], 'members_id', work.members_id);
-                this.$set(calendar.works[index], 'places_id', work.places_id);
-                this.$set(calendar.works[index], 'price', work.price);
-              });
+              calendar.works.splice(0, calendar.works.length);
+              calendar.works.push(...res.data.calendars.filter(calendarElm => calendarElm.date === calendar.date)[0].works);
             }
           });
         }
-
         this.loading = false;
       });
     },
-    // submit(day) {
-    //     axios.post('/api/calendars', this.calendars[day-1])
-    //     .then((res) => {
-    //     });
-    // },
     createcalendar(){
       this.year = this.$route.params.year;
       this.month = this.$route.params.month;
@@ -138,16 +125,10 @@ export default {
           date:this.year+"-"+('00' + this.month).slice(-2)+"-"+('00' + Number(i+1)).slice(-2),
           works:[
             {
-              "id":0,
               "members_id":0,
-              "places_id":0,
-              "price":0
             },
             {
-              "id":0,
               "members_id":0,
-              "places_id":0,
-              "price":0
             },
           ],
         });
@@ -226,7 +207,7 @@ form{
   box-shadow: 0 0 10px rgb(99, 99, 99);
   &_item {
     width: calc(100% / 7);
-    height: 90px;
+    height: 100px;
     padding: 25px 5px 0;
     position: relative;
     border-right: 1px solid #e9e9e9;
@@ -298,8 +279,8 @@ form{
     width: 335px;
   }
   .content_item {
-    height: 90px;
-    padding: 20px 5px 0;
+    height: 100px;
+    padding: 23px 5px 0;
     &_name {
       font-size: 18px;
     }

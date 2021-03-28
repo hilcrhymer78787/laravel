@@ -63,6 +63,17 @@ class CalendarController extends Controller
             $key++;
             $compareDate = $date;
         }
+
+        foreach($calendars as $index => $calendar){
+            while (count($calendars[$index]["works"]) <= 1) {
+                array_push($calendars[$index]["works"], [
+                    "id"=> 0,
+                    "members_id"=> 0,
+                    "places_id"=> 0,
+                    "price"=> 0
+                ]);
+            }
+        }
         
         return compact('calendars');
     }
