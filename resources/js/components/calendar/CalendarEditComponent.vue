@@ -154,12 +154,12 @@
                 let noProblem = true;
                 this.calendar.works.forEach(work => {
                     this.$set(work, 'error_members_id', false);
-                    if(work.members_id === 0){
+                    if(Number(work.members_id) === 0){
                         this.$set(work, 'error_members_id', true);
                         noProblem = false;
                     }
                     this.$set(work, 'error_places_id', false);
-                    if(work.places_id === 0){
+                    if(Number(work.places_id) === 0){
                         this.$set(work, 'error_places_id', true);
                         noProblem = false;
                     }
@@ -260,9 +260,6 @@
                     }
                 }
 			}
-            &:last-child .form_list_item_main{
-                margin-bottom: 0;
-            }
 		}
 	}
     &_btn {

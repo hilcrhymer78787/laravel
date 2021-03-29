@@ -40,7 +40,7 @@
             <div class="addwork" @click="addwork()">出勤を追加</div>
         </ul>
         <div class="form_btn">
-            <button type="submit" class="cmn_btn_sub">編集を確定</button>
+            <button type="submit" class="cmn_btn_sub">新規登録</button>
         </div>
         <pre>{{$data}}</pre>
     </form>
@@ -106,6 +106,12 @@
             },
             setcalendar(calendar) {
                 this.$set(this.calendar, "date", calendar.date);
+                this.calendar.works.splice(0, this.calendar.works.length);
+                let newWork = {}
+                this.$set(newWork, "members_id", 0);
+                this.$set(newWork, "places_id", 0);
+                this.$set(newWork, "price", 0);
+                this.calendar.works.push(newWork);
                 this.calendar.works.forEach(work => {
 
                     this.$set(work, "error_members_id", false);
@@ -132,12 +138,12 @@
                 let noProblem = true;
                 this.calendar.works.forEach(work => {
                     this.$set(work, 'error_members_id', false);
-                    if(work.members_id === 0){
+                    if(Number(work.members_id) === 0){
                         this.$set(work, 'error_members_id', true);
                         noProblem = false;
                     }
                     this.$set(work, 'error_places_id', false);
-                    if(work.places_id === 0){
+                    if(Number(work.places_id) === 0){
                         this.$set(work, 'error_places_id', true);
                         noProblem = false;
                     }
@@ -238,9 +244,6 @@
                     }
                 }
 			}
-            &:last-child .form_list_item_main{
-                margin-bottom: 0;
-            }
 		}
 	}
     &_btn {

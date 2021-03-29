@@ -19,7 +19,7 @@
             </li>
         </ul>
         <div class="form_btn">
-            <button type="submit" class="cmn_btn_sub">編集を確定</button>
+            <button type="submit" class="cmn_btn_sub">新規登録</button>
         </div>
     </form>
 </template>

@@ -34,7 +34,7 @@
           <ul>
             <li v-if="!(calendar.works[0].members_id == 0)">・{{calendar.works[0].member}}</li>
             <li v-if="!(calendar.works[1].members_id == 0)">・{{calendar.works[1].member}}</li>
-            <li v-if="calendar.works.length >= 3">他{{calendar.works.length - 2}}件</li>
+            <li v-if="calendar.works.length >= 3">　他{{calendar.works.length - 2}}件</li>
           </ul>
         </li>
 
@@ -94,7 +94,7 @@ export default {
       let targetCalendar = {}
       this.$set(targetCalendar, 'date', calendar.date);
       this.$set(targetCalendar, 'works', []);
-      calendar.works.forEach(work => {
+      calendar.works.filter(work => work.id !== 0).forEach(work => {
         let targetWork = {};
         this.$set(targetWork, 'members_id', work.members_id);
         this.$set(targetWork, 'member', work.member);
