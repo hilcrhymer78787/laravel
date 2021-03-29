@@ -43,7 +43,7 @@
             <div class="cmn_btn_delete" @click="deletecalendar(calendar.date)">全て削除</div>
             <button type="submit" class="cmn_btn_sub">編集を確定</button>
         </div>
-        <pre>{{$data}}</pre>
+                <!-- <pre>{{$data}}</pre> -->
     </form>
 </template>
 

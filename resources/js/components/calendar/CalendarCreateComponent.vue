@@ -42,7 +42,7 @@
         <div class="form_btn">
             <button type="submit" class="cmn_btn_sub">新規登録</button>
         </div>
-        <pre>{{$data}}</pre>
+                <!-- <pre>{{$data}}</pre> -->
     </form>
 </template>
 

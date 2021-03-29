@@ -36,7 +36,7 @@
         <div v-if="loading" class="vue-loading-wrap">
             <vue-loading type="spin" color="#333" :size="{ width: '80px', height: '80px'}"></vue-loading>
         </div>
-        <pre>{{$data}}</pre>
+        <!-- <pre>{{$data}}</pre> -->
     </div>
 </template>
 
