@@ -36,5 +36,5 @@ Route::post('/calendars', 'CalendarController@store');
 // Route::post('/calendars/{year}/{month}/{day}', 'CalendarController@store');
 Route::get('/calendars/{year}/{month}', 'CalendarController@show');
 Route::put('/calendars/{calendar}', 'CalendarController@update');
-Route::delete('/calendars/{calendar}', 'CalendarController@destroy');
+Route::delete('/calendars/{date}', 'CalendarController@destroy');
 

@@ -115,21 +115,24 @@ body{
   padding: 10px 15px;
   border-bottom: 5px solid #a26209;
   margin: 15px 0 0 auto;
-  white-space: nowrap
+  white-space: nowrap;
+  cursor: pointer;
 }
 .cmn_btn_sub{
   display: inline-block;
   background-color: #f3920b;
   border-radius: 5px;
   padding: 5px 10px;
-  white-space: nowrap
+  white-space: nowrap;
+  cursor: pointer;
 }
 .cmn_btn_delete{
   display: inline-block;
   background-color: #fd7171;
   border-radius: 5px;
   padding: 5px 10px;
-  white-space: nowrap
+  white-space: nowrap;
+  cursor: pointer;
 }
 .cmn_pageTitle {
   font-weight: bold;

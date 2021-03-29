@@ -29,7 +29,7 @@
       <ul class="content">
         <li v-for="(n, index) in first_day" :key="index+100" class="content_item blank"></li>
 
-        <li @click="create(calendar)" v-for="calendar in calendars" :key="calendar.date" class="content_item main">
+        <li @click="clickcalendar(calendar)" v-for="calendar in calendars" :key="calendar.date" class="content_item main">
           <span class="content_item_icn">{{ calendar.date|format }}</span>
           <ul>
             <li v-if="!(calendar.works[0].members_id == 0)">・{{calendar.works[0].member}}</li>
@@ -44,7 +44,7 @@
       <div :class="{active:editmodal}" class="cmn_modal">
           <div class="cmn_modal_inner">
               <div @click="closeEditModal()" class="cmn_modal_inner_close">×</div>
-              <!-- <PlaceEditComponent v-show="mode === 'edit'" ref="placeEdit"/> -->
+              <CalendarEditComponent v-show="mode === 'edit'" ref="calendarEdit"/>
               <CalendarCreateComponent v-show="mode === 'create'" ref="calendarCreate"/>
           </div>
       </div>
@@ -56,11 +56,13 @@
 </template>
 <script>
 import CalendarCreateComponent from './CalendarCreateComponent'
+import CalendarEditComponent from './CalendarEditComponent'
 import { VueLoading } from 'vue-loading-template'
 import moment from "moment"
 export default {
   components: {
     CalendarCreateComponent,
+    CalendarEditComponent,
     VueLoading,
   },
   data: function () {
@@ -80,13 +82,35 @@ export default {
     };
   },
   methods: {
-    edit(){
+    clickcalendar(calendar){
+      console.log(calendar.works[0].id === undefined);
+      if(calendar.works[0].id === undefined){
+        this.create(calendar);
+      }else{
+        this.edit(calendar);
+      }
+    },
+    edit(calendar){
+      let targetCalendar = {}
+      this.$set(targetCalendar, 'date', calendar.date);
+      this.$set(targetCalendar, 'works', []);
+      calendar.works.forEach(work => {
+        let targetWork = {};
+        this.$set(targetWork, 'members_id', work.members_id);
+        this.$set(targetWork, 'member', work.member);
+        this.$set(targetWork, 'places_id', work.places_id);
+        this.$set(targetWork, 'place', work.place);
+        this.$set(targetWork, 'price', work.price);
+        targetCalendar.works.push(targetWork);
+      });
+      this.mode = "edit";
       this.editmodal = true;
+      this.$refs.calendarEdit.setcalendar(targetCalendar);
     },
     create(calendar){
-        this.mode = "create";
-        this.editmodal = true;
-        this.$refs.calendarCreate.setcalendar(calendar)
+      this.mode = "create";
+      this.editmodal = true;
+      this.$refs.calendarCreate.setcalendar(calendar)
     },
     closeEditModal(){
         this.editmodal = false;
@@ -99,26 +123,6 @@ export default {
     },
     getcalendars() {
       this.loading = true;
-      axios.get('/api/calendars/' + this.year + '/' + this.month)
-      .then((res) => {
-        if(res.data.calendars.length !== 0){
-          this.calendars.forEach(calendar => {
-            if(res.data.calendars.filter(calendarElm => calendarElm.date === calendar.date).length !== 0){
-              calendar.works.splice(0, calendar.works.length);
-              calendar.works.push(...res.data.calendars.filter(calendarElm => calendarElm.date === calendar.date)[0].works);
-            }
-          });
-        }
-        this.loading = false;
-      });
-    },
-    createcalendar(){
-      this.year = this.$route.params.year;
-      this.month = this.$route.params.month;
-      this.lastday = new Date(this.year, this.month, 0).getDate();
-      this.first_day = new Date(this.year, this.month - 1, 1).getDay();
-      this.last_day_cnt = 6 - new Date(this.year, this.month - 1, this.lastday).getDay();
-
       this.calendars.splice(0, this.calendars.length);
       for(let i = 0; i < this.lastday; i++){
         this.calendars.push({
@@ -133,6 +137,29 @@ export default {
           ],
         });
       }
+      axios.get('/api/calendars/' + this.year + '/' + this.month)
+      .then((res) => {
+        if(res.data.calendars.length !== 0){
+          this.calendars.forEach(calendar => {
+            if(res.data.calendars.filter(calendarElm => calendarElm.date === calendar.date).length !== 0){
+              calendar.works.splice(0, calendar.works.length);
+              calendar.works.push(...res.data.calendars.filter(calendarElm => calendarElm.date === calendar.date)[0].works);
+            }
+          });
+        }
+        this.loading = false;
+      })
+      .catch(err => {
+          alert("エラーです");
+          this.loading = false;
+      });
+    },
+    createcalendar(){
+      this.year = this.$route.params.year;
+      this.month = this.$route.params.month;
+      this.lastday = new Date(this.year, this.month, 0).getDate();
+      this.first_day = new Date(this.year, this.month - 1, 1).getDay();
+      this.last_day_cnt = 6 - new Date(this.year, this.month - 1, this.lastday).getDay();
       this.getcalendars();
     }
   },

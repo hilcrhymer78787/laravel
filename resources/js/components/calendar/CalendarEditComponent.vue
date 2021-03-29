@@ -1,7 +1,7 @@
 <template>        
     <form class="form" v-on:submit.prevent="postcalendar">
         <div class="form_ttl">
-            出勤登録<br>
+            出勤編集<br>
             {{calendar.date}}
         </div>
         <ul class="work">
@@ -40,6 +40,7 @@
             <div class="addwork" @click="addwork()">出勤を追加</div>
         </ul>
         <div class="form_btn">
+            <div class="cmn_btn_delete" @click="deletecalendar(calendar.date)">全て削除</div>
             <button type="submit" class="cmn_btn_sub">編集を確定</button>
         </div>
         <pre>{{$data}}</pre>
@@ -106,8 +107,15 @@
             },
             setcalendar(calendar) {
                 this.$set(this.calendar, "date", calendar.date);
+                this.calendar.works.splice(0, this.calendar.works.length);
+                this.calendar.works.push(...calendar.works.filter(work => work.id !== 0));
                 this.calendar.works.forEach(work => {
-
+                    if(work.member === "（削除済）"){
+                        work.members_id = 0;
+                    }
+                    if(work.place === "（削除済）"){
+                        work.places_id = 0;
+                    }
                     this.$set(work, "error_members_id", false);
                     this.$set(work, "error_places_id", false);
                     this.$set(work, "error_price", false);
@@ -119,6 +127,20 @@
                     axios.post('/api/calendars', this.calendar)
                         .then((res) => {
                             console.log(res.data);
+                            this.$parent.editmodal = false;
+                            this.$parent.getcalendars();
+                        })
+                        .catch(err => {
+                            alert("エラーです");
+                            this.$parent.loading = false;
+                        });
+                }
+            },
+            deletecalendar(date){
+                if(confirm(date + "のデータを全て削除しますか？")){
+                    this.$parent.loading = true;
+                    axios.delete('/api/calendars/' + date)
+                        .then((res) => {
                             this.$parent.editmodal = false;
                             this.$parent.getcalendars();
                         })
