@@ -7,6 +7,7 @@
         </ul>
         <div :class="{active:hamburger}" class="header">
             <div class="header_nav d-flex justify-content-center">
+                <router-link @click.native="hamburgerFalse()" :to="{name: 'search'}">search</router-link>
                 <router-link @click.native="hamburgerFalse()" :to="{name: 'calendar'}">calendar</router-link>
                 <router-link @click.native="hamburgerFalse()" :to="{name: 'place'}">place</router-link>
                 <router-link @click.native="hamburgerFalse()" :to="{name: 'user'}">user</router-link>

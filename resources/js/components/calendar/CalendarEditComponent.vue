@@ -48,140 +48,140 @@
 </template>
 
 <script>
-    import moment from "moment"
-    export default {
-        data: function () {
-            return {
-                loading:false,
-                error:{
-                    name:false,
-                    tel:false,
-                    address:false,
-                },
-                calendar: {
-                    date:"",
-                    works:[
-                        {
-                            id:0,
-                            members_id:0,
-                            places_id:0,
-                            price:0,
-                        }
-                    ],
-                },
-                users: [],
-                places: [],
+import moment from "moment"
+export default {
+    data: function () {
+        return {
+            loading:false,
+            error:{
+                name:false,
+                tel:false,
+                address:false,
+            },
+            calendar: {
+                date:"",
+                works:[
+                    {
+                        id:0,
+                        members_id:0,
+                        places_id:0,
+                        price:0,
+                    }
+                ],
+            },
+            users: [],
+            places: [],
+        }
+    },
+    methods: {
+        getusers() {
+            this.loading = true;
+            axios.get('/api/users')
+                .then((res) => {
+                    this.users = res.data;
+                    this.loading = false;
+                });
+        },
+        getplaces() {
+            this.loading = true;
+            axios.get('/api/places')
+                .then((res) => {
+                    this.places = res.data;
+                    this.loading = false;
+                });
+        },
+        addwork(){
+            let obj = {
+                id:0,
+                members_id:0,
+                places_id:0,
+                price:0,
+            }
+            this.calendar.works.push(obj);
+        },
+        deletelist(index){
+            this.calendar.works.splice(index,1);
+            if(this.calendar.works.length === 0){
+                this.addwork();
             }
         },
-        methods: {
-            getusers() {
-                this.loading = true;
-                axios.get('/api/users')
-                    .then((res) => {
-                        this.users = res.data;
-                        this.loading = false;
-                    });
-            },
-            getplaces() {
-                this.loading = true;
-                axios.get('/api/places')
-                    .then((res) => {
-                        this.places = res.data;
-                        this.loading = false;
-                    });
-            },
-            addwork(){
-                let obj = {
-                    id:0,
-                    members_id:0,
-                    places_id:0,
-                    price:0,
+        setcalendar(calendar) {
+            this.$set(this.calendar, "date", calendar.date);
+            this.calendar.works.splice(0, this.calendar.works.length);
+            this.calendar.works.push(...calendar.works.filter(work => work.id !== 0));
+            this.calendar.works.forEach(work => {
+                if(work.member === "（削除済）"){
+                    work.members_id = 0;
                 }
-                this.calendar.works.push(obj);
-            },
-            deletelist(index){
-                this.calendar.works.splice(index,1);
-                if(this.calendar.works.length === 0){
-                    this.addwork();
+                if(work.place === "（削除済）"){
+                    work.places_id = 0;
                 }
-            },
-            setcalendar(calendar) {
-                this.$set(this.calendar, "date", calendar.date);
-                this.calendar.works.splice(0, this.calendar.works.length);
-                this.calendar.works.push(...calendar.works.filter(work => work.id !== 0));
-                this.calendar.works.forEach(work => {
-                    if(work.member === "（削除済）"){
-                        work.members_id = 0;
-                    }
-                    if(work.place === "（削除済）"){
-                        work.places_id = 0;
-                    }
-                    this.$set(work, "error_members_id", false);
-                    this.$set(work, "error_places_id", false);
-                    this.$set(work, "error_price", false);
-                });
-            },
-            postcalendar() {
-                if(this.validation()){
-                    this.$parent.loading = true;
-                    axios.post('/api/calendars', this.calendar)
-                        .then((res) => {
-                            console.log(res.data);
-                            this.$parent.editmodal = false;
-                            this.$parent.getcalendars();
-                        })
-                        .catch(err => {
-                            alert("エラーです");
-                            this.$parent.loading = false;
-                        });
-                }
-            },
-            deletecalendar(date){
-                if(confirm(date + "のデータを全て削除しますか？")){
-                    this.$parent.loading = true;
-                    axios.delete('/api/calendars/' + date)
-                        .then((res) => {
-                            this.$parent.editmodal = false;
-                            this.$parent.getcalendars();
-                        })
-                        .catch(err => {
-                            alert("エラーです");
-                            this.$parent.loading = false;
-                        });
-                }
-            },
-            validation(){
-                let noProblem = true;
-                this.calendar.works.forEach(work => {
-                    this.$set(work, 'error_members_id', false);
-                    if(Number(work.members_id) === 0){
-                        this.$set(work, 'error_members_id', true);
-                        noProblem = false;
-                    }
-                    this.$set(work, 'error_places_id', false);
-                    if(Number(work.places_id) === 0){
-                        this.$set(work, 'error_places_id', true);
-                        noProblem = false;
-                    }
-                    this.$set(work, 'error_price', false);
-                    if(!(/^([1-9]\d*|0)$/.test(work.price))){
-                        this.$set(work, 'error_price', true);
-                        noProblem = false;
-                    }
-                });
-                return noProblem;
-            },
+                this.$set(work, "error_members_id", false);
+                this.$set(work, "error_places_id", false);
+                this.$set(work, "error_price", false);
+            });
         },
-        mounted: function(){
-            this.getusers();
-            this.getplaces();
-        },
-        filters: {
-            format:function(value) {
-                return moment(value).format("YYYY/MM/DD HH:mm:ss");
+        postcalendar() {
+            if(this.validation()){
+                this.$parent.loading = true;
+                axios.post('/api/calendars', this.calendar)
+                    .then((res) => {
+                        console.log(res.data);
+                        this.$parent.editmodal = false;
+                        this.$parent.getcalendars();
+                    })
+                    .catch(err => {
+                        alert("エラーです");
+                        this.$parent.loading = false;
+                    });
             }
         },
-    }
+        deletecalendar(date){
+            if(confirm(date + "のデータを全て削除しますか？")){
+                this.$parent.loading = true;
+                axios.delete('/api/calendars/' + date)
+                    .then((res) => {
+                        this.$parent.editmodal = false;
+                        this.$parent.getcalendars();
+                    })
+                    .catch(err => {
+                        alert("エラーです");
+                        this.$parent.loading = false;
+                    });
+            }
+        },
+        validation(){
+            let noProblem = true;
+            this.calendar.works.forEach(work => {
+                this.$set(work, 'error_members_id', false);
+                if(Number(work.members_id) === 0){
+                    this.$set(work, 'error_members_id', true);
+                    noProblem = false;
+                }
+                this.$set(work, 'error_places_id', false);
+                if(Number(work.places_id) === 0){
+                    this.$set(work, 'error_places_id', true);
+                    noProblem = false;
+                }
+                this.$set(work, 'error_price', false);
+                if(!(/^([1-9]\d*|0)$/.test(work.price))){
+                    this.$set(work, 'error_price', true);
+                    noProblem = false;
+                }
+            });
+            return noProblem;
+        },
+    },
+    mounted: function(){
+        this.getusers();
+        this.getplaces();
+    },
+    filters: {
+        format:function(value) {
+            return moment(value).format("YYYY/MM/DD HH:mm:ss");
+        }
+    },
+}
 </script>
 <style lang="scss" scoped>
 .error {

@@ -45,6 +45,11 @@ const router = new VueRouter({
             component: () => import('./components/calendar/CalendarListComponent'),
             props: true
         },
+        {
+            path: '/search',
+            name: 'search',
+            component: () => import('./components/search/SearchListComponent'),
+        },
     ]
 });
 

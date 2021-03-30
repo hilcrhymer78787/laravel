@@ -38,3 +38,5 @@ Route::get('/calendars/{year}/{month}', 'CalendarController@show');
 Route::put('/calendars/{calendar}', 'CalendarController@update');
 Route::delete('/calendars/{date}', 'CalendarController@destroy');
 
+
+Route::get('/search/{members_id}/{places_id}', 'CalendarController@search');
