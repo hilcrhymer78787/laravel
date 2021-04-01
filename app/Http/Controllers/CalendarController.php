@@ -94,11 +94,17 @@ class CalendarController extends Controller
     
     public function search($members_id, $places_id)
     {
-        $calendars = DB::table('calendars')
-        ->where('members_id', $members_id)
-        ->where('places_id', $places_id)
-        ->orderBy('date', 'asc')
-        ->get();
+        $query = Calendar::query()
+        ->orderBy('date', 'asc');
+
+        if($members_id != 0){
+            $query->where('members_id', $members_id);
+        }
+        if($places_id != 0){
+            $query->where('places_id', $places_id);
+        }
+
+        $calendars = $query->get();
 
         foreach($calendars as $calendar){
             $date = $calendar->date;
