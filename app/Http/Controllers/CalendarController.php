@@ -92,16 +92,28 @@ class CalendarController extends Controller
         ->delete();
     }
     
-    public function search($members_id, $places_id)
+    public function search(Request $form)
     {
         $query = Calendar::query()
         ->orderBy('date', 'asc');
 
-        if($members_id != 0){
-            $query->where('members_id', $members_id);
+        if($form["members_id"] != 0){
+            $query->where('members_id','=', $form["members_id"]);
         }
-        if($places_id != 0){
-            $query->where('places_id', $places_id);
+        if($form["places_id"] != 0){
+            $query->where('places_id','=', $form["places_id"]);
+        }
+        if($form["date_min"] != "Invalid date"){
+            $query->where('date','>=', $form["date_min"]);
+        }
+        if($form["date_max"] != "Invalid date"){
+            $query->where('date','<=', $form["date_max"]);
+        }
+        if($form["price_min"] != ""){
+            $query->where('price','>=', intval($form["price_min"]));
+        }
+        if($form["price_max"] != ""){
+            $query->where('price','<=', intval($form["price_max"]));
         }
 
         $calendars = $query->get();

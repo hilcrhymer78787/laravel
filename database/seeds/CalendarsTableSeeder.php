@@ -13,23 +13,23 @@ class CalendarsTableSeeder extends Seeder
     {
         for ($i = 1; $i <= 20; $i++) {
             DB::table('calendars')->insert([
-                'date' => '2021/03/'.$i,
+                'date' => '2021/04/'.$i,
                 'price' => 1000,
                 'members_id' => 1,
                 'places_id' => 1,
             ]);
         }
-        for ($i = 1; $i <= 20; $i++) {
+        for ($i = 1; $i <= 200; $i++) {
             DB::table('calendars')->insert([
-                'date' => '2021/03/'.$i,
+                'date' => '2021/04/01',
                 'price' => 1000,
-                'members_id' => 1,
+                'members_id' => $i,
                 'places_id' => 2,
             ]);
         }
         for ($i = 1; $i <= 20; $i = $i + 2) {
             DB::table('calendars')->insert([
-                'date' => '2021/03/'.$i,
+                'date' => '2021/04/'.$i,
                 'price' => 3000,
                 'members_id' => 3,
                 'places_id' => 3,
@@ -37,7 +37,7 @@ class CalendarsTableSeeder extends Seeder
         }
         for ($i = 1; $i <= 20; $i = $i + 2) {
             DB::table('calendars')->insert([
-                'date' => '2021/03/'.$i,
+                'date' => '2021/04/'.$i,
                 'price' => 4000,
                 'members_id' => 4,
                 'places_id' => 4,
@@ -45,7 +45,7 @@ class CalendarsTableSeeder extends Seeder
         }
         for ($i = 1; $i <= 20; $i = $i + 4) {
             DB::table('calendars')->insert([
-                'date' => '2021/03/'.$i,
+                'date' => '2021/04/'.$i,
                 'price' => 5000,
                 'members_id' => 5,
                 'places_id' => 5,
@@ -53,7 +53,7 @@ class CalendarsTableSeeder extends Seeder
         }
         for ($i = 1; $i <= 20; $i++) {
             DB::table('calendars')->insert([
-                'date' => '2021/04/'.$i,
+                'date' => '2021/05/'.$i,
                 'price' => 1000,
                 'members_id' => 1,
                 'places_id' => 1,

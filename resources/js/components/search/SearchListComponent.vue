@@ -59,10 +59,24 @@
             </ul>
         </div>
 
+        <ul class="pager">
+            <li class="pager_item" @click="changePage(nowPage-1)" v-if="nowPage != 1">＜</li>
+            <li class="pager_item" @click="changePage(nowPage-4)" v-if="(nowPage > maxPage-1)&&(nowPage-4 >= 1)">{{nowPage-4}}</li>
+            <li class="pager_item" @click="changePage(nowPage-3)" v-if="(nowPage > maxPage-2)&&(nowPage-3 >= 1)">{{nowPage-3}}</li>
+            <li class="pager_item" @click="changePage(nowPage-2)" v-if="nowPage-2 >= 1">{{nowPage-2}}</li>
+            <li class="pager_item" @click="changePage(nowPage-1)" v-if="nowPage-1 >= 1">{{nowPage-1}}</li>
+            <li class="pager_item active">{{nowPage}}</li>
+            <li class="pager_item" @click="changePage(nowPage+1)" v-if="nowPage+1 <= maxPage">{{nowPage+1}}</li>
+            <li class="pager_item" @click="changePage(nowPage+2)" v-if="nowPage+2 <= maxPage">{{nowPage+2}}</li>
+            <li class="pager_item" @click="changePage(nowPage+3)" v-if="(nowPage-2 < 1)&&(maxPage >= 3)">{{nowPage+3}}</li>
+            <li class="pager_item" @click="changePage(nowPage+4)" v-if="(nowPage-1 < 1)&&(maxPage >= 4)">{{nowPage+4}}</li>
+            <li class="pager_item" @click="changePage(nowPage+1)" v-if="nowPage != maxPage">＞</li>
+        </ul>
+
         <div v-if="loading" class="vue-loading-wrap">
             <vue-loading type="spin" color="#333" :size="{ width: '80px', height: '80px'}"></vue-loading>
         </div>
-        <pre>{{$data}}</pre>
+        <!-- <pre>{{$data}}</pre> -->
     </div>
 </template>
 
@@ -78,17 +92,21 @@ export default {
     },
     data: function () {
         return {
+            nowPage:1,
+            maxPage:1,
+            maxItems:10,
+            calendars:[],
+            calendarDatas:[],
             loading:false,
             form:{
                 members_id:0,
                 places_id:0,
-                date_min:null,
-                date_max:null,
+                date_min:"Invalid date",
+                date_max:"Invalid date",
                 price_min:"",
                 price_max:"",
 
             },
-            calendars:[],
             users: [],
             places: [],
             DatePickerFormat: "yyyy.MM.dd",
@@ -102,6 +120,10 @@ export default {
                 .then((res) => {
                     this.users = res.data;
                     this.loading = false;
+                })
+                .catch(err => {
+                    alert("エラーです");
+                    this.loading = false;
                 });
         },
         getplaces() {
@@ -110,25 +132,52 @@ export default {
                 .then((res) => {
                     this.places = res.data;
                     this.loading = false;
+                })
+                .catch(err => {
+                    alert("エラーです");
+                    this.loading = false;
                 });
         },
         getSearchCalendars() {
             this.loading = true;
-            axios.get('/api/search/' + this.form.members_id + '/' + this.form.places_id)
+            axios.post('/api/search', this.form)
                 .then((res) => {
-                    this.calendars = res.data.calendars;
+                    this.calendarDatas = res.data.calendars;
+                    this.changePage(1);
+                })
+                .catch(err => {
+                    alert("エラーです");
                     this.loading = false;
                 });
         },
+        changePage(topage){
+            this.nowPage = topage;
+            this.maxPage = Math.ceil(this.calendarDatas.length/this.maxItems);
+            this.calendars.splice(0, this.calendars.length);
+            for(let i = 0; i < this.maxItems; i++){
+                if(this.calendarDatas[i+(topage-1)*this.maxItems] != undefined){
+                    this.calendars.push(this.calendarDatas[i+(topage-1)*this.maxItems]);
+                }
+            };
+            this.loading = false;
+        },
+        format:function(value) {
+            return moment(value).format("YYYY-MM-DD");
+        }
     },
     mounted: function(){
+        this.form.date_min = this.format(new Date());
         this.getusers();
         this.getplaces();
+        this.getSearchCalendars();
     },
-    filters: {
-        format:function(value) {
-            return moment(value).format("YYYY/MM/DD HH:mm:ss");
-        }
+    watch: {
+      'form.date_min': function(){
+          this.form.date_min = this.format(this.form.date_min);
+      },
+      'form.date_max': function(){
+          this.form.date_max = this.format(this.form.date_max);
+      },
     },
 }
 </script>
@@ -149,6 +198,31 @@ export default {
             transform: translateY(50%);
             font-size: 30px;
             line-height: 1em;
+        }
+    }
+}
+.pager{
+    display: flex;
+    justify-content: center;
+    margin-top: 50px;
+    &_item{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 30px;
+        height: 30px;
+        border: 1px solid #000066;
+        background-color: white;
+        color: #000066;
+        box-shadow: 0 0 1px #000066;
+        margin-right: 15px;
+        cursor: pointer;
+        &:last-child{
+            margin-right: 0;
+        }
+        &.active{
+            background-color: #000066;
+            color: white;
         }
     }
 }
