@@ -111,14 +111,18 @@ export default {
         display: flex;
         align-items: center;
         padding: 5px;
-        border-bottom: 1px solid gray;
+        border-bottom: 1px solid #dee2e6;
+        font-size: 15px;
         &.ar{
             font-weight: bold;
+            background-color: #e9ecef;
+            border-bottom: 2px solid #dee2e6;
         }
         &_list {
             padding: 5px;
             &.id {
                 width: 20%;
+                font-weight: bold;
             }
             &.name {
                 width: 35%;
@@ -156,6 +160,7 @@ export default {
         &_row {
             &_list {
                 padding: 5px;
+                font-size: 18px;
                 &.id {
                     width: 20%;
                 }
