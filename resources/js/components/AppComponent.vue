@@ -27,6 +27,10 @@ a:hover{
 table{
   border: none;
 }
+select{
+  cursor: pointer;
+}
+
 
 /* common sp
 --------------------------------------------- */

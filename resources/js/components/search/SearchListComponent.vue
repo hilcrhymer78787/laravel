@@ -27,7 +27,7 @@
                     <dd class="form_list_item_main date">
                         <Datepicker v-model="form.date_min" :format="DatePickerFormat" :language="ja" class="form_list_item_main_input datepicker"/>
                         <span> 〜 </span>
-                        <Datepicker v-model="form.date_max" :format="DatePickerFormat" :language="ja" class="form_list_item_main_input datepicker"/>
+                        <Datepicker v-model="form.date_max" :format="DatePickerFormat" :language="ja" class="form_list_item_main_input datepicker right"/>
                     </dd>
                 </li>
                 <li class="form_list_item">
@@ -135,6 +135,9 @@ export default {
 <style lang="scss" scoped>
 .vdp-datepicker ::v-deep input {
     width: 100% ;
+}
+.vdp-datepicker.right ::v-deep .vdp-datepicker__calendar {
+    right: 0;
 }
 .form {
     &_ttl {
