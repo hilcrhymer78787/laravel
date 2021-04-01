@@ -68,8 +68,8 @@
             <li class="pager_item active">{{nowPage}}</li>
             <li class="pager_item" @click="changePage(nowPage+1)" v-if="nowPage+1 <= maxPage">{{nowPage+1}}</li>
             <li class="pager_item" @click="changePage(nowPage+2)" v-if="nowPage+2 <= maxPage">{{nowPage+2}}</li>
-            <li class="pager_item" @click="changePage(nowPage+3)" v-if="(nowPage-2 < 1)&&(maxPage >= 3)">{{nowPage+3}}</li>
-            <li class="pager_item" @click="changePage(nowPage+4)" v-if="(nowPage-1 < 1)&&(maxPage >= 4)">{{nowPage+4}}</li>
+            <li class="pager_item" @click="changePage(nowPage+3)" v-if="(nowPage-2 <= 0)&&(maxPage >= 4)">{{nowPage+3}}</li>
+            <li class="pager_item" @click="changePage(nowPage+4)" v-if="(nowPage-1 <= 0)&&(maxPage >= 5)">{{nowPage+4}}</li>
             <li class="pager_item" @click="changePage(nowPage+1)" v-if="nowPage != maxPage">＞</li>
         </ul>
 
