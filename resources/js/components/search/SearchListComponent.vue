@@ -25,9 +25,9 @@
                 <li class="form_list_item">
                     <dt class="form_list_item_ttl">日付</dt>
                     <dd class="form_list_item_main date">
-                        <Datepicker v-model="form.date_min" :format="DatePickerFormat" :language="ja" class="form_list_item_main_input datepicker"/>
+                        <Datepicker v-model="form.date_min" :clear-button="true" :format="DatePickerFormat" :language="ja" class="form_list_item_main_input datepicker"/>
                         <span> 〜 </span>
-                        <Datepicker v-model="form.date_max" :format="DatePickerFormat" :language="ja" class="form_list_item_main_input datepicker right"/>
+                        <Datepicker v-model="form.date_max" :clear-button="true" :format="DatePickerFormat" :language="ja" class="form_list_item_main_input datepicker right"/>
                     </dd>
                 </li>
                 <li class="form_list_item">
@@ -82,8 +82,8 @@ export default {
             form:{
                 members_id:0,
                 places_id:0,
-                date_min:"",
-                date_max:"",
+                date_min:null,
+                date_max:null,
                 price_min:"",
                 price_max:"",
 
@@ -133,11 +133,24 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.vdp-datepicker ::v-deep input {
-    width: 100% ;
-}
-.vdp-datepicker.right ::v-deep .vdp-datepicker__calendar {
-    right: 0;
+.vdp-datepicker{
+    position: relative;
+    &.right ::v-deep .vdp-datepicker__calendar {
+        right: 0;
+    }
+    & ::v-deep input {
+        width: 100% ;
+    }
+    & ::v-deep &__clear-button{
+        i span{
+            position: absolute; 
+            right: 5px;
+            bottom: 57%;
+            transform: translateY(50%);
+            font-size: 30px;
+            line-height: 1em;
+        }
+    }
 }
 .form {
     &_ttl {
