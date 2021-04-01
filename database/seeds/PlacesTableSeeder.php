@@ -14,7 +14,7 @@ class PlacesTableSeeder extends Seeder
     {
         for ($i = 1; $i <= 9; $i++) {
             DB::table('places')->insert([
-                'name' => '磯丸水産' . $i,
+                'name' => '出演場所' . $i,
                 'address' => '東京都港区芝公園４丁目２−' . $i,
                 'tel' => '0465858000' . $i,
             ]);

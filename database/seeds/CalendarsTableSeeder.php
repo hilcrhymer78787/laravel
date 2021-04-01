@@ -19,14 +19,6 @@ class CalendarsTableSeeder extends Seeder
                 'places_id' => 1,
             ]);
         }
-        for ($i = 1; $i <= 200; $i++) {
-            DB::table('calendars')->insert([
-                'date' => '2021/04/01',
-                'price' => 1000,
-                'members_id' => $i,
-                'places_id' => 2,
-            ]);
-        }
         for ($i = 1; $i <= 20; $i = $i + 2) {
             DB::table('calendars')->insert([
                 'date' => '2021/04/'.$i,

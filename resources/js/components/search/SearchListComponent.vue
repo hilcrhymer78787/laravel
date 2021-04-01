@@ -189,6 +189,7 @@ export default {
     }
     & ::v-deep input {
         width: 100% ;
+        cursor: pointer;
     }
     & ::v-deep &__clear-button{
         i span{
@@ -260,6 +261,7 @@ export default {
                         border: none;
                     }
                     &.datepicker{
+                        cursor: pointer;
                         width: 44%;
                     }
                 }
