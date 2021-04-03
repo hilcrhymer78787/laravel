@@ -11,8 +11,11 @@
                 <router-link @click.native="hamburgerFalse()" :to="{name: 'calendar'}">calendar</router-link>
                 <router-link @click.native="hamburgerFalse()" :to="{name: 'place'}">place</router-link>
                 <router-link @click.native="hamburgerFalse()" :to="{name: 'user'}">user</router-link>
+                <p style="margin-left:100px;">名前〇〇</p>
+                <a href="/logout" style="margin-left:30px;">ログアウト</a>
             </div>
         </div>
+        <div class="dammyHeader"></div>
     </div>
 </template>
 
@@ -65,6 +68,9 @@ export default {
     }
 }
 
+.dammyHeader{
+    padding-top: 120px;
+}
 .hamburger{
 position: fixed;
 right: 15px;

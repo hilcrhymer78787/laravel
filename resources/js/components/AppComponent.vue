@@ -35,7 +35,7 @@ select{
 /* common sp
 --------------------------------------------- */
 body{
-  padding: 50px 0;
+  padding: 0 0 50px;
   background-color:#e9e9e9;
   font-family: "Noto Sans JP", "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro", sans-serif;
   font-size: 12px;
@@ -247,7 +247,6 @@ input[type=radio]:checked:before {
     display: block;
   }
   body{
-    padding: 120px 0 50px;
     font-size: 15px;
   }
   .cmn_pageTitle {

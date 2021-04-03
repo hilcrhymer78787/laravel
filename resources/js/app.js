@@ -1,8 +1,5 @@
-
 import VueRouter from 'vue-router';
-
 import AppComponent from "./components/AppComponent";
-
 import HeaderComponent from "./components/HeaderComponent";
 
 
@@ -19,7 +16,7 @@ window.Vue = require('vue');
 Vue.use(VueRouter);
 
 const router = new VueRouter({
-    mode: 'history',
+    // mode: 'history',
     routes: [
         {
             path: '/place',
