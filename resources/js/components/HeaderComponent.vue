@@ -11,7 +11,7 @@
                 <router-link @click.native="hamburgerFalse()" :to="{name: 'calendar'}">calendar</router-link>
                 <router-link @click.native="hamburgerFalse()" :to="{name: 'place'}">place</router-link>
                 <router-link @click.native="hamburgerFalse()" :to="{name: 'user'}">user</router-link>
-                <p style="margin-left:100px;">名前〇〇</p>
+                <p style="margin-left:100px;">{{loginuser.name}}</p>
                 <a href="/logout" style="margin-left:30px;">ログアウト</a>
             </div>
         </div>
@@ -23,18 +23,28 @@
 export default {
     data: function () {
         return {
+            loginuser:{},
             hamburger:false,
             year: new Date().getFullYear(),
             month: new Date().getMonth()+1,
         };
     },
     methods:{
-        hamburgerToggle:function(){
+        getLoginUser(){
+            axios.get('/api/loginuser')
+                .then((res) => {
+                    this.loginuser = res.data.loginuser;
+                });
+        },
+        hamburgerToggle(){
             this.hamburger = !this.hamburger;
         },
-        hamburgerFalse:function(){
+        hamburgerFalse(){
             this.hamburger = false;
         }
+    },
+    mounted() {
+        this.getLoginUser();
     }
 }
 </script>

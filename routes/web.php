@@ -13,11 +13,18 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Route::get('/{any}', function() {
-//     return view('app');
-// })->where('any', '.*');
+// Auth::routes();
 
-Auth::routes();
-
-Route::get('/', 'HomeController@index')->name('home');
+// Route::get('/', 'HomeController@index')->name('home');
+Route::get('/login', 'Auth\LoginController@showLoginForm')->name('login');
+Route::post('/login', 'Auth\LoginController@login');
 Route::get('/logout', 'Auth\LoginController@logout')->name('logout');
+Route::post('/logout', 'Auth\LoginController@logout', 'logout');
+Route::group(['middleware' => 'auth:web'], function () {
+    Route::get('/', function () {
+        return view('app');
+    });
+});
+
+
+Route::middleware('auth')->get('api/loginuser', 'UserController@loginuser');

@@ -12,7 +12,13 @@ class UsersTableSeeder extends Seeder
      */
     public function run()
     {
-       for ($i = 1; $i <= 200; $i++) {
+        User::create([
+            'name' => '今野',
+            'email' => 'test@gmail.com',
+            'password' => \Hash::make('Zxcasdqwe1'),
+            'salary' => 10000,
+        ]);
+       for ($i = 1; $i <= 9; $i++) {
             User::create([
                 'name' => '名前' . $i,
                 'email' => 'email' . $i . '@gmail.com',
