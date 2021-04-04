@@ -46,7 +46,7 @@
             </ul>
         </form>
 
-        <div class="table">
+        <div v-show="isShow" class="table">
             <ul class="table_row ar">
                 <li class="table_row_list date">日付</li>
                 <li class="table_row_list member">出勤者</li>
@@ -59,7 +59,7 @@
             </ul>
         </div>
 
-        <ul class="pager">
+        <ul v-show="isShow" class="pager">
             <li class="pager_item" @click="changePage(nowPage-1)" v-if="nowPage != 1">＜</li>
             <li class="pager_item" @click="changePage(nowPage-4)" v-if="(nowPage > maxPage-1)&&(nowPage-4 >= 1)">{{nowPage-4}}</li>
             <li class="pager_item" @click="changePage(nowPage-3)" v-if="(nowPage > maxPage-2)&&(nowPage-3 >= 1)">{{nowPage-3}}</li>
@@ -92,6 +92,7 @@ export default {
     },
     data: function () {
         return {
+            isShow:false,
             nowPage:1,
             maxPage:1,
             maxItems:10,
@@ -160,6 +161,7 @@ export default {
                 }
             };
             this.loading = false;
+            this.isShow = true;
         },
         format:function(value) {
             return moment(value).format("YYYY-MM-DD");

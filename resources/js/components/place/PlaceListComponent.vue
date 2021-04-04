@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="cmn_pageTitle">出勤先一覧</div>
-        <div class="table">
+        <div v-show="isShow" class="table">
             <ul class="table_row ar">
                 <li class="table_row_list id">ID</li>
                 <li class="table_row_list name">出勤先</li>
@@ -52,6 +52,7 @@ export default {
     },
     data: function () {
         return {
+            isShow:false,
             loading:false,
             editmodal:false,
             mode:"",
@@ -64,6 +65,7 @@ export default {
             axios.get('/api/places')
                 .then((res) => {
                     this.places = res.data;
+                    this.isShow = true;
                     this.loading = false;
                 });
         },
