@@ -6,13 +6,21 @@
             <li class="hamburger_icn"></li>
         </ul>
         <div :class="{active:hamburger}" class="header">
-            <div class="header_nav d-flex justify-content-center">
-                <router-link @click.native="hamburgerFalse()" :to="{name: 'search'}">search</router-link>
-                <router-link @click.native="hamburgerFalse()" :to="{name: 'calendar'}">calendar</router-link>
-                <router-link @click.native="hamburgerFalse()" :to="{name: 'place'}">place</router-link>
-                <router-link @click.native="hamburgerFalse()" :to="{name: 'user'}">user</router-link>
-                <p style="margin-left:100px;">{{loginuser.name}}</p>
-                <a href="/logout" style="margin-left:30px;">ログアウト</a>
+            <div class="container">
+                <div class="d-flex align-items-center">
+                    <img class="header_img" v-if="loginuser.img_name" @error="noImage" :src="'/storage/' + loginuser.img_name">
+                    <img class="header_img" v-if="!loginuser.img_name" @error="noImage" src="/assets/noimage.png">                    
+                    <div class="header_left">
+                        <p>{{loginuser.name}}</p>
+                        <a href="/logout">ログアウト</a>
+                    </div>
+                </div>
+                <div class="header_nav d-flex justify-content-center">
+                    <router-link @click.native="hamburgerFalse()" :to="{name: 'search'}">search</router-link>
+                    <router-link @click.native="hamburgerFalse()" :to="{name: 'calendar'}">calendar</router-link>
+                    <router-link @click.native="hamburgerFalse()" :to="{name: 'place'}">place</router-link>
+                    <router-link @click.native="hamburgerFalse()" :to="{name: 'user'}">user</router-link>
+                </div>
             </div>
         </div>
         <div class="dammyHeader"></div>
@@ -36,6 +44,9 @@ export default {
                     this.loginuser = res.data.loginuser;
                 });
         },
+        noImage(element){
+            element.target.src = '/assets/noimage.png'
+        },
         hamburgerToggle(){
             this.hamburger = !this.hamburger;
         },
@@ -52,9 +63,6 @@ export default {
 /* header sp
 --------------------------------------------- */
 .header{
-    display: flex;
-    justify-content: center;
-    align-items: center;
     position:fixed;
     top:0;
     right: 0;
@@ -65,8 +73,28 @@ export default {
     transform: translateX(-100%);
     transition: .5s;
     color: white;
+    .container{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
     &.active{
         transform: translateX(0);
+    }
+    &_img{
+        margin-right: 10px;
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        border: 2px solid white;
+
+    }
+    &_left{
+        margin-right: 50px;
+        a{
+            font-size: 15px;
+            color: #f3920b;
+        }
     }
     &_nav{
         a{
@@ -91,6 +119,7 @@ height: 30px;
 display: flex;
 flex-direction: column;
 justify-content: space-between;
+align-items: center;
 cursor: pointer;
     &_icn{
     height: 5px;
@@ -121,7 +150,7 @@ cursor: pointer;
         position:fixed;
         bottom: auto;
         transform: translateX(0) !important;
-        padding: 20px 0;
+        padding: 10px 0;
         transition: 0;
         font-size: 20px;
     }
