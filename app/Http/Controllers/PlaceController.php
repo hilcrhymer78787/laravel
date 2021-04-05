@@ -24,8 +24,6 @@ class PlaceController extends Controller
         $place["tel"] = $request->tel;
         $place["address"] = $request->address;
         $place->save();
-
-        return $request;
     }
     
     public function show(Place $place)
@@ -45,13 +43,12 @@ class PlaceController extends Controller
         }
 
         $place->where("id", $request->id)->update([
-            "id" => $request->id,
             "name" => $request->name,
             "tel" => $request->tel,
             "address" => $request->address,
         ]);
     }        
-        
+    
     public function destroy(Place $place)
     {
         Storage::delete('public/' . $place->img_name);

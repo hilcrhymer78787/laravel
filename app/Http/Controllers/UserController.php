@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Auth;
 
 class UserController extends Controller
@@ -18,23 +20,45 @@ class UserController extends Controller
         return User::all();
     }
 
-    // \Hash::make('Zxcasdqwe1')
     public function show(User $user)
     {
         return $user;
     }
-    public function store(Request $request)
+
+    public function store(Request $request, User $user)
     {
-        return User::create($request->all());
+        if(isset($request->file)){
+            $request->file->storeAs('public/', $request->img_name);
+            $user["img_name"] = $request->img_name;
+        }
+        $user["name"] = $request->name;
+        $user["email"] = $request->email;
+        $user["password"] = $request->password;
+        $user["salary"] = $request->salary;
+        $user["img_name"] = $request->img_name;
+        $user->save();
+
+        return $user;
     }
     public function update(Request $request, User $user)
     {
-        $user->update($request->all());
-        return $user;
+        if(isset($request->file)){
+            $request->file->storeAs('public/', $request->img_name);
+            Storage::delete('public/' . $request->img_oldname);
+            $user->where("id", $request->id)->update([
+                "img_name" => $request->img_name,
+            ]);
+        }
+
+        $user->where("id", $request->id)->update([
+            "name" => $request->name,
+            "email" => $request->email,
+            "salary" => $request->salary,
+        ]);
     }
     public function destroy(User $user)
     {
+        Storage::delete('public/' . $user->img_name);
         $user->delete();
-        return $user;
     }
 }

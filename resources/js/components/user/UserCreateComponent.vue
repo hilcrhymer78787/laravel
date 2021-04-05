@@ -3,6 +3,13 @@
         <div class="form_ttl">出勤者登録</div>
         <ul class="form_list">
             <li class="form_list_item">
+                <dt class="form_list_item_ttl">画像</dt>
+                <dd class="form_list_item_main">
+                    <img @click="previewImg()" :src="uploadedImage" @error="noImage">
+                </dd>
+                <input ref="input" class="d-none" type="file" accept="image/*" v-on:change="fileSelected">
+            </li>
+            <li class="form_list_item">
                 <dt class="form_list_item_ttl">名前</dt>
                 <dd class="form_list_item_main"><input type="text" v-model="user.name"></dd>
                 <div v-if="error.name" class="error">名前を入力してください</div>
@@ -26,6 +33,7 @@
         <div class="form_btn">
             <button type="submit" class="cmn_btn_sub">新規登録</button>
         </div>
+        <!-- <pre>{{user}}</pre> -->
     </form>
 </template>
 
@@ -41,7 +49,11 @@
                     password:false,
                     salary:false,
                 },
+                uploadedImage: "",
+                file:"",
                 user: {
+                    id:0,
+                    img_name:"",
                     name:"",
                     email:"",
                     password:"",
@@ -55,10 +67,32 @@
                     this.$set(this.user, key, "")
                 })
             },
+            noImage(element){
+                element.target.src = '/assets/noimage.png'
+            },
+            previewImg(){
+                this.$refs.input.click();
+            },
+            fileSelected(event){
+                this.$set(this.user, 'img_name', moment(new Date()).format("YYYYMMDDHHmmss") + event.target.files[0].name);
+                this.file = event.target.files[0];
+                let reader = new FileReader(); //File API生成
+                reader.onload = (e) => {
+                    this.uploadedImage = e.target.result;
+                };
+                reader.readAsDataURL(this.file);
+            },
             postuser() {
                 if(this.validation()){
                     this.$parent.loading = true;
-                    axios.post('/api/users', this.user)
+                    let postData = new FormData();
+                    postData.append("file", this.file);
+                    postData.append("img_name", this.user.img_name);
+                    postData.append("name", this.user.name);
+                    postData.append("email", this.user.email);
+                    postData.append("password", this.user.password);
+                    postData.append("salary", this.user.salary);
+                    axios.post('/api/users', postData)
                         .then((res) => {
                             this.$parent.editmodal = false;
                             this.$parent.getusers();
@@ -66,8 +100,6 @@
                         })
                         .catch(err => {
                             alert("エラーです");
-                            console.log(err);
-
                             this.$parent.loading = false;
                         });
                 }
@@ -141,6 +173,11 @@
                         border: none;
                     }
                 }
+                img {
+                    width: 70px;
+                    height: 70px;
+                    cursor: pointer;
+                }
 			}
 		}
 	}
@@ -174,6 +211,10 @@
                             padding: 5px;
                         }
                     }
+                    img {
+                        width: 120px;
+                        height: 120px;
+                    }
                 }
             }
         }
@@ -181,6 +222,4 @@
         }
     }
 }
-
-
 </style>

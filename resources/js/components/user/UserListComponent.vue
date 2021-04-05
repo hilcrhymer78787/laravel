@@ -3,13 +3,16 @@
         <div class="cmn_pageTitle">出勤者一覧</div>
         <div v-show="isShow" class="table">
             <ul class="table_row ar">
-                <li class="table_row_list id">ID</li>
+                <li class="table_row_list img_name pl-2">画像</li>
                 <li class="table_row_list name">名前</li>
                 <li class="table_row_list email d-none d-md-block">メール</li>
                 <li class="table_row_list btn">　</li>
             </ul>
             <ul v-for="user in users" :key="user.id" class="table_row">
-                <li class="table_row_list id">{{ user.id }}</li>
+                <li class="table_row_list img_name">
+                    <img v-if="user.img_name" @error="noImage" :src="'/storage/' + user.img_name">
+                    <img v-if="!user.img_name" @error="noImage" src="/assets/noimage.png">
+                </li>
                 <li class="table_row_list name">{{ user.name }}</li>
                 <li class="table_row_list email d-none d-md-block">{{ user.email }}</li>
                 <li class="table_row_list btn" style="text-align:right;">
@@ -79,6 +82,9 @@ export default {
                     });
             }  
         },
+        noImage(element){
+            element.target.src = '/assets/noimage.png'
+        },
         create(){
             this.mode = "create";
             this.editmodal = true;
@@ -89,6 +95,8 @@ export default {
             let edituser = {};
 
             this.$set(edituser, 'id', user.id);
+            this.$set(edituser, 'img_name', user.img_name);
+            this.$set(edituser, 'img_oldname', user.img_name);
             this.$set(edituser, 'name', user.name);
             this.$set(edituser, 'email', user.email);
             this.$set(edituser, 'email_verified_at', user.email_verified_at);
@@ -126,9 +134,14 @@ export default {
         }
         &_list {
             padding: 5px;
-            &.id {
+            &.img_name {
                 width: 20%;
                 font-weight: bold;
+                padding: 0 5px 0 0;
+                img{
+                    width: 100%;
+                    max-width: 70px;
+                }
             }
             &.name {
                 width: 35%;
@@ -167,7 +180,7 @@ export default {
             &_list {
                 padding: 5px;
                 font-size: 18px;
-                &.id {
+                &.img_name {
                     width: 20%;
                 }
                 &.name {

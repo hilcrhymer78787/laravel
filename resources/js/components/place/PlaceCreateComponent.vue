@@ -3,7 +3,7 @@
         <div class="form_ttl">出勤先登録</div>
         <ul class="form_list">
             <li class="form_list_item">
-                <dt class="form_list_item_ttl">IMG</dt>
+                <dt class="form_list_item_ttl">画像</dt>
                 <dd class="form_list_item_main">
                     <img @click="previewImg()" :src="uploadedImage" @error="noImage">
                 </dd>
@@ -89,7 +89,6 @@
                             this.$parent.editmodal = false;
                             this.$parent.getplaces();
                             this.$parent.loading = false;
-                            console.log(res);
                         })
                         .catch(err => {
                             alert("エラーです");
@@ -206,6 +205,4 @@
         }
     }
 }
-
-
 </style>

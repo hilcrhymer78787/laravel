@@ -4,7 +4,12 @@
         <ul class="form_list">
             <li class="form_list_item">
                 <dt class="form_list_item_ttl">ID</dt>
-                <dd class="form_list_item_main"><input class="ar" type="text" readonly v-model="user.id"></dd>
+                <dd class="form_list_item_main">
+                    <img v-if="!file&&user.img_name" @click="previewImg()" :src="'/storage/' + user.img_name" @error="noImage">
+                    <img v-if="!file&&!user.img_name" @click="previewImg()" src="/assets/noimage.png" @error="noImage">
+                    <img v-if="file" @click="previewImg()" :src="uploadedImage" @error="noImage">
+                </dd>
+                <input ref="input" class="d-none" type="file" accept="image/*" v-on:change="fileSelected" @click="fileclicked">
             </li>
             <li class="form_list_item">
                 <dt class="form_list_item_ttl">登録日時</dt>
@@ -25,11 +30,6 @@
                 <div v-if="error.email" class="error">メールアドレスを適切な形で入力してください</div>
             </li>
             <li class="form_list_item">
-                <dt class="form_list_item_ttl">パスワード</dt>
-                <dd class="form_list_item_main"><input type="text" v-model="user.password"></dd>
-                <div v-if="error.password" class="error">パスワードを8文字以上の英数字で入力してください</div>
-            </li>
-            <li class="form_list_item">
                 <dt class="form_list_item_ttl">日給</dt>
                 <dd class="form_list_item_main"><input type="text" v-model="user.salary"></dd>
                 <div v-if="error.salary" class="error">日給を数値で入力してください</div>
@@ -38,6 +38,7 @@
         <div class="form_btn">
             <button type="submit" class="cmn_btn_sub">編集を確定</button>
         </div>
+        <!-- <pre>{{user}}</pre> -->
     </form>
 </template>
 
@@ -50,13 +51,16 @@
                 error:{
                     name:false,
                     email:false,
-                    password:false,
                     salary:false,
                 },
+                uploadedImage: "",
+                file:"",
                 user: {
+                    id:0,
+                    img_name:"",
+                    img_oldname:"",
                     name:"",
                     email:"",
-                    password:"",
                     salary:"",
                 },
             }
@@ -64,18 +68,48 @@
         methods: {
             setuser(edituser) {
                 this.user = edituser;
+                this.file = "";
                 this.$set(this.error, 'name', false);
                 this.$set(this.error, 'email', false);
-                this.$set(this.error, 'password', false);
                 this.$set(this.error, 'salary', false);
+            },
+            noImage(element){
+                element.target.src = '/assets/noimage.png'
+            },
+            previewImg(){
+                this.$refs.input.click();
+            },
+            fileclicked(element){
+                element.target.value = '';
+            },
+            fileSelected(event){
+                this.$set(this.user, 'img_name', moment(new Date()).format("YYYYMMDDHHmmss") + event.target.files[0].name);
+                this.file = event.target.files[0];
+                let reader = new FileReader(); //File API生成
+                reader.onload = (e) => {
+                    this.uploadedImage = e.target.result;
+                };
+                reader.readAsDataURL(this.file);
             },
             putuser() {
                 if(this.validation()){
                     this.$parent.loading = true;
-                    axios.put('/api/users/' + this.user.id, this.user)
+                    let postData = new FormData();
+                    postData.append("file", this.file);
+                    postData.append("id", this.user.id);
+                    postData.append("img_name", this.user.img_name);
+                    postData.append("name", this.user.name);
+                    postData.append("email", this.user.email);
+                    postData.append("salary", this.user.salary);
+                    axios.post('/api/usersUpdate', postData)
                         .then((res) => {
                             this.$parent.editmodal = false;
                             this.$parent.getusers();
+                            this.$parent.loading = false;
+                            console.log();
+                        })
+                        .catch(err => {
+                            alert("エラーです");
                             this.$parent.loading = false;
                         });
                 }
@@ -90,11 +124,6 @@
                 this.$set(this.error, 'email', false);
                 if(!(/^[a-zA-Z0-9_.+-]+@([a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9]*\.)+[a-zA-Z]{2,}$/.test(this.user.email))){
                     this.$set(this.error, 'email', true);
-                    noProblem = false;
-                }
-                this.$set(this.error, 'password', false);
-                if(!(/^([a-zA-Z0-9]{8,})$/.test(this.user.password))){
-                    this.$set(this.error, 'password', true);
                     noProblem = false;
                 }
                 this.$set(this.error, 'salary', false);
@@ -149,6 +178,11 @@
                         border: none;
                     }
                 }
+                img {
+                    width: 70px;
+                    height: 70px;
+                    cursor: pointer;
+                }
 			}
 		}
 	}
@@ -181,6 +215,10 @@
                         &.ar{
                             padding: 5px;
                         }
+                    }
+                    img {
+                        width: 120px;
+                        height: 120px;
                     }
                 }
             }

@@ -72,8 +72,8 @@
                 this.$refs.input.click();
             },
             fileclicked(element){
-                element.target.value = ''
-;            },
+                element.target.value = '';
+            },
             fileSelected(event){
                 this.$set(this.place, 'img_name', moment(new Date()).format("YYYYMMDDHHmmss") + event.target.files[0].name);
                 this.file = event.target.files[0];
