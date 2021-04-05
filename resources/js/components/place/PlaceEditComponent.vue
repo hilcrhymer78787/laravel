@@ -3,8 +3,13 @@
         <div class="form_ttl">出勤先編集</div>
         <ul class="form_list">
             <li class="form_list_item">
-                <dt class="form_list_item_ttl">ID</dt>
-                <dd class="form_list_item_main"><input class="ar" type="text" readonly v-model="place.id"></dd>
+                <dt class="form_list_item_ttl">IMG</dt>
+                <dd class="form_list_item_main">
+                    <img v-if="!file&&place.img_name" @click="previewImg()" :src="'/storage/' + place.img_name" @error="noImage">
+                    <img v-if="!file&&!place.img_name" @click="previewImg()" src="/assets/noimage.png" @error="noImage">
+                    <img v-if="file" @click="previewImg()" :src="uploadedImage" @error="noImage">
+                </dd>
+                <input ref="input" class="d-none" type="file" accept="image/*" v-on:change="fileSelected" @click="fileclicked">
             </li>
             <li class="form_list_item">
                 <dt class="form_list_item_ttl">出勤先</dt>
@@ -25,6 +30,7 @@
         <div class="form_btn">
             <button type="submit" class="cmn_btn_sub">編集を確定</button>
         </div>
+        <!-- <pre>{{place}}</pre> -->
     </form>
 </template>
 
@@ -39,8 +45,12 @@
                     tel:false,
                     address:false,
                 },
+                uploadedImage: "",
+                file:"",
                 place: {
                     id:0,
+                    img_name:"",
+                    img_oldname:"",
                     name:"",
                     tel:"",
                     address:"",
@@ -50,18 +60,48 @@
         methods: {
             setplace(editplace) {
                 this.place = editplace;
+                this.file = "";
                 this.$set(this.error, 'name', false);
                 this.$set(this.error, 'tel', false);
                 this.$set(this.error, 'address', false);
             },
+            noImage(element){
+                element.target.src = '/assets/noimage.png'
+            },
+            previewImg(){
+                this.$refs.input.click();
+            },
+            fileclicked(element){
+                element.target.value = ''
+;            },
+            fileSelected(event){
+                this.$set(this.place, 'img_name', moment(new Date()).format("YYYYMMDDHHmmss") + event.target.files[0].name);
+                this.file = event.target.files[0];
+                let reader = new FileReader(); //File API生成
+                reader.onload = (e) => {
+                    this.uploadedImage = e.target.result;
+                };
+                reader.readAsDataURL(this.file);
+            },
             putplace() {
                 if(this.validation()){
                     this.$parent.loading = true;
-                    // this.$parent.loading = true;
-                    axios.put('/api/places/' + this.place.id, this.place)
+                    let postData = new FormData();
+                    postData.append("file", this.file);
+                    postData.append("id", this.place.id);
+                    postData.append("img_name", this.place.img_name);
+                    postData.append("img_oldname", this.place.img_oldname);
+                    postData.append("name", this.place.name);
+                    postData.append("tel", this.place.tel);
+                    postData.append("address", this.place.address);
+                    axios.post('/api/placesUpdate', postData)
                         .then((res) => {
                             this.$parent.editmodal = false;
                             this.$parent.getplaces();
+                            this.$parent.loading = false;
+                        })
+                        .catch(err => {
+                            alert("エラーです");
                             this.$parent.loading = false;
                         });
                 }
@@ -86,12 +126,8 @@
                 return noProblem;
             },
         },
-        mounted: function(){
-        },
-        filters: {
-            format:function(value) {
-                return moment(value).format("YYYY/MM/DD HH:mm:ss");
-            }
+        mounted(){
+
         },
     }
 </script>
@@ -130,6 +166,11 @@
                         border: none;
                     }
                 }
+                img {
+                    width: 70px;
+                    height: 70px;
+                    cursor: pointer;
+                }
 			}
 		}
 	}
@@ -162,6 +203,10 @@
                         &.ar{
                             padding: 5px;
                         }
+                    }
+                    img {
+                        width: 120px;
+                        height: 120px;
                     }
                 }
             }

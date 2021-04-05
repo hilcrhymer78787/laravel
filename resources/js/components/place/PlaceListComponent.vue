@@ -3,13 +3,16 @@
         <div class="cmn_pageTitle">出勤先一覧</div>
         <div v-show="isShow" class="table">
             <ul class="table_row ar">
-                <li class="table_row_list id">ID</li>
+                <li class="table_row_list img_name pl-2">画像</li>
                 <li class="table_row_list name">出勤先</li>
                 <li class="table_row_list tel d-none d-md-block">住所</li>
                 <li class="table_row_list btn">　</li>
             </ul>
             <ul v-for="place in places" :key="place.id" class="table_row">
-                <li class="table_row_list id">{{ place.id }}</li>
+                <li class="table_row_list img_name">
+                    <img v-if="place.img_name" @error="noImage" :src="'/storage/' + place.img_name">
+                    <img v-if="!place.img_name" @error="noImage" src="/assets/noimage.png">
+                </li>
                 <li class="table_row_list name">{{ place.name }}</li>
                 <li class="table_row_list tel d-none d-md-block">{{ place.address }}</li>
                 <li class="table_row_list btn" style="text-align:right;">
@@ -36,7 +39,7 @@
         <div v-if="loading" class="vue-loading-wrap">
             <vue-loading type="spin" color="#333" :size="{ width: '80px', height: '80px'}"></vue-loading>
         </div>
-                <!-- <pre>{{$data}}</pre> -->
+        <pre>{{$data}}</pre>
     </div>
 </template>
 
@@ -79,6 +82,9 @@ export default {
                     });
             }  
         },
+        noImage(element){
+            element.target.src = '/assets/noimage.png'
+        },
         create(){
             this.mode = "create";
             this.editmodal = true;
@@ -89,6 +95,8 @@ export default {
             let editplace = {};
 
             this.$set(editplace, 'id', place.id);
+            this.$set(editplace, 'img_name', place.img_name);
+            this.$set(editplace, 'img_oldname', place.img_name);
             this.$set(editplace, 'name', place.name);
             this.$set(editplace, 'tel', place.tel);
             this.$set(editplace, 'address', place.address);
@@ -122,9 +130,14 @@ export default {
         }
         &_list {
             padding: 5px;
-            &.id {
+            &.img_name {
                 width: 20%;
                 font-weight: bold;
+                padding: 0 5px 0 0;
+                img{
+                    width: 100%;
+                    max-width: 70px;
+                }
             }
             &.name {
                 width: 35%;
@@ -163,7 +176,7 @@ export default {
             &_list {
                 padding: 5px;
                 font-size: 18px;
-                &.id {
+                &.img_name {
                     width: 20%;
                 }
                 &.name {

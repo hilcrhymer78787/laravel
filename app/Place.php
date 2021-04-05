@@ -11,6 +11,7 @@ class Place extends Model
         'name',
         'address',
         'tel',
+        'img_name',
     ];
     public function calendars(){
         return $this->hasMany('App\Calendar');

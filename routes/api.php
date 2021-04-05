@@ -27,13 +27,12 @@ Route::delete('/users/{user}', 'UserController@destroy');
 
 Route::get('/places', 'PlaceController@index');
 Route::post('/places', 'PlaceController@store');
-Route::put('/places/{place}', 'PlaceController@update');
+Route::post('/placesUpdate', 'PlaceController@update');
 Route::delete('/places/{place}', 'PlaceController@destroy');
 
 
 Route::get('/calendars', 'CalendarController@index');
 Route::post('/calendars', 'CalendarController@store');
-// Route::post('/calendars/{year}/{month}/{day}', 'CalendarController@store');
 Route::get('/calendars/{year}/{month}', 'CalendarController@show');
 Route::put('/calendars/{calendar}', 'CalendarController@update');
 Route::delete('/calendars/{date}', 'CalendarController@destroy');
