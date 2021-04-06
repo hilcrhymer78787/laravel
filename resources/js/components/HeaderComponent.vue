@@ -7,7 +7,7 @@
         </ul>
         <div :class="{active:hamburger}" class="header">
             <div class="container">
-                <div class="d-flex align-items-center">
+                <div class="d-flex align-items-center justify-content-center">
                     <img class="header_img" v-if="loginuser.img_name" @error="noImage" :src="'/storage/' + loginuser.img_name">
                     <img class="header_img" v-if="!loginuser.img_name" @error="noImage" src="/assets/noimage.png">                    
                     <div class="header_left">
@@ -15,7 +15,7 @@
                         <a href="/logout">ログアウト</a>
                     </div>
                 </div>
-                <div class="header_nav d-flex justify-content-center">
+                <div class="header_nav d-md-flex justify-content-center">
                     <router-link @click.native="hamburgerFalse()" :to="{name: 'search'}">search</router-link>
                     <router-link @click.native="hamburgerFalse()" :to="{name: 'calendar'}">calendar</router-link>
                     <router-link @click.native="hamburgerFalse()" :to="{name: 'place'}">place</router-link>
@@ -60,9 +60,10 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-/* header sp
---------------------------------------------- */
 .header{
+    display: flex;
+    justify-content: center;
+    align-items: center;
     position:fixed;
     top:0;
     right: 0;
@@ -73,24 +74,20 @@ export default {
     transform: translateX(-100%);
     transition: .5s;
     color: white;
-    .container{
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
     &.active{
         transform: translateX(0);
     }
     &_img{
         margin-right: 10px;
-        width: 70px;
-        height: 70px;
+        width: 60px;
+        height: 60px;
         border-radius: 50%;
         border: 2px solid white;
 
     }
     &_left{
         margin-right: 50px;
+        font-size: 20px;
         a{
             font-size: 15px;
             color: #f3920b;
@@ -98,16 +95,19 @@ export default {
     }
     &_nav{
         a{
-            margin-right: 20px;
-            &:last-child{
-                margin-right: 0;
+            text-align: center;
+            font-size: 20px;
+            margin-bottom: 10px;
+            &:first-child{
+                margin-top: 20px;
             }
         }
+
     }
 }
 
 .dammyHeader{
-    padding-top: 120px;
+    padding-top: 50px;
 }
 .hamburger{
 position: fixed;
@@ -122,6 +122,7 @@ justify-content: space-between;
 align-items: center;
 cursor: pointer;
     &_icn{
+    width: 100%;
     height: 5px;
     background-color: #f3920b;
     border-radius: 5px;
@@ -143,16 +144,35 @@ cursor: pointer;
     }
 }
 @media (min-width: 768px) {
-    /* header pc
-    --------------------------------------------- */
     .header{
         width:100%;
         position:fixed;
         bottom: auto;
         transform: translateX(0) !important;
-        padding: 10px 0;
+        padding: 15px 0;
         transition: 0;
         font-size: 20px;
+        .container{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        &_nav{
+            a{
+                text-align: left;
+                margin-right: 20px;
+                margin-bottom: 0;
+                &:first-child{
+                    margin-top: 0;
+                }
+                &:last-child{
+                    margin-right: 0;
+                }
+            }
+        }
+    }
+    .dammyHeader{
+        padding-top: 120px;
     }
     .hamburger{
         display: none;
