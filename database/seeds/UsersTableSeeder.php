@@ -18,13 +18,6 @@ class UsersTableSeeder extends Seeder
             'password' => \Hash::make('test1234'),
             'salary' => 10000,
         ]);
-       for ($i = 1; $i <= 4; $i++) {
-            User::create([
-                'name' => '名前' . $i,
-                'email' => 'email' . $i . '@gmail.com',
-                'password' => 'password' . $i,
-                'salary' => $i*1000,
-            ]);
-        }
+        factory(User::class, 30)->create();
     }
 }
