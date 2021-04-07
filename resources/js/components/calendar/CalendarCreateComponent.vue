@@ -1,4 +1,4 @@
-<template>        
+<template>
     <form class="form" v-on:submit.prevent="postcalendar">
         <div class="form_ttl">
             出勤登録<br>
@@ -42,130 +42,128 @@
         <div class="form_btn">
             <button type="submit" class="cmn_btn_sub">新規登録</button>
         </div>
-                <!-- <pre>{{$data}}</pre> -->
+        <!-- <pre>{{$data}}</pre> -->
     </form>
 </template>
 
 <script>
-    import moment from "moment"
-    export default {
-        data: function () {
-            return {
-                loading:false,
-                error:{
-                    name:false,
-                    tel:false,
-                    address:false,
-                },
-                calendar: {
-                    date:"",
-                    works:[
-                        {
-                            id:0,
-                            members_id:0,
-                            places_id:0,
-                            price:0,
-                        }
-                    ],
-                },
-                users: [],
-                places: [],
+import moment from "moment";
+export default {
+    data: function () {
+        return {
+            loading: false,
+            error: {
+                name: false,
+                tel: false,
+                address: false,
+            },
+            calendar: {
+                date: "",
+                works: [
+                    {
+                        id: 0,
+                        members_id: 0,
+                        places_id: 0,
+                        price: 0,
+                    },
+                ],
+            },
+            users: [],
+            places: [],
+        };
+    },
+    methods: {
+        getusers() {
+            this.loading = true;
+            axios.get("/api/users").then((res) => {
+                this.users = res.data;
+                this.loading = false;
+            });
+        },
+        getplaces() {
+            this.loading = true;
+            axios.get("/api/places").then((res) => {
+                this.places = res.data;
+                this.loading = false;
+            });
+        },
+        addwork() {
+            let obj = {
+                id: 0,
+                members_id: 0,
+                places_id: 0,
+                price: 0,
+            };
+            this.calendar.works.push(obj);
+        },
+        deletelist(index) {
+            this.calendar.works.splice(index, 1);
+            if (this.calendar.works.length === 0) {
+                this.addwork();
             }
         },
-        methods: {
-            getusers() {
-                this.loading = true;
-                axios.get('/api/users')
-                    .then((res) => {
-                        this.users = res.data;
-                        this.loading = false;
-                    });
-            },
-            getplaces() {
-                this.loading = true;
-                axios.get('/api/places')
-                    .then((res) => {
-                        this.places = res.data;
-                        this.loading = false;
-                    });
-            },
-            addwork(){
-                let obj = {
-                    id:0,
-                    members_id:0,
-                    places_id:0,
-                    price:0,
-                }
-                this.calendar.works.push(obj);
-            },
-            deletelist(index){
-                this.calendar.works.splice(index,1);
-                if(this.calendar.works.length === 0){
-                    this.addwork();
-                }
-            },
-            setcalendar(calendar) {
-                this.$set(this.calendar, "date", calendar.date);
-                this.calendar.works.splice(0, this.calendar.works.length);
-                let newWork = {}
-                this.$set(newWork, "members_id", 0);
-                this.$set(newWork, "places_id", 0);
-                this.$set(newWork, "price", 0);
-                this.calendar.works.push(newWork);
-                this.calendar.works.forEach(work => {
-
-                    this.$set(work, "error_members_id", false);
-                    this.$set(work, "error_places_id", false);
-                    this.$set(work, "error_price", false);
-                });
-            },
-            postcalendar() {
-                if(this.validation()){
-                    this.$parent.loading = true;
-                    axios.post('/api/calendars', this.calendar)
-                        .then((res) => {
-                            console.log(res.data);
-                            this.$parent.editmodal = false;
-                            this.$parent.getcalendars();
-                        })
-                        .catch(err => {
-                            alert("エラーです");
-                            this.$parent.loading = false;
-                        });
-                }
-            },
-            validation(){
-                let noProblem = true;
-                this.calendar.works.forEach(work => {
-                    this.$set(work, 'error_members_id', false);
-                    if(Number(work.members_id) === 0){
-                        this.$set(work, 'error_members_id', true);
-                        noProblem = false;
-                    }
-                    this.$set(work, 'error_places_id', false);
-                    if(Number(work.places_id) === 0){
-                        this.$set(work, 'error_places_id', true);
-                        noProblem = false;
-                    }
-                    this.$set(work, 'error_price', false);
-                    if(!(/^([1-9]\d*|0)$/.test(work.price))){
-                        this.$set(work, 'error_price', true);
-                        noProblem = false;
-                    }
-                });
-                return noProblem;
-            },
+        setcalendar(calendar) {
+            this.$set(this.calendar, "date", calendar.date);
+            this.calendar.works.splice(0, this.calendar.works.length);
+            let newWork = {};
+            this.$set(newWork, "members_id", 0);
+            this.$set(newWork, "places_id", 0);
+            this.$set(newWork, "price", 0);
+            this.calendar.works.push(newWork);
+            this.calendar.works.forEach((work) => {
+                this.$set(work, "error_members_id", false);
+                this.$set(work, "error_places_id", false);
+                this.$set(work, "error_price", false);
+            });
         },
-        mounted: function(){
-            this.getusers();
-            this.getplaces();
-        },
-        filters: {
-            format:function(value) {
-                return moment(value).format("YYYY/MM/DD HH:mm:ss");
+        postcalendar() {
+            if (this.validation()) {
+                this.$parent.loading = true;
+                axios
+                    .post("/api/calendars", this.calendar)
+                    .then((res) => {
+                        console.log(res.data);
+                        this.$parent.editmodal = false;
+                        this.$parent.getcalendars();
+                    })
+                    .catch((err) => {
+                        alert("エラーです");
+                        this.$parent.loading = false;
+                    });
             }
         },
-    }
+        validation() {
+            let noProblem = true;
+            this.calendar.works.forEach((work) => {
+                this.$set(work, "error_members_id", false);
+                if (Number(work.members_id) === 0) {
+                    this.$set(work, "error_members_id", true);
+                    noProblem = false;
+                }
+                this.$set(work, "error_places_id", false);
+                if (Number(work.places_id) === 0) {
+                    this.$set(work, "error_places_id", true);
+                    noProblem = false;
+                }
+                this.$set(work, "error_price", false);
+                if (!/^([1-9]\d*|0)$/.test(work.price)) {
+                    this.$set(work, "error_price", true);
+                    noProblem = false;
+                }
+            });
+            return noProblem;
+        },
+    },
+    mounted: function () {
+        this.getusers();
+        this.getplaces();
+    },
+    filters: {
+        format: function (value) {
+            return moment(value).format("YYYY/MM/DD HH:mm:ss");
+        },
+    },
+};
 </script>
 <style lang="scss" scoped>
 .error {
@@ -173,13 +171,13 @@
     position: relative;
     bottom: 8px;
 }
-.work{
-    &_list{
+.work {
+    &_list {
         padding-bottom: 15px;
         border-bottom: 1px solid gray;
         margin-bottom: 50px;
     }
-    .addwork{
+    .addwork {
         width: 140px;
         margin: 0 auto;
         text-align: center;
@@ -189,7 +187,7 @@
         cursor: pointer;
         border-radius: 100px;
         position: relative;
-        &::before{
+        &::before {
             content: "+";
             position: absolute;
             right: 10px;
@@ -208,10 +206,10 @@
         margin-bottom: 15px;
         text-align: center;
     }
-    .form_list_wrap{
+    .form_list_wrap {
         display: flex;
         justify-content: space-between;
-        .delete_list{
+        .delete_list {
             display: flex;
             justify-content: center;
             align-items: center;
@@ -222,42 +220,43 @@
             cursor: pointer;
         }
     }
-	&_list {
+    &_list {
         width: 80%;
-		&_item {
+        &_item {
             font-size: 15px;
             margin-bottom: 10px;
             &:last-child {
                 margin-bottom: 0;
             }
-			&_ttl {
-			}
-			&_main {
-                input, select{
+            &_ttl {
+            }
+            &_main {
+                input,
+                select {
                     border: 1px solid gray;
                     border-radius: 5px;
                     width: 100%;
                     padding: 5px;
-                    &.ar{
+                    &.ar {
                         padding: 0;
                         border: none;
                     }
                 }
-			}
-		}
-	}
+            }
+        }
+    }
     &_btn {
         padding: 15px 0 50px;
         text-align: right;
     }
 }
-@media(min-width:768px){
+@media (min-width: 768px) {
     .error {
         padding: 5px;
     }
     .form {
-        .form_list_wrap{
-            .delete_list{
+        .form_list_wrap {
+            .delete_list {
                 width: 30px;
             }
         }
@@ -277,8 +276,8 @@
                 }
                 &_main {
                     width: 70%;
-                    input{
-                        &.ar{
+                    input {
+                        &.ar {
                             padding: 5px;
                         }
                     }
@@ -289,6 +288,4 @@
         }
     }
 }
-
-
 </style>

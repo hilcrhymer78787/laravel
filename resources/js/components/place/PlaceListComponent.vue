@@ -31,8 +31,8 @@
         <div :class="{active:editmodal}" class="cmn_modal">
             <div class="cmn_modal_inner">
                 <div @click="closeEditModal()" class="cmn_modal_inner_close">×</div>
-                <PlaceEditComponent v-show="mode === 'edit'" ref="placeEdit"/>
-                <PlaceCreateComponent v-show="mode === 'create'" ref="placeCreate"/>
+                <PlaceEditComponent v-show="mode === 'edit'" ref="placeEdit" />
+                <PlaceCreateComponent v-show="mode === 'create'" ref="placeCreate" />
             </div>
         </div>
 
@@ -44,86 +44,84 @@
 </template>
 
 <script>
-import PlaceEditComponent from './PlaceEditComponent'
-import PlaceCreateComponent from './PlaceCreateComponent'
-import { VueLoading } from 'vue-loading-template'
+import PlaceEditComponent from "./PlaceEditComponent";
+import PlaceCreateComponent from "./PlaceCreateComponent";
+import { VueLoading } from "vue-loading-template";
 export default {
     components: {
         PlaceEditComponent,
         PlaceCreateComponent,
-        VueLoading
+        VueLoading,
     },
     data: function () {
         return {
-            isShow:false,
-            loading:false,
-            editmodal:false,
-            mode:"",
-            places: []
-        }
+            isShow: false,
+            loading: false,
+            editmodal: false,
+            mode: "",
+            places: [],
+        };
     },
     methods: {
         getplaces() {
             this.loading = true;
-            axios.get('/api/places')
-                .then((res) => {
-                    this.places = res.data;
-                    this.isShow = true;
-                    this.loading = false;
-                });
+            axios.get("/api/places").then((res) => {
+                this.places = res.data;
+                this.isShow = true;
+                this.loading = false;
+            });
         },
         deleteplace(id, name) {
-            if(confirm("「" + name + "」を削除しますか？")){
+            if (confirm("「" + name + "」を削除しますか？")) {
                 this.loading = true;
-                axios.delete('/api/places/' + id)
-                    .then((res) => {
-                        this.getplaces();
-                        this.loading = false;
-                    });
-            }  
+                axios.delete("/api/places/" + id).then((res) => {
+                    this.getplaces();
+                    this.loading = false;
+                });
+            }
         },
-        noImage(element){
-            element.target.src = '/assets/noimage.png'
+        noImage(element) {
+            element.target.src = "/assets/noimage.png";
         },
-        create(){
+        create() {
             this.mode = "create";
             this.editmodal = true;
-            this.$refs.placeCreate.setplace()
+            this.$refs.placeCreate.setplace();
         },
-        edit(place){
+        edit(place) {
             this.mode = "edit";
             let editplace = {};
 
-            this.$set(editplace, 'id', place.id);
-            this.$set(editplace, 'img_name', place.img_name);
-            this.$set(editplace, 'img_oldname', place.img_name);
-            this.$set(editplace, 'name', place.name);
-            this.$set(editplace, 'tel', place.tel);
-            this.$set(editplace, 'address', place.address);
+            this.$set(editplace, "id", place.id);
+            this.$set(editplace, "img_name", place.img_name);
+            this.$set(editplace, "img_oldname", place.img_name);
+            this.$set(editplace, "name", place.name);
+            this.$set(editplace, "tel", place.tel);
+            this.$set(editplace, "address", place.address);
 
-            this.$refs.placeEdit.setplace(editplace)
+            this.$refs.placeEdit.setplace(editplace);
             this.editmodal = true;
         },
-        closeEditModal(){
+        closeEditModal() {
             this.editmodal = false;
-        }
+        },
     },
     mounted() {
         this.getplaces();
-    }
-}
+    },
+};
 </script>
 <style lang="scss" scoped>
 .table {
     background-color: white;
     box-shadow: 0 0 10px #636363;
-	&_row {
+    &_row {
         display: flex;
         align-items: center;
         padding: 5px;
         border-bottom: 1px solid #dee2e6;
         font-size: 15px;
-        &.ar{
+        &.ar {
             font-weight: bold;
             background-color: #e9ecef;
             border-bottom: 2px solid #dee2e6;
@@ -134,7 +132,7 @@ export default {
                 width: 20%;
                 font-weight: bold;
                 padding: 0 5px 0 0;
-                img{
+                img {
                     width: 100%;
                     max-width: 70px;
                 }
@@ -149,22 +147,22 @@ export default {
                 text-align: right;
             }
         }
-	}
+    }
 }
-.footbar{
+.footbar {
     position: fixed;
     right: 0;
     left: 0;
     bottom: 0;
     height: 50px;
     background-color: rgba(0, 0, 0, 0.5);
-    .container{
+    .container {
         height: 100%;
         display: flex;
         justify-content: center;
         align-items: center;
     }
-    &_btn{
+    &_btn {
         padding: 5px 10px;
         border-radius: 5px;
         background-color: white;
@@ -192,8 +190,8 @@ export default {
             }
         }
     }
-    .footbar{
-        .container{
+    .footbar {
+        .container {
             justify-content: flex-end;
         }
     }

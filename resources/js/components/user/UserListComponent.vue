@@ -31,8 +31,8 @@
         <div :class="{active:editmodal}" class="cmn_modal">
             <div class="cmn_modal_inner">
                 <div @click="closeEditModal()" class="cmn_modal_inner_close">×</div>
-                <UserEditComponent v-show="mode === 'edit'" ref="userEdit"/>
-                <UserCreateComponent v-show="mode === 'create'" ref="userCreate"/>
+                <UserEditComponent v-show="mode === 'edit'" ref="userEdit" />
+                <UserCreateComponent v-show="mode === 'create'" ref="userCreate" />
             </div>
         </div>
 
@@ -44,90 +44,88 @@
 </template>
 
 <script>
-import UserEditComponent from './UserEditComponent'
-import UserCreateComponent from './UserCreateComponent'
-import { VueLoading } from 'vue-loading-template'
+import UserEditComponent from "./UserEditComponent";
+import UserCreateComponent from "./UserCreateComponent";
+import { VueLoading } from "vue-loading-template";
 export default {
     components: {
         UserEditComponent,
         UserCreateComponent,
-        VueLoading
+        VueLoading,
     },
     data: function () {
         return {
-            isShow:false,
-            loading:false,
-            editmodal:false,
-            mode:"",
-            users: []
-        }
+            isShow: false,
+            loading: false,
+            editmodal: false,
+            mode: "",
+            users: [],
+        };
     },
     methods: {
         getusers() {
             this.loading = true;
-            axios.get('/api/users')
-                .then((res) => {
-                    this.users = res.data;
-                    this.isShow = true;
-                    this.loading = false;
-                });
+            axios.get("/api/users").then((res) => {
+                this.users = res.data;
+                this.isShow = true;
+                this.loading = false;
+            });
         },
         deleteuser(id, name) {
-            if(confirm("「" + name + "」を削除しますか？")){
+            if (confirm("「" + name + "」を削除しますか？")) {
                 this.loading = true;
-                axios.delete('/api/users/' + id)
-                    .then((res) => {
-                        this.getusers();
-                        this.loading = false;
-                    });
-            }  
+                axios.delete("/api/users/" + id).then((res) => {
+                    this.getusers();
+                    this.loading = false;
+                });
+            }
         },
-        noImage(element){
-            element.target.src = '/assets/noimage.png'
+        noImage(element) {
+            element.target.src = "/assets/noimage.png";
         },
-        create(){
+        create() {
             this.mode = "create";
             this.editmodal = true;
-            this.$refs.userCreate.setuser()
+            this.$refs.userCreate.setuser();
         },
-        edit(user){
+        edit(user) {
             this.mode = "edit";
             let edituser = {};
 
-            this.$set(edituser, 'id', user.id);
-            this.$set(edituser, 'img_name', user.img_name);
-            this.$set(edituser, 'img_oldname', user.img_name);
-            this.$set(edituser, 'name', user.name);
-            this.$set(edituser, 'email', user.email);
-            this.$set(edituser, 'email_verified_at', user.email_verified_at);
-            this.$set(edituser, 'password', user.password);
-            this.$set(edituser, 'salary', user.salary);
-            this.$set(edituser, 'created_at', user.created_at);
-            this.$set(edituser, 'updated_at', user.updated_at);
+            this.$set(edituser, "id", user.id);
+            this.$set(edituser, "img_name", user.img_name);
+            this.$set(edituser, "img_oldname", user.img_name);
+            this.$set(edituser, "name", user.name);
+            this.$set(edituser, "email", user.email);
+            this.$set(edituser, "email_verified_at", user.email_verified_at);
+            this.$set(edituser, "password", user.password);
+            this.$set(edituser, "salary", user.salary);
+            this.$set(edituser, "created_at", user.created_at);
+            this.$set(edituser, "updated_at", user.updated_at);
 
-            this.$refs.userEdit.setuser(edituser)
+            this.$refs.userEdit.setuser(edituser);
             this.editmodal = true;
         },
-        closeEditModal(){
+        closeEditModal() {
             this.editmodal = false;
-        }
+        },
     },
     mounted() {
         this.getusers();
-    }
-}
+    },
+};
 </script>
 <style lang="scss" scoped>
 .table {
     background-color: white;
     box-shadow: 0 0 10px #636363;
-	&_row {
+    &_row {
         display: flex;
         align-items: center;
         padding: 5px;
         border-bottom: 1px solid #dee2e6;
         font-size: 15px;
-        &.ar{
+        &.ar {
             font-weight: bold;
             background-color: #e9ecef;
             border-bottom: 2px solid #dee2e6;
@@ -138,7 +136,7 @@ export default {
                 width: 20%;
                 font-weight: bold;
                 padding: 0 5px 0 0;
-                img{
+                img {
                     width: 100%;
                     max-width: 70px;
                 }
@@ -153,22 +151,22 @@ export default {
                 text-align: right;
             }
         }
-	}
+    }
 }
-.footbar{
+.footbar {
     position: fixed;
     right: 0;
     left: 0;
     bottom: 0;
     height: 50px;
     background-color: rgba(0, 0, 0, 0.5);
-    .container{
+    .container {
         height: 100%;
         display: flex;
         justify-content: center;
         align-items: center;
     }
-    &_btn{
+    &_btn {
         padding: 5px 10px;
         border-radius: 5px;
         background-color: white;
@@ -196,8 +194,8 @@ export default {
             }
         }
     }
-    .footbar{
-        .container{
+    .footbar {
+        .container {
             justify-content: flex-end;
         }
     }

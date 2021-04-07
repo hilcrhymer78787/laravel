@@ -1,4 +1,4 @@
-<template>        
+<template>
     <form class="form" v-on:submit.prevent="postplace">
         <div class="form_ttl">出勤先登録</div>
         <ul class="form_list">
@@ -33,93 +33,97 @@
 </template>
 
 <script>
-    import moment from "moment"
-    export default {
-        data: function () {
-            return {
-                loading:false,
-                error:{
-                    name:false,
-                    tel:false,
-                    address:false,
-                },
-                uploadedImage: "",
-                file:"",
-                place: {
-                    id:0,
-                    img_name:"",
-                    name:"",
-                    tel:"",
-                    address:"",
-                },
+import moment from "moment";
+export default {
+    data: function () {
+        return {
+            loading: false,
+            error: {
+                name: false,
+                tel: false,
+                address: false,
+            },
+            uploadedImage: "",
+            file: "",
+            place: {
+                id: 0,
+                img_name: "",
+                name: "",
+                tel: "",
+                address: "",
+            },
+        };
+    },
+    methods: {
+        setplace() {
+            Object.keys(this.place).forEach((key) => {
+                this.$set(this.place, key, "");
+            });
+        },
+        noImage(element) {
+            element.target.src = "/assets/noimage.png";
+        },
+        previewImg() {
+            this.$refs.input.click();
+        },
+        fileSelected(event) {
+            this.$set(
+                this.place,
+                "img_name",
+                moment(new Date()).format("YYYYMMDDHHmmss") +
+                    event.target.files[0].name
+            );
+            this.file = event.target.files[0];
+            let reader = new FileReader(); //File API生成
+            reader.onload = (e) => {
+                this.uploadedImage = e.target.result;
+            };
+            reader.readAsDataURL(this.file);
+        },
+        postplace() {
+            if (this.validation()) {
+                this.$parent.loading = true;
+                let postData = new FormData();
+                postData.append("file", this.file);
+                postData.append("img_name", this.place.img_name);
+                postData.append("name", this.place.name);
+                postData.append("tel", this.place.tel);
+                postData.append("address", this.place.address);
+                axios
+                    .post("/api/places", postData)
+                    .then((res) => {
+                        this.$parent.editmodal = false;
+                        this.$parent.getplaces();
+                        this.$parent.loading = false;
+                    })
+                    .catch((err) => {
+                        alert("エラーです");
+                        this.$parent.loading = false;
+                    });
             }
         },
-        methods: {
-            setplace() {
-                Object.keys(this.place).forEach(key => {
-                    this.$set(this.place, key, "")
-                    })
-            },
-            noImage(element){
-                element.target.src = '/assets/noimage.png'
-            },
-            previewImg(){
-                this.$refs.input.click();
-            },
-            fileSelected(event){
-                this.$set(this.place, 'img_name', moment(new Date()).format("YYYYMMDDHHmmss") + event.target.files[0].name);
-                this.file = event.target.files[0];
-                let reader = new FileReader(); //File API生成
-                reader.onload = (e) => {
-                    this.uploadedImage = e.target.result;
-                };
-                reader.readAsDataURL(this.file);
-            },
-            postplace() {
-                if(this.validation()){
-                    this.$parent.loading = true;
-                    let postData = new FormData();
-                    postData.append("file", this.file);
-                    postData.append("img_name", this.place.img_name);
-                    postData.append("name", this.place.name);
-                    postData.append("tel", this.place.tel);
-                    postData.append("address", this.place.address);
-                    axios.post('/api/places', postData)
-                        .then((res) => {
-                            this.$parent.editmodal = false;
-                            this.$parent.getplaces();
-                            this.$parent.loading = false;
-                        })
-                        .catch(err => {
-                            alert("エラーです");
-                            this.$parent.loading = false;
-                        });
-                }
-            },
-            validation(){
-                let noProblem = true;
-                this.$set(this.error, 'name', false);
-                if(this.place.name === ""){
-                    this.$set(this.error, 'name', true);
-                    noProblem = false;
-                }
-                this.$set(this.error, 'tel', false);
-                if(this.place.tel === ""){
-                    this.$set(this.error, 'tel', true);
-                    noProblem = false;
-                }
-                this.$set(this.error, 'address', false);
-                if(this.place.address === ""){
-                    this.$set(this.error, 'address', true);
-                    noProblem = false;
-                }
-                return noProblem;
-            },
+        validation() {
+            let noProblem = true;
+            this.$set(this.error, "name", false);
+            if (this.place.name === "") {
+                this.$set(this.error, "name", true);
+                noProblem = false;
+            }
+            this.$set(this.error, "tel", false);
+            if (this.place.tel === "") {
+                this.$set(this.error, "tel", true);
+                noProblem = false;
+            }
+            this.$set(this.error, "address", false);
+            if (this.place.address === "") {
+                this.$set(this.error, "address", true);
+                noProblem = false;
+            }
+            return noProblem;
         },
-        mounted(){
-
-        },
-    }
+    },
+    mounted() {},
+};
 </script>
 <style lang="scss" scoped>
 .error {
@@ -136,22 +140,22 @@
         margin-bottom: 15px;
         text-align: center;
     }
-	&_list {
-		&_item {
+    &_list {
+        &_item {
             font-size: 15px;
             margin-bottom: 10px;
             &:last-child {
                 margin-bottom: 0;
             }
-			&_ttl {
-			}
-			&_main {
-                input{
+            &_ttl {
+            }
+            &_main {
+                input {
                     border: 1px solid gray;
                     border-radius: 5px;
                     width: 100%;
                     padding: 5px;
-                    &.ar{
+                    &.ar {
                         padding: 0;
                         border: none;
                     }
@@ -161,15 +165,15 @@
                     height: 70px;
                     cursor: pointer;
                 }
-			}
-		}
-	}
+            }
+        }
+    }
     &_btn {
         padding: 15px 0 50px;
         text-align: right;
     }
 }
-@media(min-width:768px){
+@media (min-width: 768px) {
     .error {
         padding: 5px;
     }
@@ -189,8 +193,8 @@
                 }
                 &_main {
                     width: 70%;
-                    input{
-                        &.ar{
+                    input {
+                        &.ar {
                             padding: 5px;
                         }
                     }

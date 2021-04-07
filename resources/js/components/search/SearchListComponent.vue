@@ -25,9 +25,9 @@
                 <li class="form_list_item">
                     <dt class="form_list_item_ttl">日付</dt>
                     <dd class="form_list_item_main date">
-                        <Datepicker v-model="form.date_min" :clear-button="true" :format="DatePickerFormat" :language="ja" class="form_list_item_main_input datepicker"/>
+                        <Datepicker v-model="form.date_min" :clear-button="true" :format="DatePickerFormat" :language="ja" class="form_list_item_main_input datepicker" />
                         <span> 〜 </span>
-                        <Datepicker v-model="form.date_max" :clear-button="true" :format="DatePickerFormat" :language="ja" class="form_list_item_main_input datepicker right"/>
+                        <Datepicker v-model="form.date_max" :clear-button="true" :format="DatePickerFormat" :language="ja" class="form_list_item_main_input datepicker right" />
                     </dd>
                 </li>
                 <li class="form_list_item">
@@ -81,121 +81,128 @@
 </template>
 
 <script>
-import { VueLoading } from 'vue-loading-template'
+import { VueLoading } from "vue-loading-template";
 import Datepicker from "vuejs-datepicker";
 import { ja } from "vuejs-datepicker/dist/locale";
-import moment from "moment"
+import moment from "moment";
 export default {
     components: {
         Datepicker,
-        VueLoading
+        VueLoading,
     },
     data: function () {
         return {
-            isShow:false,
-            nowPage:1,
-            maxPage:1,
-            maxItems:10,
-            calendars:[],
-            calendarDatas:[],
-            loading:false,
-            form:{
-                members_id:0,
-                places_id:0,
-                date_min:"Invalid date",
-                date_max:"Invalid date",
-                price_min:"",
-                price_max:"",
-
+            isShow: false,
+            nowPage: 1,
+            maxPage: 1,
+            maxItems: 10,
+            calendars: [],
+            calendarDatas: [],
+            loading: false,
+            form: {
+                members_id: 0,
+                places_id: 0,
+                date_min: "Invalid date",
+                date_max: "Invalid date",
+                price_min: "",
+                price_max: "",
             },
             users: [],
             places: [],
             DatePickerFormat: "yyyy.MM.dd",
-            ja:ja,
-        }
+            ja: ja,
+        };
     },
     methods: {
         getusers() {
             this.loading = true;
-            axios.get('/api/users')
+            axios
+                .get("/api/users")
                 .then((res) => {
                     this.users = res.data;
                     this.loading = false;
                 })
-                .catch(err => {
+                .catch((err) => {
                     alert("エラーです");
                     this.loading = false;
                 });
         },
         getplaces() {
             this.loading = true;
-            axios.get('/api/places')
+            axios
+                .get("/api/places")
                 .then((res) => {
                     this.places = res.data;
                     this.loading = false;
                 })
-                .catch(err => {
+                .catch((err) => {
                     alert("エラーです");
                     this.loading = false;
                 });
         },
         getSearchCalendars() {
             this.loading = true;
-            axios.post('/api/search', this.form)
+            axios
+                .post("/api/search", this.form)
                 .then((res) => {
                     this.calendarDatas = res.data.calendars;
                     this.changePage(1);
                 })
-                .catch(err => {
+                .catch((err) => {
                     alert("エラーです");
                     this.loading = false;
                 });
         },
-        changePage(topage){
+        changePage(topage) {
             this.nowPage = topage;
-            this.maxPage = Math.ceil(this.calendarDatas.length/this.maxItems);
+            this.maxPage = Math.ceil(this.calendarDatas.length / this.maxItems);
             this.calendars.splice(0, this.calendars.length);
-            for(let i = 0; i < this.maxItems; i++){
-                if(this.calendarDatas[i+(topage-1)*this.maxItems] != undefined){
-                    this.calendars.push(this.calendarDatas[i+(topage-1)*this.maxItems]);
+            for (let i = 0; i < this.maxItems; i++) {
+                if (
+                    this.calendarDatas[i + (topage - 1) * this.maxItems] !=
+                    undefined
+                ) {
+                    this.calendars.push(
+                        this.calendarDatas[i + (topage - 1) * this.maxItems]
+                    );
                 }
-            };
+            }
             this.loading = false;
             this.isShow = true;
         },
-        format:function(value) {
+        format: function (value) {
             return moment(value).format("YYYY-MM-DD");
-        }
+        },
     },
-    mounted: function(){
+    mounted: function () {
         this.form.date_min = this.format(new Date());
         this.getusers();
         this.getplaces();
         this.getSearchCalendars();
     },
     watch: {
-      'form.date_min': function(){
-          this.form.date_min = this.format(this.form.date_min);
-      },
-      'form.date_max': function(){
-          this.form.date_max = this.format(this.form.date_max);
-      },
+        "form.date_min": function () {
+            this.form.date_min = this.format(this.form.date_min);
+        },
+        "form.date_max": function () {
+            this.form.date_max = this.format(this.form.date_max);
+        },
     },
-}
+};
 </script>
 <style lang="scss" scoped>
-.vdp-datepicker{
+.vdp-datepicker {
     position: relative;
     &.right ::v-deep .vdp-datepicker__calendar {
         right: 0;
     }
     & ::v-deep input {
-        width: 100% ;
+        width: 100%;
         cursor: pointer;
     }
-    & ::v-deep &__clear-button{
-        i span{
-            position: absolute; 
+    & ::v-deep &__clear-button {
+        i span {
+            position: absolute;
             right: 5px;
             bottom: 57%;
             transform: translateY(50%);
@@ -204,11 +211,11 @@ export default {
         }
     }
 }
-.pager{
+.pager {
     display: flex;
     justify-content: center;
     margin-top: 50px;
-    &_item{
+    &_item {
         display: flex;
         justify-content: center;
         align-items: center;
@@ -220,10 +227,10 @@ export default {
         box-shadow: 0 0 1px #000066;
         margin-right: 15px;
         cursor: pointer;
-        &:last-child{
+        &:last-child {
             margin-right: 0;
         }
-        &.active{
+        &.active {
             background-color: #000066;
             color: white;
         }
@@ -236,50 +243,52 @@ export default {
         margin-bottom: 15px;
         text-align: center;
     }
-	&_list {
-		&_item {
+    &_list {
+        &_item {
             font-size: 15px;
             margin-bottom: 10px;
             &:last-child {
                 margin-bottom: 0;
             }
-            &.btn{
+            &.btn {
                 padding: 0;
                 width: 100%;
             }
-			&_ttl {
-			}
-			&_main {
+            &_ttl {
+            }
+            &_main {
                 display: flex;
                 align-items: center;
-                &_input{
+                &_input {
                     border: 1px solid gray;
                     border-radius: 5px;
                     width: 100%;
                     padding: 5px;
                     background-color: white;
-                    &.ar{
+                    &.ar {
                         padding: 0;
                         border: none;
                     }
-                    &.datepicker{
+                    &.datepicker {
                         cursor: pointer;
                         width: 44%;
                     }
                 }
-                &.date, &.price {
-                    span{
+                &.date,
+                &.price {
+                    span {
                         display: block;
                         text-align: center;
                         width: 12%;
                     }
-                    input, select{
+                    input,
+                    select {
                         width: 44%;
                     }
                 }
-			}
-		}
-	}
+            }
+        }
+    }
     &_btn {
         width: 100%;
         padding: 0 0 50px;
@@ -289,13 +298,13 @@ export default {
 .table {
     background-color: white;
     box-shadow: 0 0 10px #636363;
-	&_row {
+    &_row {
         display: flex;
         align-items: center;
         padding: 5px;
         border-bottom: 1px solid #dee2e6;
         font-size: 15px;
-        &.ar{
+        &.ar {
             font-weight: bold;
             background-color: #e9ecef;
             border-bottom: 2px solid #dee2e6;
@@ -316,7 +325,7 @@ export default {
                 text-align: right;
             }
         }
-	}
+    }
 }
 @media (min-width: 768px) {
     .form {
@@ -335,8 +344,8 @@ export default {
                 }
                 &_main {
                     width: 70%;
-                    input{
-                        &.ar{
+                    input {
+                        &.ar {
                             padding: 5px;
                         }
                     }
