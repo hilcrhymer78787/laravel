@@ -1,40 +1,63 @@
 <template>
     <div>
-        <input type="text" v-model="newTodo" @keyup.enter="onEnter">
+        <input type="text" v-model="newTask.content" @keyup.enter="createTask">
         <ul>
-            <li v-for="(todo, index) in todos" :key="index">
-                <input type="checkbox">
-                <span>{{todo}}</span>
-                <button>delite</button>
+            <li v-for="(task, index) in tasks" :key="index">
+                <input v-model="task.state" type="checkbox">
+                <span :class="{done: task.state}">{{task.content}}</span>
+                <button @click="deleteTask(index)">delite</button>
             </li>
         </ul>
         <pre>{{$data}}</pre>
-        hoge
     </div>
 </template>
 <script lang="ts">
 import Vue from 'vue';
 export type DataType = {
-    todos: string[];
-    newTodo: string;
+    tasks: any[];
+    newTask: {
+        state: Boolean,
+        content: String,
+    };
 };
 export default Vue.extend({
     data(): DataType {
         return {
-            todos: [],
-            newTodo: "",
+            tasks: [],
+            newTask: {
+                state: false,
+                content: ""
+            },
         };
     },
     methods: {
-        onEnter(): void {
-            this.addTodo(this.newTodo);
+        createTask(): void {
+            let task: any = {
+                state: Boolean,
+                content: String
+            }
+            task = {
+                state: this.newTask.state,
+                content: this.newTask.content
+            }
+            this.tasks.push(task);
         },
-        addTodo(title: string): void {
-            this.todos.push(title);
+        deleteTask(index: number): void {
+            this.tasks.splice(index, 1);
         },
     },
 });
 </script>
 <style scoped>
-
+.done{
+    opacity: 0.5;
+    text-decoration: line-through;
+}
+button{
+    padding: 0 5px;
+    border: 1px solid black;
+}
+li{
+    margin: 15px 0;
+}
 </style>
