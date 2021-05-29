@@ -73,6 +73,7 @@ export default {
     transform: translateX(-100%);
     transition: 0.5s;
     color: white;
+    box-shadow: 0 3px 5px rgb(0 0 0 / 50%);
     &.active {
         transform: translateX(0);
     }

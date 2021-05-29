@@ -282,7 +282,7 @@ form {
         }
         &.main:hover {
             cursor: pointer;
-            background-color: rgba(255, 255, 0, 0.527);
+            background-color: #f3920b7e;
         }
         &.color {
             background-color: #fccc88;
