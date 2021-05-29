@@ -48,7 +48,6 @@ export default {
     },
     data: function () {
         return {
-            loading: false,
             editmodal: false,
             mode: "",
         };

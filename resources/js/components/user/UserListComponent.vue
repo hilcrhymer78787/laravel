@@ -1,14 +1,14 @@
 <template>
     <div>
         <div class="cmn_pageTitle">出勤者一覧</div>
-        <div v-show="isShow" class="table">
+        <div v-show="$store.state.users.length" class="table">
             <ul class="table_row ar">
                 <li class="table_row_list img_name pl-2">画像</li>
                 <li class="table_row_list name">名前</li>
                 <li class="table_row_list email d-none d-md-block">メール</li>
                 <li class="table_row_list btn">　</li>
             </ul>
-            <ul v-for="user in users" :key="user.id" class="table_row">
+            <ul v-for="user in $store.state.users" :key="user.id" class="table_row">
                 <li class="table_row_list img_name">
                     <img v-if="user.img_name" @error="noImage" :src="'/storage/' + user.img_name">
                     <img v-if="!user.img_name" @error="noImage" src="/assets/noimage.png">
@@ -35,8 +35,6 @@
                 <UserCreateComponent v-show="mode === 'create'" ref="userCreate" />
             </div>
         </div>
-
-        <!-- <pre>{{$data}}</pre> -->
     </div>
 </template>
 
@@ -50,27 +48,16 @@ export default {
     },
     data: function () {
         return {
-            isShow: false,
-            loading: false,
             editmodal: false,
             mode: "",
-            users: [],
         };
     },
     methods: {
-        getusers() {
-            this.$store.state.loading = true;
-            axios.get("/api/users").then((res) => {
-                this.users = res.data;
-                this.isShow = true;
-                this.$store.state.loading = false;
-            });
-        },
         deleteuser(id, name) {
             if (confirm("「" + name + "」を削除しますか？")) {
                 this.$store.state.loading = true;
                 axios.delete("/api/users/" + id).then((res) => {
-                    this.getusers();
+                    this.$store.commit("getusers");
                     this.$store.state.loading = false;
                 });
             }
@@ -104,9 +91,6 @@ export default {
         closeEditModal() {
             this.editmodal = false;
         },
-    },
-    mounted() {
-        this.getusers();
     },
 };
 </script>

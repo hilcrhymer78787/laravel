@@ -28,7 +28,6 @@
         <div class="form_btn">
             <button type="submit" class="cmn_btn_sub">新規登録</button>
         </div>
-        <!-- <pre>{{place}}</pre> -->
     </form>
 </template>
 
@@ -82,7 +81,7 @@ export default {
         },
         postplace() {
             if (this.validation()) {
-                this.$parent.loading = true;
+                this.$store.state.loading = true;
                 let postData = new FormData();
                 postData.append("file", this.file);
                 postData.append("img_name", this.place.img_name);
@@ -93,13 +92,12 @@ export default {
                     .post("/api/places", postData)
                     .then((res) => {
                         this.$parent.editmodal = false;
-                        this.$parent.getplaces();
-                        this.$parent.loading = false;
+                        this.$store.commit("getplaces");
                     })
                     .catch((err) => {
                         alert("エラーです");
-                        this.$parent.loading = false;
-                    });
+                    })
+                    .finally(() => (this.$store.state.loading = false));
             }
         },
         validation() {

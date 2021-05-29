@@ -62,8 +62,6 @@
         <div v-show="isShow" class="pagination">
             <v-pagination v-model="nowPage" :length="maxPages" @input="getNumber"></v-pagination>
         </div>
-
-        <!-- <pre>{{$data}}</pre> -->
     </div>
 </template>
 

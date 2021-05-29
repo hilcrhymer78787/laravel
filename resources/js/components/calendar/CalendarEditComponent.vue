@@ -43,7 +43,6 @@
             <div class="cmn_btn_delete" @click="deletecalendar(calendar.date)">全て削除</div>
             <button type="submit" class="cmn_btn_sub">編集を確定</button>
         </div>
-        <!-- <pre>{{$data}}</pre> -->
     </form>
 </template>
 
@@ -74,13 +73,6 @@ export default {
         };
     },
     methods: {
-        getusers() {
-            this.$store.state.loading = true;
-            axios.get("/api/users").then((res) => {
-                this.users = res.data;
-                this.$store.state.loading = false;
-            });
-        },
         getplaces() {
             this.$store.state.loading = true;
             axios.get("/api/places").then((res) => {
@@ -127,7 +119,6 @@ export default {
                 axios
                     .post("/api/calendars", this.calendar)
                     .then((res) => {
-                        console.log(res.data);
                         this.$parent.editmodal = false;
                         this.$parent.getcalendars();
                     })
@@ -175,7 +166,6 @@ export default {
         },
     },
     mounted: function () {
-        this.getusers();
         this.getplaces();
     },
     filters: {

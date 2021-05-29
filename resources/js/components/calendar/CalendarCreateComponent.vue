@@ -42,7 +42,6 @@
         <div class="form_btn">
             <button type="submit" class="cmn_btn_sub">新規登録</button>
         </div>
-        <!-- <pre>{{$data}}</pre> -->
     </form>
 </template>
 
@@ -122,7 +121,6 @@ export default {
                 axios
                     .post("/api/calendars", this.calendar)
                     .then((res) => {
-                        console.log(res.data);
                         this.$parent.editmodal = false;
                         this.$parent.getcalendars();
                     })

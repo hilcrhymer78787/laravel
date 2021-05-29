@@ -46,8 +46,6 @@
             </div>
 
         </form>
-
-        <!-- <pre>{{$data}}</pre> -->
     </div>
 </template>
 <script>
@@ -67,7 +65,6 @@ export default {
             calendars: [],
             nowyear: new Date().getFullYear(),
             nowmonth: new Date().getMonth() + 1,
-            users: [],
             year: 0,
             month: 0,
             lastday: 0,
@@ -77,7 +74,6 @@ export default {
     },
     methods: {
         clickcalendar(calendar) {
-            console.log(calendar.works[0].id === undefined);
             if (calendar.works[0].id === undefined) {
                 this.create(calendar);
             } else {
@@ -110,11 +106,6 @@ export default {
         },
         closeEditModal() {
             this.editmodal = false;
-        },
-        getusers() {
-            axios.get("/api/users").then((res) => {
-                this.users = res.data;
-            });
         },
         getcalendars() {
             this.$store.state.loading = true;
@@ -179,7 +170,6 @@ export default {
         $route: "createcalendar",
     },
     mounted() {
-        this.getusers();
         this.createcalendar();
     },
     filters: {

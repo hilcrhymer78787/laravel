@@ -18,6 +18,7 @@ export default {
     },
     mounted(){
         this.$store.commit("getplaces")
+        this.$store.commit("getusers")
     }
 }
 </script>

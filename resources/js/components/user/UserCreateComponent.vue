@@ -33,7 +33,6 @@
         <div class="form_btn">
             <button type="submit" class="cmn_btn_sub">新規登録</button>
         </div>
-        <!-- <pre>{{user}}</pre> -->
     </form>
 </template>
 
@@ -89,7 +88,7 @@ export default {
         },
         postuser() {
             if (this.validation()) {
-                this.$parent.loading = true;
+                this.$store.state.loading = true;
                 let postData = new FormData();
                 postData.append("file", this.file);
                 postData.append("img_name", this.user.img_name);
@@ -101,13 +100,12 @@ export default {
                     .post("/api/users", postData)
                     .then((res) => {
                         this.$parent.editmodal = false;
-                        this.$parent.getusers();
-                        this.$parent.loading = false;
+                        this.$store.commit("getusers");
                     })
                     .catch((err) => {
                         alert("エラーです");
-                        this.$parent.loading = false;
-                    });
+                    })
+                    .finally(() => (this.$store.state.loading = false));
             }
         },
         validation() {
