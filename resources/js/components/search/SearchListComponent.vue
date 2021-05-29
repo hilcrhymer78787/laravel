@@ -71,14 +71,12 @@
 </template>
 
 <script>
-import { VueLoading } from "vue-loading-template";
 import Datepicker from "vuejs-datepicker";
 import { ja } from "vuejs-datepicker/dist/locale";
 import moment from "moment";
 export default {
     components: {
         Datepicker,
-        VueLoading,
     },
     data: function () {
         return {

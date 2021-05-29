@@ -6,6 +6,10 @@ import Vuetify from 'vuetify'
 import '@mdi/font/css/materialdesignicons.css'
 import 'vuetify/dist/vuetify.min.css'
 import Vuex from 'vuex'
+import { VueLoading } from "vue-loading-template";
+
+Vue.component('vue-loading', VueLoading);
+Vue.component('app-component', AppComponent);
 
 Vue.use(Vuetify)
 Vue.use(Vuex)
@@ -76,7 +80,6 @@ const store = new Vuex.Store({
 });
 
 
-Vue.component('app-component', AppComponent);
 
 const app = new Vue({
     el: '#app',
