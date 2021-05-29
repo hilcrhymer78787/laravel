@@ -63,9 +63,6 @@
             <v-pagination v-model="nowPage" :length="maxPages" @input="getNumber"></v-pagination>
         </div>
 
-        <div v-if="loading" class="vue-loading-wrap">
-            <vue-loading type="spin" color="#333" :size="{ width: '80px', height: '80px'}"></vue-loading>
-        </div>
         <!-- <pre>{{$data}}</pre> -->
     </div>
 </template>
@@ -102,7 +99,7 @@ export default {
     },
     methods: {
         getSearchCalendars() {
-            this.loading = true;
+            this.$store.state.loading = true;
             axios
                 .post("/api/search", this.form)
                 .then((res) => {
@@ -113,7 +110,7 @@ export default {
                 .catch((err) => {
                     alert("エラーです");
                 })
-                .finally(() => (this.loading = false));
+                .finally(() => (this.$store.state.loading = false));
         },
         getNumber(page) {
             let maxNum = this.calendarDatas.length;

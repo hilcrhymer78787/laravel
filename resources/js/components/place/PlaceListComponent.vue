@@ -36,9 +36,6 @@
             </div>
         </div>
 
-        <div v-if="loading" class="vue-loading-wrap">
-            <vue-loading type="spin" color="#333" :size="{ width: '80px', height: '80px'}"></vue-loading>
-        </div>
         <!-- <pre>{{$data}}</pre> -->
     </div>
 </template>
@@ -62,19 +59,19 @@ export default {
     },
     methods: {
         getplaces() {
-            this.loading = true;
+            this.$store.state.loading = true;
             axios.get("/api/places").then((res) => {
                 this.places = res.data;
                 this.isShow = true;
-                this.loading = false;
+                this.$store.state.loading = false;
             });
         },
         deleteplace(id, name) {
             if (confirm("「" + name + "」を削除しますか？")) {
-                this.loading = true;
+                this.$store.state.loading = true;
                 axios.delete("/api/places/" + id).then((res) => {
                     this.getplaces();
-                    this.loading = false;
+                    this.$store.state.loading = false;
                 });
             }
         },

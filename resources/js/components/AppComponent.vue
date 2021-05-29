@@ -4,6 +4,9 @@
         <div class="container">
             <router-view></router-view>
         </div>
+        <div v-if="$store.state.loading" class="vue-loading-wrap">
+            <vue-loading type="spin" color="#333" :size="{ width: '80px', height: '80px'}"></vue-loading>
+        </div>
     </div>
 </template>
 

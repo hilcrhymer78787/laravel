@@ -74,17 +74,17 @@ export default {
     },
     methods: {
         getusers() {
-            this.loading = true;
+            this.$store.state.loading = true;
             axios.get("/api/users").then((res) => {
                 this.users = res.data;
-                this.loading = false;
+                this.$store.state.loading = false;
             });
         },
         getplaces() {
-            this.loading = true;
+            this.$store.state.loading = true;
             axios.get("/api/places").then((res) => {
                 this.places = res.data;
-                this.loading = false;
+                this.$store.state.loading = false;
             });
         },
         addwork() {

@@ -12,10 +12,6 @@
         <!-- カレンダー -->
         <form v-on:submit.prevent="submit">
 
-            <div v-if="loading" class="vue-loading-wrap">
-                <vue-loading type="spin" color="#333" :size="{ width: '80px', height: '80px'}"></vue-loading>
-            </div>
-
             <ul class="indent">
                 <li class="indent_item">日</li>
                 <li class="indent_item">月</li>
@@ -121,7 +117,7 @@ export default {
             });
         },
         getcalendars() {
-            this.loading = true;
+            this.$store.state.loading = true;
             this.calendars.splice(0, this.calendars.length);
             for (let i = 0; i < this.lastday; i++) {
                 this.calendars.push({
@@ -162,11 +158,11 @@ export default {
                             }
                         });
                     }
-                    this.loading = false;
+                    this.$store.state.loading = false;
                 })
                 .catch((err) => {
                     alert("エラーです");
-                    this.loading = false;
+                    this.$store.state.loading = false;
                 });
         },
         createcalendar() {
