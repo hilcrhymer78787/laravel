@@ -12,6 +12,10 @@
         <!-- カレンダー -->
         <form v-on:submit.prevent="submit">
 
+            <div v-if="loading" class="vue-loading-wrap">
+                <vue-loading type="spin" color="#333" :size="{ width: '80px', height: '80px'}"></vue-loading>
+            </div>
+
             <ul class="indent">
                 <li class="indent_item">日</li>
                 <li class="indent_item">月</li>
@@ -51,11 +55,13 @@
 <script>
 import CalendarCreateComponent from "./CalendarCreateComponent";
 import CalendarEditComponent from "./CalendarEditComponent";
+import { VueLoading } from "vue-loading-template";
 import moment from "moment";
 export default {
     components: {
         CalendarCreateComponent,
         CalendarEditComponent,
+        VueLoading,
     },
     data: function () {
         return {
@@ -108,7 +114,7 @@ export default {
             this.editmodal = false;
         },
         getcalendars() {
-            this.$store.state.loading = true;
+            this.loading = true;
             this.calendars.splice(0, this.calendars.length);
             for (let i = 0; i < this.lastday; i++) {
                 this.calendars.push({
@@ -149,12 +155,11 @@ export default {
                             }
                         });
                     }
-                    this.$store.state.loading = false;
                 })
                 .catch((err) => {
                     alert("エラーです");
-                    this.$store.state.loading = false;
-                });
+                })
+                .finally(() => (this.loading = false));
         },
         createcalendar() {
             this.year = this.$route.params.year;
@@ -170,6 +175,7 @@ export default {
         $route: "createcalendar",
     },
     mounted() {
+        this.$store.state.loading = false;
         this.createcalendar();
     },
     filters: {
