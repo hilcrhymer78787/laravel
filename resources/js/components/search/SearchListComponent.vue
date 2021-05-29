@@ -131,7 +131,6 @@ export default {
     mounted: function () {
         this.form.date_min = this.format(new Date());
         this.$store.commit("getusers");
-        this.$store.commit("getplaces");
         this.getSearchCalendars();
     },
     watch: {

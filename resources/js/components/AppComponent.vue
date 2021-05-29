@@ -16,6 +16,9 @@ export default {
     components: {
         HeaderComponent,
     },
+    mounted(){
+        this.$store.commit("getplaces")
+    }
 }
 </script>
 <style lang="scss">

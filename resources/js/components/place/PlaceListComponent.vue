@@ -1,14 +1,14 @@
 <template>
     <div>
         <div class="cmn_pageTitle">出勤先一覧</div>
-        <div v-show="isShow" class="table">
+        <div v-show="$store.state.places.length" class="table">
             <ul class="table_row ar">
                 <li class="table_row_list img_name pl-2">画像</li>
                 <li class="table_row_list name">出勤先</li>
                 <li class="table_row_list tel d-none d-md-block">住所</li>
                 <li class="table_row_list btn">　</li>
             </ul>
-            <ul v-for="place in places" :key="place.id" class="table_row">
+            <ul v-for="place in $store.state.places" :key="place.id" class="table_row">
                 <li class="table_row_list img_name">
                     <img v-if="place.img_name" @error="noImage" :src="'/storage/' + place.img_name">
                     <img v-if="!place.img_name" @error="noImage" src="/assets/noimage.png">
@@ -35,8 +35,6 @@
                 <PlaceCreateComponent v-show="mode === 'create'" ref="placeCreate" />
             </div>
         </div>
-
-        <!-- <pre>{{$data}}</pre> -->
     </div>
 </template>
 
@@ -50,27 +48,17 @@ export default {
     },
     data: function () {
         return {
-            isShow: false,
             loading: false,
             editmodal: false,
             mode: "",
-            places: [],
         };
     },
     methods: {
-        getplaces() {
-            this.$store.state.loading = true;
-            axios.get("/api/places").then((res) => {
-                this.places = res.data;
-                this.isShow = true;
-                this.$store.state.loading = false;
-            });
-        },
         deleteplace(id, name) {
             if (confirm("「" + name + "」を削除しますか？")) {
                 this.$store.state.loading = true;
                 axios.delete("/api/places/" + id).then((res) => {
-                    this.getplaces();
+                    this.$store.commit("getplaces");
                     this.$store.state.loading = false;
                 });
             }
@@ -100,9 +88,6 @@ export default {
         closeEditModal() {
             this.editmodal = false;
         },
-    },
-    mounted() {
-        this.getplaces();
     },
 };
 </script>

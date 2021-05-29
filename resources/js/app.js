@@ -54,7 +54,7 @@ const store = new Vuex.Store({
     state: {
         users: [],
         places: [],
-        loading: true,
+        loading: false,
     },
     mutations: {
         getusers(state) {
