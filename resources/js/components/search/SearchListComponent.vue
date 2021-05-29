@@ -83,11 +83,11 @@ export default {
     data: function () {
         return {
             isShow: false,
-            nowPage:1,
-            maxPages:0,
-            itemsNum:1,
-            maxItems:10,
-            calendarDatas:[],
+            nowPage: 1,
+            maxPages: 0,
+            itemsNum: 1,
+            maxItems: 10,
+            calendarDatas: [],
             calendars: [],
             loading: false,
             form: {
@@ -144,15 +144,18 @@ export default {
                 .catch((err) => {
                     alert("エラーです");
                     this.loading = false;
-                });
+                })
+                .finally(() => (this.loading = false));
         },
-        getNumber(page){
+        getNumber(page) {
             let maxNum = this.calendarDatas.length;
             this.maxPages = Math.ceil(maxNum / this.maxItems);
             this.calendars.splice(0, this.calendars.length);
-            for(let i = 0; i < this.maxItems; i++){
-                if(i + this.maxItems * (page - 1) < maxNum -1){
-                    this.calendars.push(this.calendarDatas[i + this.maxItems * (page - 1)]);
+            for (let i = 0; i < this.maxItems; i++) {
+                if (i + this.maxItems * (page - 1) < maxNum - 1) {
+                    this.calendars.push(
+                        this.calendarDatas[i + this.maxItems * (page - 1)]
+                    );
                 }
             }
         },
@@ -197,29 +200,29 @@ export default {
         }
     }
 }
-.pagination{
-   max-width: 500px;
-   margin: 0 auto 15px;
-   nav ::v-deep .v-pagination{
-       &__item{
-           color: #000066;
-           border: 1px solid #000066;
-           text-align: center;
-           &--active{
-               color: white;
-               background-color: #000066;
-           }
-       }
-       &__navigation{
-           border: 1px solid #000066;
-           .theme--light.v-icon{
-               color: #000066;
-           }
-           &--disabled{
-               opacity: 0.3;
-           }
-       }
-   }
+.pagination {
+    max-width: 500px;
+    margin: 0 auto 15px;
+    nav ::v-deep .v-pagination {
+        &__item {
+            color: #000066;
+            border: 1px solid #000066;
+            text-align: center;
+            &--active {
+                color: white;
+                background-color: #000066;
+            }
+        }
+        &__navigation {
+            border: 1px solid #000066;
+            .theme--light.v-icon {
+                color: #000066;
+            }
+            &--disabled {
+                opacity: 0.3;
+            }
+        }
+    }
 }
 .form {
     &_ttl {
