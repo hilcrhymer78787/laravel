@@ -73,7 +73,6 @@ export default {
     transform: translateX(-100%);
     transition: 0.5s;
     color: white;
-    box-shadow: 0 3px 5px rgb(0 0 0 / 50%);
     &.active {
         transform: translateX(0);
     }
@@ -147,9 +146,9 @@ export default {
         position: fixed;
         bottom: auto;
         transform: translateX(0) !important;
-        padding: 15px 0;
         transition: 0;
         font-size: 20px;
+        box-shadow: 0 3px 5px rgb(0 0 0 / 50%);
         .container {
             display: flex;
             justify-content: space-between;

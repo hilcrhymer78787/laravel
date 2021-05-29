@@ -1,6 +1,6 @@
 <template>
     <div class="app">
-        <header-component></header-component>
+        <HeaderComponent/>
         <div class="container">
             <router-view></router-view>
         </div>
@@ -8,6 +8,12 @@
 </template>
 
 <script>
+import HeaderComponent from "./HeaderComponent"
+export default {
+    components: {
+        HeaderComponent,
+    },
+}
 </script>
 <style lang="scss">
 @charset "utf-8";
@@ -497,27 +503,6 @@ input[type="radio"]:checked:before {
         font-size: 35px;
         margin-top: 50px;
         margin-bottom: 20px;
-    }
-    /* header pc
---------------------------------------------- */
-    .header {
-        width: 100%;
-        position: fixed;
-        bottom: auto;
-        transform: translateX(0) !important;
-        padding: 15px 0;
-        transition: 0;
-    }
-    .header .nav {
-        display: flex;
-        align-items: center;
-    }
-    .header .nav_list {
-        margin-bottom: 0;
-        margin-right: 15px;
-    }
-    .header .nav_list:last-child {
-        margin-right: 0;
     }
 }
 </style>
