@@ -5,8 +5,10 @@ import AppComponent from "./components/AppComponent"
 import Vuetify from 'vuetify'
 import '@mdi/font/css/materialdesignicons.css'
 import 'vuetify/dist/vuetify.min.css'
+import Vuex from 'vuex'
 
 Vue.use(Vuetify)
+Vue.use(Vuex)
 Vue.use(VueRouter)
 
 const router = new VueRouter({
@@ -44,11 +46,30 @@ const router = new VueRouter({
     ]
 });
 
+const store = new Vuex.Store({
+    state: {
+        users: []
+    },
+    mutations: {
+        getusers(state) {
+            axios
+                .get("/api/users")
+                .then((res) => {
+                    state.users = res.data;
+                })
+                .catch((err) => {
+                    alert("エラーです");
+                });
+        },
+    }
+});
+
 
 Vue.component('app-component', AppComponent);
 
 const app = new Vue({
     el: '#app',
     router,
+    store,
     vuetify: new Vuetify()
 });

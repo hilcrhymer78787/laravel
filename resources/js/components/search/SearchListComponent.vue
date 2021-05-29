@@ -9,7 +9,7 @@
                     <dd class="form_list_item_main">
                         <select class="form_list_item_main_input" v-model="form.members_id">
                             <option value="0">選択してください</option>
-                            <option v-for="user in users" :key="user.id" :value="user.id">{{user.name}}</option>
+                            <option v-for="user in $store.state.users" :key="user.id" :value="user.id">{{user.name}}</option>
                         </select>
                     </dd>
                 </li>
@@ -98,26 +98,12 @@ export default {
                 price_min: "",
                 price_max: "",
             },
-            users: [],
             places: [],
             DatePickerFormat: "yyyy.MM.dd",
             ja: ja,
         };
     },
     methods: {
-        getusers() {
-            this.loading = true;
-            axios
-                .get("/api/users")
-                .then((res) => {
-                    this.users = res.data;
-                    this.loading = false;
-                })
-                .catch((err) => {
-                    alert("エラーです");
-                    this.loading = false;
-                });
-        },
         getplaces() {
             this.loading = true;
             axios
@@ -165,7 +151,7 @@ export default {
     },
     mounted: function () {
         this.form.date_min = this.format(new Date());
-        this.getusers();
+        this.$store.commit('getusers')
         this.getplaces();
         this.getSearchCalendars();
     },
