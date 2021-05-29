@@ -59,19 +59,9 @@
             </ul>
         </div>
 
-        <ul v-show="isShow" class="pager">
-            <li class="pager_item" @click="changePage(nowPage-1)" v-if="nowPage != 1">＜</li>
-            <li class="pager_item" @click="changePage(nowPage-4)" v-if="(nowPage > maxPage-1)&&(nowPage-4 >= 1)">{{nowPage-4}}</li>
-            <li class="pager_item" @click="changePage(nowPage-3)" v-if="(nowPage > maxPage-2)&&(nowPage-3 >= 1)">{{nowPage-3}}</li>
-            <li class="pager_item" @click="changePage(nowPage-2)" v-if="nowPage-2 >= 1">{{nowPage-2}}</li>
-            <li class="pager_item" @click="changePage(nowPage-1)" v-if="nowPage-1 >= 1">{{nowPage-1}}</li>
-            <li class="pager_item active">{{nowPage}}</li>
-            <li class="pager_item" @click="changePage(nowPage+1)" v-if="nowPage+1 <= maxPage">{{nowPage+1}}</li>
-            <li class="pager_item" @click="changePage(nowPage+2)" v-if="nowPage+2 <= maxPage">{{nowPage+2}}</li>
-            <li class="pager_item" @click="changePage(nowPage+3)" v-if="(nowPage-2 <= 0)&&(maxPage >= 4)">{{nowPage+3}}</li>
-            <li class="pager_item" @click="changePage(nowPage+4)" v-if="(nowPage-1 <= 0)&&(maxPage >= 5)">{{nowPage+4}}</li>
-            <li class="pager_item" @click="changePage(nowPage+1)" v-if="nowPage != maxPage">＞</li>
-        </ul>
+        <div v-show="isShow" class="pagination">
+            <v-pagination v-model="nowPage" :length="maxPages" @input="getNumber"></v-pagination>
+        </div>
 
         <div v-if="loading" class="vue-loading-wrap">
             <vue-loading type="spin" color="#333" :size="{ width: '80px', height: '80px'}"></vue-loading>
@@ -93,11 +83,12 @@ export default {
     data: function () {
         return {
             isShow: false,
-            nowPage: 1,
-            maxPage: 1,
-            maxItems: 10,
+            nowPage:1,
+            maxPages:0,
+            itemsNum:1,
+            maxItems:10,
+            calendarDatas:[],
             calendars: [],
-            calendarDatas: [],
             loading: false,
             form: {
                 members_id: 0,
@@ -146,29 +137,24 @@ export default {
                 .post("/api/search", this.form)
                 .then((res) => {
                     this.calendarDatas = res.data.calendars;
-                    this.changePage(1);
+                    this.getNumber(1);
+                    this.isShow = true;
+                    this.loading = false;
                 })
                 .catch((err) => {
                     alert("エラーです");
                     this.loading = false;
                 });
         },
-        changePage(topage) {
-            this.nowPage = topage;
-            this.maxPage = Math.ceil(this.calendarDatas.length / this.maxItems);
+        getNumber(page){
+            let maxNum = this.calendarDatas.length;
+            this.maxPages = Math.ceil(maxNum / this.maxItems);
             this.calendars.splice(0, this.calendars.length);
-            for (let i = 0; i < this.maxItems; i++) {
-                if (
-                    this.calendarDatas[i + (topage - 1) * this.maxItems] !=
-                    undefined
-                ) {
-                    this.calendars.push(
-                        this.calendarDatas[i + (topage - 1) * this.maxItems]
-                    );
+            for(let i = 0; i < this.maxItems; i++){
+                if(i + this.maxItems * (page - 1) < maxNum -1){
+                    this.calendars.push(this.calendarDatas[i + this.maxItems * (page - 1)]);
                 }
             }
-            this.loading = false;
-            this.isShow = true;
         },
         format: function (value) {
             return moment(value).format("YYYY-MM-DD");
@@ -211,30 +197,29 @@ export default {
         }
     }
 }
-.pager {
-    display: flex;
-    justify-content: center;
-    margin-top: 50px;
-    &_item {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 30px;
-        height: 30px;
-        border: 1px solid #000066;
-        background-color: white;
-        color: #000066;
-        box-shadow: 0 0 1px #000066;
-        margin-right: 15px;
-        cursor: pointer;
-        &:last-child {
-            margin-right: 0;
-        }
-        &.active {
-            background-color: #000066;
-            color: white;
-        }
-    }
+.pagination{
+   max-width: 500px;
+   margin: 0 auto 15px;
+   nav ::v-deep .v-pagination{
+       &__item{
+           color: #000066;
+           border: 1px solid #000066;
+           text-align: center;
+           &--active{
+               color: white;
+               background-color: #000066;
+           }
+       }
+       &__navigation{
+           border: 1px solid #000066;
+           .theme--light.v-icon{
+               color: #000066;
+           }
+           &--disabled{
+               opacity: 0.3;
+           }
+       }
+   }
 }
 .form {
     &_ttl {

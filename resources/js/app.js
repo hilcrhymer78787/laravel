@@ -1,6 +1,9 @@
-import VueRouter from 'vue-router';
-import AppComponent from "./components/AppComponent";
-import HeaderComponent from "./components/HeaderComponent";
+import VueRouter from 'vue-router'
+import AppComponent from "./components/AppComponent"
+import HeaderComponent from "./components/HeaderComponent"
+import Vuetify from 'vuetify'
+import '@mdi/font/css/materialdesignicons.css'
+import 'vuetify/dist/vuetify.min.css'
 
 
 /**
@@ -9,11 +12,12 @@ import HeaderComponent from "./components/HeaderComponent";
  * building robust, powerful web applications using Vue and Laravel.
  */
 
-require('./bootstrap');
+require('./bootstrap')
 
-window.Vue = require('vue');
+window.Vue = require('vue')
 
-Vue.use(VueRouter);
+Vue.use(Vuetify)
+Vue.use(VueRouter)
 
 const router = new VueRouter({
     // mode: 'history',
@@ -72,5 +76,6 @@ Vue.component('header-component', HeaderComponent);
 
 const app = new Vue({
     el: '#app',
-    router
+    router,
+    vuetify: new Vuetify()
 });
