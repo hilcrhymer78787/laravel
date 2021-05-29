@@ -46,12 +46,10 @@
 <script>
 import UserEditComponent from "./UserEditComponent";
 import UserCreateComponent from "./UserCreateComponent";
-import { VueLoading } from "vue-loading-template";
 export default {
     components: {
         UserEditComponent,
         UserCreateComponent,
-        VueLoading,
     },
     data: function () {
         return {

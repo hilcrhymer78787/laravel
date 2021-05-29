@@ -46,12 +46,10 @@
 <script>
 import PlaceEditComponent from "./PlaceEditComponent";
 import PlaceCreateComponent from "./PlaceCreateComponent";
-import { VueLoading } from "vue-loading-template";
 export default {
     components: {
         PlaceEditComponent,
         PlaceCreateComponent,
-        VueLoading,
     },
     data: function () {
         return {
