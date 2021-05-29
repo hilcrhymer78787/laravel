@@ -46,7 +46,7 @@
             </ul>
         </form>
 
-        <div v-show="isShow" class="table">
+        <div v-show="calendarDatas.length" class="table">
             <ul class="table_row ar">
                 <li class="table_row_list date">日付</li>
                 <li class="table_row_list member">出勤者</li>
@@ -59,8 +59,8 @@
             </ul>
         </div>
 
-        <div v-show="isShow" class="pagination">
-            <v-pagination v-model="nowPage" :length="maxPages" @input="getNumber"></v-pagination>
+        <div v-show="calendarDatas.length && maxPages > 1" class="pagination">
+            <v-pagination v-model="nowPage" :length="maxPages" @input="toPage"></v-pagination>
         </div>
     </div>
 </template>
@@ -75,14 +75,10 @@ export default {
     },
     data() {
         return {
-            isShow: false,
             nowPage: 1,
-            maxPages: 0,
-            itemsNum: 1,
             maxItems: 10,
             calendarDatas: [],
             calendars: [],
-            loading: false,
             form: {
                 members_id: 0,
                 places_id: 0,
@@ -95,6 +91,11 @@ export default {
             ja: ja,
         };
     },
+    computed: {
+        maxPages() {
+            return Math.ceil(this.calendarDatas.length / this.maxItems);
+        },
+    },
     methods: {
         getSearchCalendars() {
             this.$store.state.loading = true;
@@ -102,40 +103,37 @@ export default {
                 .post("/api/search", this.form)
                 .then((res) => {
                     this.calendarDatas = res.data.calendars;
-                    this.getNumber(1);
-                    this.isShow = true;
+                    this.toPage(1);
                 })
                 .catch((err) => {
                     alert("エラーです");
                 })
                 .finally(() => (this.$store.state.loading = false));
         },
-        getNumber(page) {
-            let maxNum = this.calendarDatas.length;
-            this.maxPages = Math.ceil(maxNum / this.maxItems);
+        toPage(page) {
             this.calendars.splice(0, this.calendars.length);
+            // TODO
             for (let i = 0; i < this.maxItems; i++) {
-                if (i + this.maxItems * (page - 1) < maxNum - 1) {
+                if (i + this.maxItems * (page - 1) < this.calendarDatas.length - 1) {
                     this.calendars.push(
                         this.calendarDatas[i + this.maxItems * (page - 1)]
                     );
                 }
             }
         },
-        format: function (value) {
+        format (value) {
             return moment(value).format("YYYY-MM-DD");
         },
     },
-    mounted: function () {
+    mounted () {
         this.form.date_min = this.format(new Date());
-        this.$store.commit("getusers");
         this.getSearchCalendars();
     },
     watch: {
-        "form.date_min": function () {
+        "form.date_min" () {
             this.form.date_min = this.format(this.form.date_min);
         },
-        "form.date_max": function () {
+        "form.date_max" () {
             this.form.date_max = this.format(this.form.date_max);
         },
     },
@@ -165,6 +163,7 @@ export default {
 .pagination {
     max-width: 500px;
     margin: 0 auto 15px;
+    overflow: hidden;
     nav ::v-deep .v-pagination {
         &__item {
             color: #000066;

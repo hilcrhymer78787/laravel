@@ -13,7 +13,7 @@
                             <dd class="form_list_item_main">
                                 <select v-model="work.members_id">
                                     <option value="0">選択してください</option>
-                                    <option v-for="user in users" :key="user.id" :value="user.id">{{user.name}}</option>
+                                    <option v-for="user in $store.state.users" :key="user.id" :value="user.id">{{user.name}}</option>
                                 </select>
                             </dd>
                             <div v-if="work.error_members_id" class="error">出勤者を入力してください</div>
@@ -23,7 +23,7 @@
                             <dd class="form_list_item_main">
                                 <select v-model="work.places_id">
                                     <option value="0">選択してください</option>
-                                    <option v-for="place in places" :key="place.id" :value="place.id">{{place.name}}</option>
+                                    <option v-for="place in $store.state.places" :key="place.id" :value="place.id">{{place.name}}</option>
                                 </select>
                             </dd>
                             <div v-if="work.error_places_id" class="error">出勤場所を入力してください</div>
@@ -73,13 +73,6 @@ export default {
         };
     },
     methods: {
-        getplaces() {
-            this.$store.state.loading = true;
-            axios.get("/api/places").then((res) => {
-                this.places = res.data;
-                this.$store.state.loading = false;
-            });
-        },
         addwork() {
             let obj = {
                 id: 0,
@@ -164,9 +157,6 @@ export default {
             });
             return noProblem;
         },
-    },
-    mounted: function () {
-        this.getplaces();
     },
     filters: {
         format: function (value) {
