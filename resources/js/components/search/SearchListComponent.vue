@@ -18,7 +18,7 @@
                     <dd class="form_list_item_main">
                         <select class="form_list_item_main_input" v-model="form.places_id">
                             <option value="0">選択してください</option>
-                            <option v-for="place in places" :key="place.id" :value="place.id">{{place.name}}</option>
+                            <option v-for="place in $store.state.places" :key="place.id" :value="place.id">{{place.name}}</option>
                         </select>
                     </dd>
                 </li>
@@ -98,25 +98,11 @@ export default {
                 price_min: "",
                 price_max: "",
             },
-            places: [],
             DatePickerFormat: "yyyy.MM.dd",
             ja: ja,
         };
     },
     methods: {
-        getplaces() {
-            this.loading = true;
-            axios
-                .get("/api/places")
-                .then((res) => {
-                    this.places = res.data;
-                    this.loading = false;
-                })
-                .catch((err) => {
-                    alert("エラーです");
-                    this.loading = false;
-                });
-        },
         getSearchCalendars() {
             this.loading = true;
             axios
@@ -125,11 +111,9 @@ export default {
                     this.calendarDatas = res.data.calendars;
                     this.getNumber(1);
                     this.isShow = true;
-                    this.loading = false;
                 })
                 .catch((err) => {
                     alert("エラーです");
-                    this.loading = false;
                 })
                 .finally(() => (this.loading = false));
         },
@@ -151,8 +135,8 @@ export default {
     },
     mounted: function () {
         this.form.date_min = this.format(new Date());
-        this.$store.commit('getusers')
-        this.getplaces();
+        this.$store.commit("getusers");
+        this.$store.commit("getplaces");
         this.getSearchCalendars();
     },
     watch: {

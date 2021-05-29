@@ -48,7 +48,8 @@ const router = new VueRouter({
 
 const store = new Vuex.Store({
     state: {
-        users: []
+        users: [],
+        places: [],
     },
     mutations: {
         getusers(state) {
@@ -56,6 +57,16 @@ const store = new Vuex.Store({
                 .get("/api/users")
                 .then((res) => {
                     state.users = res.data;
+                })
+                .catch((err) => {
+                    alert("エラーです");
+                });
+        },
+        getplaces(state) {
+            axios
+                .get("/api/places")
+                .then((res) => {
+                    state.places = res.data;
                 })
                 .catch((err) => {
                     alert("エラーです");
