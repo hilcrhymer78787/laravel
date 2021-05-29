@@ -1,9 +1,7 @@
 <template>
     <div>
         <ul @click="hamburgerToggle()" :class="{active:hamburger}" class="hamburger">
-            <li class="hamburger_icn"></li>
-            <li class="hamburger_icn"></li>
-            <li class="hamburger_icn"></li>
+            <li v-for="n in 3" :key="n" class="hamburger_icn"></li>
         </ul>
         <div :class="{active:hamburger}" class="header">
             <div class="container">

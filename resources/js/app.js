@@ -1,19 +1,10 @@
+window.Vue = require('vue')
+require('./bootstrap')
 import VueRouter from 'vue-router'
 import AppComponent from "./components/AppComponent"
 import Vuetify from 'vuetify'
 import '@mdi/font/css/materialdesignicons.css'
 import 'vuetify/dist/vuetify.min.css'
-
-
-/**
- * First we will load all of this project's JavaScript dependencies which
- * includes Vue and other libraries. It is a great starting point when
- * building robust, powerful web applications using Vue and Laravel.
- */
-
-require('./bootstrap')
-
-window.Vue = require('vue')
 
 Vue.use(Vuetify)
 Vue.use(VueRouter)
