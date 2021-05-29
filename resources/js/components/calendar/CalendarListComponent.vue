@@ -63,7 +63,7 @@ export default {
         CalendarEditComponent,
         VueLoading,
     },
-    data: function () {
+    data() {
         return {
             loading: false,
             editmodal: false,

@@ -46,7 +46,7 @@ export default {
         UserEditComponent,
         UserCreateComponent,
     },
-    data: function () {
+    data() {
         return {
             editmodal: false,
             mode: "",

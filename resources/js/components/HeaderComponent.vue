@@ -27,7 +27,7 @@
 
 <script>
 export default {
-    data: function () {
+    data() {
         return {
             loginuser: {},
             hamburger: false,

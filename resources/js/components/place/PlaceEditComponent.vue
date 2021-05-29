@@ -36,7 +36,7 @@
 <script>
 import moment from "moment";
 export default {
-    data: function () {
+    data() {
         return {
             loading: false,
             error: {

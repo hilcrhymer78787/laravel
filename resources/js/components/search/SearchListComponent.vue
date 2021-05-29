@@ -73,7 +73,7 @@ export default {
     components: {
         Datepicker,
     },
-    data: function () {
+    data() {
         return {
             isShow: false,
             nowPage: 1,

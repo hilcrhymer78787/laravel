@@ -46,7 +46,7 @@ export default {
         PlaceEditComponent,
         PlaceCreateComponent,
     },
-    data: function () {
+    data() {
         return {
             editmodal: false,
             mode: "",
