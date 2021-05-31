@@ -46,22 +46,25 @@
             </ul>
         </form>
 
-        <div v-show="calendarDatas.length" class="table">
-            <ul class="table_row ar">
-                <li class="table_row_list date">日付</li>
-                <li class="table_row_list member">出勤者</li>
-                <li class="table_row_list place d-none d-md-block">出勤先</li>
-            </ul>
-            <ul v-for="calendar in calendars" :key="calendar.id" class="table_row">
-                <li class="table_row_list date">{{ calendar.date }}</li>
-                <li class="table_row_list member">{{ calendar.member }}</li>
-                <li class="table_row_list place d-none d-md-block">{{ calendar.place }}</li>
-            </ul>
-        </div>
-
         <div v-show="calendarDatas.length && maxPages > 1" class="pagination">
             <v-pagination v-model="nowPage" :length="maxPages" @input="toPage"></v-pagination>
         </div>
+
+        <div class="table_wrap">
+            <div v-show="calendarDatas.length" class="table">
+                <ul class="table_row ar">
+                    <li class="table_row_list date">日付</li>
+                    <li class="table_row_list member">出勤者</li>
+                    <li class="table_row_list place d-none d-md-block">出勤先</li>
+                </ul>
+                <ul v-for="calendar in calendars" :key="calendar.id" class="table_row">
+                    <li class="table_row_list date">{{ calendar.date }}</li>
+                    <li class="table_row_list member">{{ calendar.member }}</li>
+                    <li class="table_row_list place d-none d-md-block">{{ calendar.place }}</li>
+                </ul>
+            </div>
+        </div>
+
     </div>
 </template>
 
@@ -114,26 +117,29 @@ export default {
             this.calendars.splice(0, this.calendars.length);
             // TODO
             for (let i = 0; i < this.maxItems; i++) {
-                if (i + this.maxItems * (page - 1) < this.calendarDatas.length - 1) {
+                if (
+                    i + this.maxItems * (page - 1) <
+                    this.calendarDatas.length - 1
+                ) {
                     this.calendars.push(
                         this.calendarDatas[i + this.maxItems * (page - 1)]
                     );
                 }
             }
         },
-        format (value) {
+        format(value) {
             return moment(value).format("YYYY-MM-DD");
         },
     },
-    mounted () {
+    mounted() {
         this.form.date_min = this.format(new Date());
         this.getSearchCalendars();
     },
     watch: {
-        "form.date_min" () {
+        "form.date_min"() {
             this.form.date_min = this.format(this.form.date_min);
         },
-        "form.date_max" () {
+        "form.date_max"() {
             this.form.date_max = this.format(this.form.date_max);
         },
     },
@@ -162,7 +168,7 @@ export default {
 }
 .pagination {
     max-width: 500px;
-    margin: 0 auto 15px;
+    margin: 0 0 15px;
     overflow: hidden;
     nav ::v-deep .v-pagination {
         &__item {
@@ -244,6 +250,9 @@ export default {
         text-align: right;
     }
 }
+.table_wrap {
+    min-height: 600px;
+}
 .table {
     background-color: white;
     box-shadow: 0 0 10px #636363;
@@ -261,11 +270,11 @@ export default {
         &_list {
             padding: 5px;
             &.date {
-                width: 20%;
+                width: 50%;
                 font-weight: bold;
             }
             &.member {
-                width: 35%;
+                width: 50%;
             }
             &.place {
             }
