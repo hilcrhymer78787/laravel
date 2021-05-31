@@ -88,7 +88,7 @@ export default {
         },
         postuser() {
             if (this.validation()) {
-                this.$store.state.loading = true;
+                this.$store.state.userLoading = true;
                 let postData = new FormData();
                 postData.append("file", this.file);
                 postData.append("img_name", this.user.img_name);
@@ -105,7 +105,7 @@ export default {
                     .catch((err) => {
                         alert("エラーです");
                     })
-                    .finally(() => (this.$store.state.loading = false));
+                    .finally(() => (this.$store.state.userLoading = false));
             }
         },
         validation() {

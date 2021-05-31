@@ -45,7 +45,7 @@
             <v-pagination v-model="currentPage" :length="maxPages"></v-pagination>
         </div>
 
-        <p v-if="!$store.state.loading && !searchCalendars.length" style="font-size:25px;">データはありません</p>
+        <p v-if="!$store.state.calendarLoading && !searchCalendars.length" style="font-size:25px;">データはありません</p>
 
         <div class="table_wrap">
             <div v-show="searchCalendars.length" class="table">

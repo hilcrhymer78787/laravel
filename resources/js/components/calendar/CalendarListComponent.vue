@@ -48,10 +48,10 @@
                     <CalendarCreateComponent v-show="mode === 'create'" ref="calendarCreate" />
                 </div>
             </div>
-
-            <div v-if="$store.state.userLoading || $store.state.placeLoading || $store.state.calendarLoading" class="vue-loading-wrap">
+            
+            <!-- <div v-if="$store.state.userLoading || $store.state.placeLoading || $store.state.calendarLoading" class="vue-loading-wrap">
                 <vue-loading type="spin" color="#333" :size="{ width: '80px', height: '80px'}"></vue-loading>
-            </div>
+            </div> -->
         </form>
     </div>
 </template>
@@ -179,7 +179,6 @@ export default {
         $route: "getcalendars",
     },
     mounted() {
-        this.$store.state.loading = false;
         this.getcalendars();
     },
     filters: {

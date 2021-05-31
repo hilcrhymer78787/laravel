@@ -97,7 +97,7 @@ export default {
         },
         putuser() {
             if (this.validation()) {
-                this.$store.state.loading = true;
+                this.$store.state.userLoading = true;
                 let postData = new FormData();
                 postData.append("file", this.file);
                 postData.append("id", this.user.id);
@@ -115,7 +115,7 @@ export default {
                     .catch((err) => {
                         alert("エラーです");
                     })
-                    .finally(() => (this.$store.state.loading = false));
+                    .finally(() => (this.$store.state.userLoading = false));
             }
         },
         validation() {
