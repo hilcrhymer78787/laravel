@@ -71,12 +71,24 @@ export default {
             calendars: [],
             nowyear: new Date().getFullYear(),
             nowmonth: new Date().getMonth() + 1,
-            year: 0,
-            month: 0,
-            lastday: 0,
-            first_day: 0,
-            last_day_cnt: 0,
         };
+    },
+    computed: {
+        year(){
+            return this.$route.params.year;
+        },
+        month(){
+            return this.$route.params.month;
+        },
+        lastday(){
+            return new Date(this.year, this.month, 0).getDate();
+        },
+        first_day(){
+            return new Date(this.year, this.month - 1, 1).getDay();
+        },
+        last_day_cnt(){
+            return 6 - new Date(this.year, this.month - 1, this.lastday).getDay();
+        },
     },
     methods: {
         clickcalendar(calendar) {
@@ -161,25 +173,16 @@ export default {
                 })
                 .finally(() => (this.loading = false));
         },
-        createcalendar() {
-            this.year = this.$route.params.year;
-            this.month = this.$route.params.month;
-            this.lastday = new Date(this.year, this.month, 0).getDate();
-            this.first_day = new Date(this.year, this.month - 1, 1).getDay();
-            this.last_day_cnt =
-                6 - new Date(this.year, this.month - 1, this.lastday).getDay();
-            this.getcalendars();
-        },
     },
     watch: {
-        $route: "createcalendar",
+        $route: "getcalendars",
     },
     mounted() {
         this.$store.state.loading = false;
-        this.createcalendar();
+        this.getcalendars();
     },
     filters: {
-        format: function (value) {
+        format (value) {
             return moment(value).format("D");
         },
     },
@@ -194,7 +197,6 @@ button {
 }
 .cmn_pageTitle {
     margin-bottom: 0;
-    // width: 200px;
 }
 .cmn_pageSecondTitle {
     margin-top: 50px;
