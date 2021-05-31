@@ -31,8 +31,6 @@ export default {
         return {
             loginuser: {},
             hamburger: false,
-            year: new Date().getFullYear(),
-            month: new Date().getMonth() + 1,
         };
     },
     methods: {

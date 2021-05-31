@@ -6,7 +6,6 @@ use App\Calendar;
 use App\Place;
 use App\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class CalendarController extends Controller
 {
