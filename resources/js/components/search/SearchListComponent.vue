@@ -2,12 +2,12 @@
     <div>
         <div class="cmn_pageTitle">出勤検索</div>
 
-        <form class="form" v-on:submit.prevent="getSearchCalendars">
+        <form class="form" v-on:submit.prevent>
             <ul class="form_list">
                 <li class="form_list_item">
                     <dt class="form_list_item_ttl">出勤者</dt>
                     <dd class="form_list_item_main">
-                        <select class="form_list_item_main_input" v-model="form.members_id">
+                        <select class="form_list_item_main_input" v-model="members_id">
                             <option value="0">選択してください</option>
                             <option v-for="user in $store.state.users" :key="user.id" :value="user.id">{{user.name}}</option>
                         </select>
@@ -16,7 +16,7 @@
                 <li class="form_list_item">
                     <dt class="form_list_item_ttl">出勤先</dt>
                     <dd class="form_list_item_main">
-                        <select class="form_list_item_main_input" v-model="form.places_id">
+                        <select class="form_list_item_main_input" v-model="places_id">
                             <option value="0">選択してください</option>
                             <option v-for="place in $store.state.places" :key="place.id" :value="place.id">{{place.name}}</option>
                         </select>
@@ -25,33 +25,30 @@
                 <li class="form_list_item">
                     <dt class="form_list_item_ttl">日付</dt>
                     <dd class="form_list_item_main date">
-                        <Datepicker v-model="form.date_min" :clear-button="true" :format="DatePickerFormat" :language="ja" class="form_list_item_main_input datepicker" />
+                        <Datepicker v-model="date_min" :clear-button="true" :format="DatePickerFormat" :language="ja" class="form_list_item_main_input datepicker" />
                         <span> 〜 </span>
-                        <Datepicker v-model="form.date_max" :clear-button="true" :format="DatePickerFormat" :language="ja" class="form_list_item_main_input datepicker right" />
+                        <Datepicker v-model="date_max" :clear-button="true" :format="DatePickerFormat" :language="ja" class="form_list_item_main_input datepicker right" />
                     </dd>
                 </li>
                 <li class="form_list_item">
                     <dt class="form_list_item_ttl">日給</dt>
                     <dd class="form_list_item_main price">
-                        <input v-model="form.price_min" class="form_list_item_main_input" type="text">
+                        <input v-model.number="price_min" class="form_list_item_main_input" type="text">
                         <span> 〜 </span>
-                        <input v-model="form.price_max" class="form_list_item_main_input" type="text">
+                        <input v-model.number="price_max" class="form_list_item_main_input" type="text">
                     </dd>
-                </li>
-                <li class="form_list_item btn">
-                    <div class="form_btn">
-                        <button type="submit" class="cmn_btn_sub">検索</button>
-                    </div>
                 </li>
             </ul>
         </form>
 
-        <div v-show="calendarDatas.length && maxPages > 1" class="pagination">
+        <div v-show="searchCalendars.length && maxPages > 1" class="pagination">
             <v-pagination v-model="currentPage" :length="maxPages"></v-pagination>
         </div>
 
+        <p v-if="!$store.state.loading && !searchCalendars.length" style="font-size:25px;">データはありません</p>
+
         <div class="table_wrap">
-            <div v-show="calendarDatas.length" class="table">
+            <div v-show="searchCalendars.length" class="table">
                 <ul class="table_row ar">
                     <li class="table_row_list date">日付</li>
                     <li class="table_row_list member">出勤者</li>
@@ -79,59 +76,80 @@ export default {
         return {
             currentPage: 1,
             perPage: 10,
-            calendarDatas: [],
-            form: {
-                members_id: 0,
-                places_id: 0,
-                date_min: "Invalid date",
-                date_max: "Invalid date",
-                price_min: "",
-                price_max: "",
-            },
+
+            members_id: 0,
+            places_id: 0,
+            date_min: "Invalid date",
+            date_max: "Invalid date",
+            price_min: "",
+            price_max: "",
+
             DatePickerFormat: "yyyy.MM.dd",
             ja: ja,
         };
     },
     computed: {
         calendars() {
-            return this.calendarDatas.filter((value, index) => {
+            return this.searchCalendars.filter((value, index) => {
                 return (
                     this.perPage * (this.currentPage - 1) <= index &&
                     index < this.perPage * this.currentPage
                 );
             });
         },
+        searchCalendars() {
+            this.currentPage = 1;
+            let outputDatas = this.$store.state.calendarDatas;
+            if (this.members_id != 0) {
+                outputDatas = outputDatas.filter(
+                    (value) => value.members_id === this.members_id
+                );
+            }
+            if (this.places_id != 0) {
+                outputDatas = outputDatas.filter(
+                    (value) => value.places_id === this.places_id
+                );
+            }
+            if (this.date_min != "Invalid date") {
+                outputDatas = outputDatas.filter(
+                    (value) => value.date >= this.date_min
+                );
+            }
+            if (this.date_max != "Invalid date") {
+                outputDatas = outputDatas.filter(
+                    (value) => value.date <= this.date_max
+                );
+            }
+            if (this.price_min != "") {
+                outputDatas = outputDatas.filter(
+                    (value) => value.price >= this.price_min
+                );
+            }
+            if (this.price_max != "") {
+                outputDatas = outputDatas.filter(
+                    (value) => value.price <= this.price_max
+                );
+            }
+            return outputDatas;
+        },
         maxPages() {
-            return Math.ceil(this.calendarDatas.length / this.perPage);
+            return Math.ceil(this.searchCalendars.length / this.perPage);
         },
     },
     methods: {
-        getSearchCalendars() {
-            this.$store.state.loading = true;
-            axios
-                .post("/api/search", this.form)
-                .then((res) => {
-                    this.calendarDatas = res.data.calendars;
-                })
-                .catch((err) => {
-                    alert("エラーです");
-                })
-                .finally(() => (this.$store.state.loading = false));
-        },
         format(value) {
             return moment(value).format("YYYY-MM-DD");
         },
     },
     mounted() {
-        this.form.date_min = this.format(new Date());
-        this.getSearchCalendars();
+        this.date_min = this.format(new Date());
     },
     watch: {
-        "form.date_min"() {
-            this.form.date_min = this.format(this.form.date_min);
+        date_min() {
+            this.date_min = this.format(this.date_min);
         },
-        "form.date_max"() {
-            this.form.date_max = this.format(this.form.date_max);
+        date_max() {
+            this.date_max = this.format(this.date_max);
         },
     },
 };
@@ -183,6 +201,7 @@ export default {
     }
 }
 .form {
+    margin-bottom: 30px;
     &_ttl {
         font-size: 25px;
         font-weight: bold;
@@ -195,10 +214,6 @@ export default {
             margin-bottom: 10px;
             &:last-child {
                 margin-bottom: 0;
-            }
-            &.btn {
-                padding: 0;
-                width: 100%;
             }
             &_ttl {
             }
@@ -234,11 +249,6 @@ export default {
                 }
             }
         }
-    }
-    &_btn {
-        width: 100%;
-        padding: 0 0 50px;
-        text-align: right;
     }
 }
 .table_wrap {

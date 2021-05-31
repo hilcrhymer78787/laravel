@@ -38,4 +38,4 @@ Route::put('/calendars/{calendar}', 'CalendarController@update');
 Route::delete('/calendars/{date}', 'CalendarController@destroy');
 
 
-Route::post('/search', 'CalendarController@search');
+Route::get('/search', 'CalendarController@search');

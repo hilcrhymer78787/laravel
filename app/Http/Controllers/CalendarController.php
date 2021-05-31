@@ -12,12 +12,28 @@ class CalendarController extends Controller
 {
     public function index()
     {
-        return Calendar::all();
+        $calendars = Calendar::orderBy('date', 'asc')
+        ->get();
+
+        foreach($calendars as $calendar){
+            $date = $calendar->date;
+            if(isset(Place::find($calendar->places_id)->name)){
+                $calendar->place = Place::find($calendar->places_id)->name;
+            }else{
+                $calendar->place = "（削除済）";
+            }
+            if(isset(User::find($calendar->members_id)->name)){
+                $calendar->member = User::find($calendar->members_id)->name;
+            }else{
+                $calendar->member = "（削除済）";
+            }
+        }
+
+        return $calendars;
     }
 
     public function store(Request $request)
     {
-
         $calendars = DB::table('calendars')
         ->where('date', $request["date"])
         ->delete();
@@ -92,46 +108,4 @@ class CalendarController extends Controller
         ->delete();
     }
     
-    public function search(Request $form)
-    {
-        $query = Calendar::query()
-        ->orderBy('date', 'asc');
-
-        if($form["members_id"] != 0){
-            $query->where('members_id','=', $form["members_id"]);
-        }
-        if($form["places_id"] != 0){
-            $query->where('places_id','=', $form["places_id"]);
-        }
-        if($form["date_min"] != "Invalid date"){
-            $query->where('date','>=', $form["date_min"]);
-        }
-        if($form["date_max"] != "Invalid date"){
-            $query->where('date','<=', $form["date_max"]);
-        }
-        if($form["price_min"] != ""){
-            $query->where('price','>=', intval($form["price_min"]));
-        }
-        if($form["price_max"] != ""){
-            $query->where('price','<=', intval($form["price_max"]));
-        }
-
-        $calendars = $query->get();
-
-        foreach($calendars as $calendar){
-            $date = $calendar->date;
-            if(isset(Place::find($calendar->places_id)->name)){
-                $calendar->place = Place::find($calendar->places_id)->name;
-            }else{
-                $calendar->place = "（削除済）";
-            }
-            if(isset(User::find($calendar->members_id)->name)){
-                $calendar->member = User::find($calendar->members_id)->name;
-            }else{
-                $calendar->member = "（削除済）";
-            }
-        }
-
-        return compact('calendars');
-    }
 }

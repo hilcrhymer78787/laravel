@@ -54,6 +54,7 @@ const store = new Vuex.Store({
     state: {
         users: [],
         places: [],
+        calendarDatas: [],
         loading: false,
     },
     mutations: {
@@ -76,6 +77,18 @@ const store = new Vuex.Store({
                 .catch((err) => {
                     alert("エラーです");
                 });
+        },
+        getCalendars(state) {
+            state.loading = true;
+            axios
+                .get("/api/calendars")
+                .then((res) => {
+                    state.calendarDatas = res.data;
+                })
+                .catch((err) => {
+                    alert("エラーです");
+                })
+                .finally(() => (state.loading = false));
         },
     }
 });
