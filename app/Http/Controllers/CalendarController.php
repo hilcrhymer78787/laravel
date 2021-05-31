@@ -34,8 +34,7 @@ class CalendarController extends Controller
 
     public function store(Request $request)
     {
-        $calendars = DB::table('calendars')
-        ->where('date', $request["date"])
+        $calendars = Calendar::where('date', $request["date"])
         ->delete();
         foreach($request["works"] as $work){
             $calendar = new Calendar;
@@ -49,8 +48,7 @@ class CalendarController extends Controller
     
     public function show($year,$month)
     {
-        $datas = DB::table('calendars')
-        ->select('date','id','members_id','places_id','price')
+        $datas = Calendar::select('date','id','members_id','places_id','price')
         ->whereYear('date', $year)
         ->whereMonth('date', $month)
         ->orderBy('date', 'asc')
@@ -103,8 +101,7 @@ class CalendarController extends Controller
     
     public function destroy($date)
     {
-        DB::table('calendars')
-        ->where('date', $date)
+        Calendar::where('date', $date)
         ->delete();
     }
     
