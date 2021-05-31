@@ -47,7 +47,7 @@
         </form>
 
         <div v-show="calendarDatas.length && maxPages > 1" class="pagination">
-            <v-pagination v-model="nowPage" :length="maxPages" @input="toPage"></v-pagination>
+            <v-pagination v-model="currentPage" :length="maxPages"></v-pagination>
         </div>
 
         <div class="table_wrap">
@@ -64,7 +64,6 @@
                 </ul>
             </div>
         </div>
-
     </div>
 </template>
 
@@ -78,10 +77,9 @@ export default {
     },
     data() {
         return {
-            nowPage: 1,
-            maxItems: 10,
+            currentPage: 1,
+            perPage: 10,
             calendarDatas: [],
-            calendars: [],
             form: {
                 members_id: 0,
                 places_id: 0,
@@ -95,8 +93,16 @@ export default {
         };
     },
     computed: {
+        calendars() {
+            return this.calendarDatas.filter((value, index) => {
+                return (
+                    this.perPage * (this.currentPage - 1) <= index &&
+                    index < this.perPage * this.currentPage
+                );
+            });
+        },
         maxPages() {
-            return Math.ceil(this.calendarDatas.length / this.maxItems);
+            return Math.ceil(this.calendarDatas.length / this.perPage);
         },
     },
     methods: {
@@ -106,26 +112,11 @@ export default {
                 .post("/api/search", this.form)
                 .then((res) => {
                     this.calendarDatas = res.data.calendars;
-                    this.toPage(1);
                 })
                 .catch((err) => {
                     alert("エラーです");
                 })
                 .finally(() => (this.$store.state.loading = false));
-        },
-        toPage(page) {
-            this.calendars.splice(0, this.calendars.length);
-            // TODO
-            for (let i = 0; i < this.maxItems; i++) {
-                if (
-                    i + this.maxItems * (page - 1) <
-                    this.calendarDatas.length - 1
-                ) {
-                    this.calendars.push(
-                        this.calendarDatas[i + this.maxItems * (page - 1)]
-                    );
-                }
-            }
         },
         format(value) {
             return moment(value).format("YYYY-MM-DD");
