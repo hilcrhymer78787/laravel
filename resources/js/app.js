@@ -52,6 +52,7 @@ const router = new VueRouter({
 
 const store = new Vuex.Store({
     state: {
+        loginuser: {},
         users: [],
         places: [],
         calendarDatas: [],
@@ -60,6 +61,11 @@ const store = new Vuex.Store({
         calendarLoading: false,
     },
     mutations: {
+        getLoginUser(state) {
+            axios.get("/api/loginuser").then((res) => {
+                state.loginuser = res.data.loginuser;
+            });
+        },
         getusers(state) {
             state.userLoading = true;
             axios

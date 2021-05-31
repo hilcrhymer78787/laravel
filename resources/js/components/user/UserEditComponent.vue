@@ -108,6 +108,7 @@ export default {
                 axios
                     .post("/api/usersUpdate", postData)
                     .then((res) => {
+                        this.$store.commit("getLoginUser")
                         this.$parent.editmodal = false;
                         this.$store.commit("getusers");
                     })

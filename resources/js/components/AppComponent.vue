@@ -14,6 +14,7 @@ export default {
         HeaderComponent,
     },
     mounted(){
+        this.$store.commit("getLoginUser")
         this.$store.commit("getplaces")
         this.$store.commit("getusers")
         this.$store.commit("getCalendars")

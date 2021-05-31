@@ -6,10 +6,10 @@
         <div :class="{active:hamburger}" class="header">
             <div class="container">
                 <div class="d-flex align-items-center justify-content-center">
-                    <img class="header_img" v-if="loginuser.img_name" @error="noImage" :src="'/storage/' + loginuser.img_name">
-                    <img class="header_img" v-if="!loginuser.img_name" @error="noImage" src="/assets/noimage.png">
+                    <img class="header_img" v-if="$store.state.loginuser.img_name" @error="noImage" :src="'/storage/' + $store.state.loginuser.img_name">
+                    <img class="header_img" v-if="!$store.state.loginuser.img_name" @error="noImage" src="/assets/noimage.png">
                     <div class="header_left">
-                        <p>{{loginuser.name}}</p>
+                        <p>{{$store.state.loginuser.name}}</p>
                         <a href="/logout">ログアウト</a>
                     </div>
                 </div>
@@ -34,11 +34,6 @@ export default {
         };
     },
     methods: {
-        getLoginUser() {
-            axios.get("/api/loginuser").then((res) => {
-                this.loginuser = res.data.loginuser;
-            });
-        },
         noImage(element) {
             element.target.src = "/assets/noimage.png";
         },
@@ -48,9 +43,6 @@ export default {
         hamburgerFalse() {
             this.hamburger = false;
         },
-    },
-    mounted() {
-        this.getLoginUser();
     },
 };
 </script>
