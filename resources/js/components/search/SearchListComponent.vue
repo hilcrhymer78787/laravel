@@ -61,6 +61,10 @@
                 </ul>
             </div>
         </div>
+
+        <div v-if="$store.state.userLoading || $store.state.placeLoading || $store.state.calendarLoading" class="vue-loading-wrap">
+            <vue-loading type="spin" color="#333" :size="{ width: '80px', height: '80px'}"></vue-loading>
+        </div>
     </div>
 </template>
 

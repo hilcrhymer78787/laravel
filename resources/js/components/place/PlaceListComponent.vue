@@ -35,6 +35,10 @@
                 <PlaceCreateComponent v-show="mode === 'create'" ref="placeCreate" />
             </div>
         </div>
+
+        <div v-if="$store.state.placeLoading" class="vue-loading-wrap">
+            <vue-loading type="spin" color="#333" :size="{ width: '80px', height: '80px'}"></vue-loading>
+        </div>
     </div>
 </template>
 
@@ -55,10 +59,10 @@ export default {
     methods: {
         deleteplace(id, name) {
             if (confirm("「" + name + "」を削除しますか？")) {
-                this.$store.state.loading = true;
+                this.$store.state.placeLoading = true;
                 axios.delete("/api/places/" + id).then((res) => {
                     this.$store.commit("getplaces");
-                    this.$store.state.loading = false;
+                    this.$store.state.placeLoading = false;
                 });
             }
         },

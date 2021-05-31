@@ -55,10 +55,13 @@ const store = new Vuex.Store({
         users: [],
         places: [],
         calendarDatas: [],
-        loading: false,
+        userLoading: false,
+        placeLoading: false,
+        calendarLoading: false,
     },
     mutations: {
         getusers(state) {
+            state.userLoading = true;
             axios
                 .get("/api/users")
                 .then((res) => {
@@ -66,9 +69,11 @@ const store = new Vuex.Store({
                 })
                 .catch((err) => {
                     alert("エラーです");
-                });
+                })
+                .finally(() => (state.userLoading = false));
         },
         getplaces(state) {
+            state.placeLoading = true;
             axios
                 .get("/api/places")
                 .then((res) => {
@@ -76,10 +81,11 @@ const store = new Vuex.Store({
                 })
                 .catch((err) => {
                     alert("エラーです");
-                });
+                })
+                .finally(() => (state.placeLoading = false));
         },
         getCalendars(state) {
-            state.loading = true;
+            state.calendarLoading = true;
             axios
                 .get("/api/calendars")
                 .then((res) => {
@@ -88,7 +94,7 @@ const store = new Vuex.Store({
                 .catch((err) => {
                     alert("エラーです");
                 })
-                .finally(() => (state.loading = false));
+                .finally(() => (state.calendarLoading = false));
         },
     }
 });
