@@ -55,13 +55,11 @@
 <script>
 import CalendarCreateComponent from "./CalendarCreateComponent";
 import CalendarEditComponent from "./CalendarEditComponent";
-import { VueLoading } from "vue-loading-template";
 import moment from "moment";
 export default {
     components: {
         CalendarCreateComponent,
         CalendarEditComponent,
-        VueLoading,
     },
     data() {
         return {
