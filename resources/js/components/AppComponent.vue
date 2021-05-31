@@ -306,7 +306,7 @@ body {
     display: none;
 }
 .container {
-    max-width: 900px;
+    max-width: 900px !important;
 }
 .vue-loading-wrap {
     display: flex;
