@@ -120,7 +120,6 @@ export default {
             return noProblem;
         },
     },
-    mounted() {},
 };
 </script>
 <style lang="scss" scoped>

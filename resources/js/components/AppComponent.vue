@@ -1,6 +1,6 @@
 <template>
     <div class="app">
-        <HeaderComponent/>
+        <HeaderComponent />
         <div class="container">
             <router-view></router-view>
         </div>
@@ -8,18 +8,18 @@
 </template>
 
 <script>
-import HeaderComponent from "./HeaderComponent"
+import HeaderComponent from "./HeaderComponent";
 export default {
     components: {
         HeaderComponent,
     },
-    mounted(){
-        this.$store.commit("getLoginUser")
-        this.$store.commit("getplaces")
-        this.$store.commit("getusers")
-        this.$store.commit("getCalendars")
-    }
-}
+    mounted() {
+        this.$store.commit("getLoginUser");
+        this.$store.commit("getplaces");
+        this.$store.commit("getusers");
+        this.$store.commit("getCalendars");
+    },
+};
 </script>
 <style lang="scss">
 @charset "utf-8";
