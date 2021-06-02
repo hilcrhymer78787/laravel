@@ -10,12 +10,7 @@
         </div>
 
         <!-- カレンダー -->
-        <form v-on:submit.prevent="submit">
-
-            <div v-if="loading" class="vue-loading-wrap">
-                <vue-loading type="spin" color="#333" :size="{ width: '80px', height: '80px'}"></vue-loading>
-            </div>
-
+        <div>
             <ul class="indent">
                 <li class="indent_item">日</li>
                 <li class="indent_item">月</li>
@@ -29,11 +24,11 @@
             <ul class="content">
                 <li v-for="(n, index) in first_day" :key="index+100" class="content_item blank"></li>
 
-                <li @click="clickcalendar(calendar)" v-for="calendar in calendars" :key="calendar.date" class="content_item main">
-                    <span class="content_item_icn">{{ calendar.date|format }}</span>
+                <li @click="clickcalendar(calendar)" v-for="(calendar, index) in calendars" :key="calendar.date" class="content_item main">
+                    <span class="content_item_icn">{{ index + 1 }}</span>
                     <ul>
-                        <li v-if="!(calendar.works[0].members_id == 0)">・{{calendar.works[0].member}}</li>
-                        <li v-if="!(calendar.works[1].members_id == 0)">・{{calendar.works[1].member}}</li>
+                        <li v-if="calendar.works.length >= 1">・{{calendar.works[0].member}}</li>
+                        <li v-if="calendar.works.length >= 2">・{{calendar.works[1].member}}</li>
                         <li v-if="calendar.works.length >= 3">　他{{calendar.works.length - 2}}件</li>
                     </ul>
                 </li>
@@ -48,11 +43,11 @@
                     <CalendarCreateComponent v-show="mode === 'create'" ref="calendarCreate" />
                 </div>
             </div>
-            
-            <!-- <div v-if="$store.state.userLoading || $store.state.placeLoading || $store.state.calendarLoading" class="vue-loading-wrap">
+
+            <div v-if="loading || $store.state.userLoading || $store.state.placeLoading || $store.state.calendarLoading" class="vue-loading-wrap">
                 <vue-loading type="spin" color="#333" :size="{ width: '80px', height: '80px'}"></vue-loading>
-            </div> -->
-        </form>
+            </div>
+        </div>
     </div>
 </template>
 <script>
@@ -69,31 +64,58 @@ export default {
             loading: false,
             editmodal: false,
             mode: "",
-            calendars: [],
-            nowyear: new Date().getFullYear(),
-            nowmonth: new Date().getMonth() + 1,
         };
     },
     computed: {
-        year(){
+        calendars() {
+            let outputData = [];
+
+            for (let day = 1; day <= this.lastday; day++) {
+                outputData.push({
+                    date: moment(
+                        new Date(this.year, this.month - 1, day)
+                    ).format("YYYY-MM-DD"),
+                    works: [],
+                });
+            }
+
+            if (!this.$store.state.calendarLoading) {
+                outputData.forEach((calendar) => {
+                    let calendarWorksFilterDate = this.$store.state.calendarWorks.filter(
+                        (calendarElm) => calendarElm.date === calendar.date
+                    );
+                    if (calendarWorksFilterDate.length) {
+                        calendar.works.push(
+                            ...calendarWorksFilterDate[0].works
+                        );
+                    }
+                });
+            }
+
+            return outputData;
+        },
+        year() {
             return this.$route.params.year;
         },
-        month(){
+        month() {
             return this.$route.params.month;
         },
-        lastday(){
+        lastday() {
             return new Date(this.year, this.month, 0).getDate();
         },
-        first_day(){
+        first_day() {
             return new Date(this.year, this.month - 1, 1).getDay();
         },
-        last_day_cnt(){
-            return 6 - new Date(this.year, this.month - 1, this.lastday).getDay();
+        last_day_cnt() {
+            return (
+                6 - new Date(this.year, this.month - 1, this.lastday).getDay()
+            );
         },
     },
     methods: {
         clickcalendar(calendar) {
-            if (calendar.works[0].id === undefined) {
+            this.editmodal = true;
+            if (!calendar.works.length) {
                 this.create(calendar);
             } else {
                 this.edit(calendar);
@@ -115,75 +137,14 @@ export default {
                     targetCalendar.works.push(targetWork);
                 });
             this.mode = "edit";
-            this.editmodal = true;
             this.$refs.calendarEdit.setcalendar(targetCalendar);
         },
         create(calendar) {
             this.mode = "create";
-            this.editmodal = true;
             this.$refs.calendarCreate.setcalendar(calendar);
         },
         closeEditModal() {
             this.editmodal = false;
-        },
-        getcalendars() {
-            this.loading = true;
-            this.calendars.splice(0, this.calendars.length);
-            for (let i = 0; i < this.lastday; i++) {
-                this.calendars.push({
-                    date:
-                        this.year +
-                        "-" +
-                        ("00" + this.month).slice(-2) +
-                        "-" +
-                        ("00" + Number(i + 1)).slice(-2),
-                    works: [
-                        {
-                            members_id: 0,
-                        },
-                        {
-                            members_id: 0,
-                        },
-                    ],
-                });
-            }
-            axios
-                .get("/api/calendars/" + this.year + "/" + this.month)
-                .then((res) => {
-                    if (res.data.calendars.length !== 0) {
-                        this.calendars.forEach((calendar) => {
-                            if (
-                                res.data.calendars.filter(
-                                    (calendarElm) =>
-                                        calendarElm.date === calendar.date
-                                ).length !== 0
-                            ) {
-                                calendar.works.splice(0, calendar.works.length);
-                                calendar.works.push(
-                                    ...res.data.calendars.filter(
-                                        (calendarElm) =>
-                                            calendarElm.date === calendar.date
-                                    )[0].works
-                                );
-                            }
-                        });
-                    }
-                })
-                .catch((err) => {
-                    alert("エラーです");
-                })
-                .finally(() => (this.loading = false));
-        },
-    },
-    watch: {
-        $route: "getcalendars",
-    },
-    mounted() {
-        this.getcalendars();
-    },
-    filters: {
-        format (value) {
-            return moment(value).format("D");
         },
     },
 };
@@ -200,12 +161,6 @@ button {
 }
 .cmn_pageSecondTitle {
     margin-top: 50px;
-}
-form {
-    position: relative;
-    .vue-loading-wrap {
-        position: absolute;
-    }
 }
 .pager {
     display: flex;

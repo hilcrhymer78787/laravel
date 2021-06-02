@@ -114,12 +114,12 @@ export default {
                     .post("/api/calendars", this.calendar)
                     .then((res) => {
                         this.$parent.editmodal = false;
-                        this.$parent.getcalendars();
+                        this.$store.commit("getCalendars");
                     })
                     .catch((err) => {
                         alert("エラーです");
-                        this.$parent.loading = false;
-                    });
+                    })
+                    .finally(() => {this.$parent.loading = false});
             }
         },
         deletecalendar(date) {
@@ -129,12 +129,12 @@ export default {
                     .delete("/api/calendars/" + date)
                     .then((res) => {
                         this.$parent.editmodal = false;
-                        this.$parent.getcalendars();
+                        this.$store.commit("getCalendars");
                     })
                     .catch((err) => {
                         alert("エラーです");
-                        this.$parent.loading = false;
-                    });
+                    })
+                    .finally(() => {this.$parent.loading = false});
             }
         },
         validation() {

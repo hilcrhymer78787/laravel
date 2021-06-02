@@ -56,6 +56,7 @@ const store = new Vuex.Store({
         users: [],
         places: [],
         calendarDatas: [],
+        calendarWorks: [],
         userLoading: false,
         placeLoading: false,
         calendarLoading: false,
@@ -96,6 +97,21 @@ const store = new Vuex.Store({
                 .get("/api/calendars")
                 .then((res) => {
                     state.calendarDatas = res.data;
+
+                    let dates = [];
+                    res.data.forEach(element => {
+                        dates.push(element.date)
+                    });
+
+                    state.calendarWorks.splice(0, state.calendarWorks.length);
+                    new Set(dates).forEach(date => {
+                        let calendarWork = {
+                            date: date,
+                            works: [...res.data.filter(data => date === data.date)]
+                        }
+                        state.calendarWorks.push(calendarWork);
+                    });
+
                 })
                 .catch((err) => {
                     alert("エラーです");
