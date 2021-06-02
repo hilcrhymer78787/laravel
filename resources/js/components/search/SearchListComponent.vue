@@ -159,6 +159,11 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+@mixin mq-pc {
+    @media screen and (min-width: 768px) {
+        @content;
+    }
+}
 .vdp-datepicker {
     position: relative;
     &.right ::v-deep .vdp-datepicker__calendar {
@@ -211,19 +216,35 @@ export default {
         font-weight: bold;
         margin-bottom: 15px;
         text-align: center;
+        @include mq-pc {
+            font-size: 35px;
+            margin-bottom: 25px;
+        }
     }
     &_list {
         &_item {
             font-size: 15px;
             margin-bottom: 10px;
+            @include mq-pc {
+                display: flex;
+                flex-wrap: wrap;
+                width: 500px;
+            }
             &:last-child {
                 margin-bottom: 0;
             }
             &_ttl {
+                @include mq-pc {
+                    width: 30%;
+                    padding: 5px;
+                }
             }
             &_main {
                 display: flex;
                 align-items: center;
+                @include mq-pc {
+                    width: 70%;
+                }
                 &_input {
                     border: 1px solid gray;
                     border-radius: 5px;
@@ -233,6 +254,9 @@ export default {
                     &.ar {
                         padding: 0;
                         border: none;
+                        @include mq-pc {
+                            padding: 5px;
+                        }
                     }
                     &.datepicker {
                         cursor: pointer;
@@ -274,68 +298,32 @@ export default {
         }
         &_list {
             padding: 5px;
+            @include mq-pc {
+                font-size: 18px;
+            }
             &.date {
                 width: 50%;
                 font-weight: bold;
+                @include mq-pc {
+                    width: 20%;
+                }
             }
             &.member {
                 width: 50%;
+                @include mq-pc {
+                    width: 20%;
+                }
             }
             &.place {
+                @include mq-pc {
+                    width: 40%;
+                }
             }
             &.btn {
                 width: 45%;
                 text-align: right;
-            }
-        }
-    }
-}
-@media (min-width: 768px) {
-    .form {
-        &_ttl {
-            font-size: 35px;
-            margin-bottom: 25px;
-        }
-        &_list {
-            &_item {
-                display: flex;
-                flex-wrap: wrap;
-                width: 500px;
-                &_ttl {
-                    width: 30%;
-                    padding: 5px;
-                }
-                &_main {
-                    width: 70%;
-                    input {
-                        &.ar {
-                            padding: 5px;
-                        }
-                    }
-                }
-            }
-        }
-        &_btn {
-            max-width: 500px;
-        }
-    }
-    .table {
-        &_row {
-            &_list {
-                padding: 5px;
-                font-size: 18px;
-                &.date {
+                @include mq-pc {
                     width: 20%;
-                }
-                &.member {
-                    width: 20%;
-                }
-                &.place {
-                    width: 40%;
-                }
-                &.btn {
-                    width: 20%;
-                    text-align: right;
                 }
             }
         }
