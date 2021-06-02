@@ -101,6 +101,7 @@ export default {
                     .then((res) => {
                         this.$parent.editmodal = false;
                         this.$store.commit("getusers");
+                        this.$store.commit("getCalendars");
                     })
                     .catch((err) => {
                         alert("エラーです");

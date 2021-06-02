@@ -62,6 +62,7 @@ export default {
                 this.$store.state.userLoading = true;
                 axios.delete("/api/users/" + id).then((res) => {
                     this.$store.commit("getusers");
+                    this.$store.commit("getCalendars");
                     this.$store.state.userLoading = false;
                 });
             }

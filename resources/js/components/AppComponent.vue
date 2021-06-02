@@ -71,7 +71,8 @@ input {
     bottom: 0;
     left: 0;
     z-index: 100;
-    .vue-loading {
+    @include mq-pc {
+        top: 84px;
     }
 }
 .router-link-active {
@@ -171,5 +172,4 @@ input {
         margin-bottom: 20px;
     }
 }
-
 </style>

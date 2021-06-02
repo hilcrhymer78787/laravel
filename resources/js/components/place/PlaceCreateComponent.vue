@@ -93,6 +93,7 @@ export default {
                     .then((res) => {
                         this.$parent.editmodal = false;
                         this.$store.commit("getplaces");
+                        this.$store.commit("getCalendars");
                     })
                     .catch((err) => {
                         alert("エラーです");

@@ -62,7 +62,7 @@ export default {
                 this.$store.state.placeLoading = true;
                 axios.delete("/api/places/" + id).then((res) => {
                     this.$store.commit("getplaces");
-                    this.$store.state.placeLoading = false;
+                    this.$store.commit("getCalendars");
                 });
             }
         },

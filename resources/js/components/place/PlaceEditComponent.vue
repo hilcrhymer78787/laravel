@@ -103,6 +103,7 @@ export default {
                     .then((res) => {
                         this.$parent.editmodal = false;
                         this.$store.commit("getplaces");
+                        this.$store.commit("getCalendars");
                     })
                     .catch((err) => {
                         alert("エラーです");
@@ -130,7 +131,6 @@ export default {
             return noProblem;
         },
     },
-    mounted() {},
 };
 </script>
 <style lang="scss" scoped>
