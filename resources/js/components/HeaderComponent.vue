@@ -102,16 +102,18 @@ export default {
             text-align: center;
             font-size: 20px;
             margin-bottom: 10px;
-            &:first-child {
-                margin-top: 20px;
-            }
             @include mq-pc {
                 text-align: left;
                 margin-right: 20px;
                 margin-bottom: 0;
-                &:first-child {
+            }
+            &:first-child {
+                margin-top: 20px;
+                @include mq-pc {
                     margin-top: 0;
                 }
+            }
+            @include mq-pc {
                 &:last-child {
                     margin-right: 0;
                 }
