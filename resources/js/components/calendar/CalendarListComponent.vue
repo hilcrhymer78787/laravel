@@ -151,6 +151,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@mixin mq-pc {
+    @media screen and (min-width: 768px) {
+        @content;
+    }
+}
 input,
 button {
     border: none;
@@ -158,6 +163,10 @@ button {
 }
 .cmn_pageTitle {
     margin-bottom: 0;
+    @include mq-pc {
+        margin-bottom: 0;
+        width: 335px;
+    }
 }
 .cmn_pageSecondTitle {
     margin-top: 50px;
@@ -167,13 +176,24 @@ button {
     justify-content: center;
     align-items: center;
     margin-bottom: 30px;
+    @include mq-pc {
+        margin-bottom: 50px;
+    }
     &_prev {
         font-size: 20px;
         margin-right: 10px;
+        @include mq-pc {
+            font-size: 40px;
+            margin-right: 20px;
+        }
     }
     &_next {
         font-size: 20px;
         margin-left: 10px;
+        @include mq-pc {
+            font-size: 40px;
+            margin-left: 20px;
+        }
     }
 }
 
@@ -206,6 +226,9 @@ button {
         border-right: 1px solid #e9e9e9;
         border-top: 1px solid #e9e9e9;
         overflow: hidden;
+        @include mq-pc {
+            padding: 23px 5px 0;
+        }
         &:nth-child(7n) {
             border-right: none;
         }
@@ -244,6 +267,9 @@ button {
             position: absolute;
             top: 0;
             left: 0;
+            @include mq-pc {
+                font-size: 18px;
+            }
         }
         &_icn {
             font-size: 14px;
@@ -268,34 +294,9 @@ button {
             width: 100%;
             text-align: center;
             font-size: 12px;
-        }
-    }
-}
-
-@media (min-width: 768px) {
-    .cmn_pageTitle {
-        margin-bottom: 0;
-        width: 335px;
-    }
-    .content_item {
-        height: 100px;
-        padding: 23px 5px 0;
-        &_name {
-            font-size: 18px;
-        }
-        &_price {
-            font-size: 16px;
-        }
-    }
-    .pager {
-        margin-bottom: 50px;
-        &_prev {
-            font-size: 40px;
-            margin-right: 20px;
-        }
-        &_next {
-            font-size: 40px;
-            margin-left: 20px;
+            @include mq-pc {
+                font-size: 16px;
+            }
         }
     }
 }

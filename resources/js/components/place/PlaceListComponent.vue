@@ -95,6 +95,11 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+@mixin mq-pc {
+    @media screen and (min-width: 768px) {
+        @content;
+    }
+}
 .table {
     background-color: white;
     box-shadow: 0 0 10px #636363;
@@ -111,10 +116,17 @@ export default {
         }
         &_list {
             padding: 5px;
+            @include mq-pc {
+                padding: 5px;
+                font-size: 18px;
+            }
             &.img_name {
                 width: 20%;
                 font-weight: bold;
                 padding: 0 5px 0 0;
+                @include mq-pc {
+                    width: 20%;
+                }
                 img {
                     width: 100%;
                     max-width: 70px;
@@ -122,12 +134,22 @@ export default {
             }
             &.name {
                 width: 35%;
+                @include mq-pc {
+                    width: 20%;
+                }
             }
             &.tel {
+                @include mq-pc {
+                    width: 40%;
+                }
             }
             &.btn {
                 width: 45%;
                 text-align: right;
+                @include mq-pc {
+                    width: 20%;
+                    text-align: right;
+                }
             }
         }
     }
@@ -144,39 +166,14 @@ export default {
         display: flex;
         justify-content: center;
         align-items: center;
+        @include mq-pc {
+            justify-content: flex-end;
+        }
     }
     &_btn {
         padding: 5px 10px;
         border-radius: 5px;
         background-color: white;
-    }
-}
-@media (min-width: 768px) {
-    .table {
-        &_row {
-            &_list {
-                padding: 5px;
-                font-size: 18px;
-                &.img_name {
-                    width: 20%;
-                }
-                &.name {
-                    width: 20%;
-                }
-                &.tel {
-                    width: 40%;
-                }
-                &.btn {
-                    width: 20%;
-                    text-align: right;
-                }
-            }
-        }
-    }
-    .footbar {
-        .container {
-            justify-content: flex-end;
-        }
     }
 }
 </style>
