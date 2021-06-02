@@ -46,6 +46,11 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+@mixin mq-pc {
+    @media screen and (min-width: 768px) {
+        @content;
+    }
+}
 .header {
     display: flex;
     justify-content: center;
@@ -60,6 +65,20 @@ export default {
     transform: translateX(-100%);
     transition: 0.5s;
     color: white;
+    @include mq-pc {
+        width: 100%;
+        position: fixed;
+        bottom: auto;
+        transform: translateX(0) !important;
+        transition: 0;
+        font-size: 20px;
+        box-shadow: 0 3px 5px rgb(0 0 0 / 50%);
+        .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    }
     &.active {
         transform: translateX(0);
     }
@@ -86,12 +105,26 @@ export default {
             &:first-child {
                 margin-top: 20px;
             }
+            @include mq-pc {
+                text-align: left;
+                margin-right: 20px;
+                margin-bottom: 0;
+                &:first-child {
+                    margin-top: 0;
+                }
+                &:last-child {
+                    margin-right: 0;
+                }
+            }
         }
     }
 }
 
 .dammyHeader {
     padding-top: 50px;
+    @include mq-pc {
+        padding-top: 120px;
+    }
 }
 .hamburger {
     position: fixed;
@@ -105,6 +138,9 @@ export default {
     justify-content: space-between;
     align-items: center;
     cursor: pointer;
+    @include mq-pc {
+        display: none;
+    }
     &_icn {
         width: 100%;
         height: 5px;
@@ -125,41 +161,6 @@ export default {
         &:nth-child(3) {
             transform: rotate(45deg) translateY(-12px) translateX(-5px);
         }
-    }
-}
-@media (min-width: 768px) {
-    .header {
-        width: 100%;
-        position: fixed;
-        bottom: auto;
-        transform: translateX(0) !important;
-        transition: 0;
-        font-size: 20px;
-        box-shadow: 0 3px 5px rgb(0 0 0 / 50%);
-        .container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        &_nav {
-            a {
-                text-align: left;
-                margin-right: 20px;
-                margin-bottom: 0;
-                &:first-child {
-                    margin-top: 0;
-                }
-                &:last-child {
-                    margin-right: 0;
-                }
-            }
-        }
-    }
-    .dammyHeader {
-        padding-top: 120px;
-    }
-    .hamburger {
-        display: none;
     }
 }
 </style>

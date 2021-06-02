@@ -109,7 +109,7 @@ export default {
                     .post("/api/usersUpdate", postData)
                     .then((res) => {
                         this.$parent.editmodal = false;
-                        this.$store.commit("getLoginUser")
+                        this.$store.commit("getLoginUser");
                         this.$store.commit("getusers");
                         this.$store.commit("getCalendars");
                     })
@@ -152,10 +152,18 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+@mixin mq-pc {
+    @media screen and (min-width: 768px) {
+        @content;
+    }
+}
 .error {
     color: red;
     position: relative;
     bottom: 8px;
+    @include mq-pc {
+        padding: 5px;
+    }
 }
 .form {
     height: 100%;
@@ -165,17 +173,33 @@ export default {
         font-weight: bold;
         margin-bottom: 15px;
         text-align: center;
+        @include mq-pc {
+            font-size: 35px;
+            margin-bottom: 25px;
+        }
     }
     &_list {
         &_item {
             font-size: 15px;
             margin-bottom: 10px;
+            @include mq-pc {
+                display: flex;
+                flex-wrap: wrap;
+                width: 500px;
+            }
             &:last-child {
                 margin-bottom: 0;
             }
             &_ttl {
+                @include mq-pc {
+                    width: 30%;
+                    padding: 5px;
+                }
             }
             &_main {
+                @include mq-pc {
+                    width: 70%;
+                }
                 input {
                     border: 1px solid gray;
                     border-radius: 5px;
@@ -184,12 +208,19 @@ export default {
                     &.ar {
                         padding: 0;
                         border: none;
+                        @include mq-pc {
+                            padding: 5px;
+                        }
                     }
                 }
                 img {
                     width: 70px;
                     height: 70px;
                     cursor: pointer;
+                    @include mq-pc {
+                        width: 120px;
+                        height: 120px;
+                    }
                 }
             }
         }
@@ -197,42 +228,6 @@ export default {
     &_btn {
         padding: 15px 0 50px;
         text-align: right;
-    }
-}
-@media (min-width: 768px) {
-    .error {
-        padding: 5px;
-    }
-    .form {
-        &_ttl {
-            font-size: 35px;
-            margin-bottom: 25px;
-        }
-        &_list {
-            &_item {
-                display: flex;
-                flex-wrap: wrap;
-                width: 500px;
-                &_ttl {
-                    width: 30%;
-                    padding: 5px;
-                }
-                &_main {
-                    width: 70%;
-                    input {
-                        &.ar {
-                            padding: 5px;
-                        }
-                    }
-                    img {
-                        width: 120px;
-                        height: 120px;
-                    }
-                }
-            }
-        }
-        &_btn {
-        }
     }
 }
 </style>
