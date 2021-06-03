@@ -29,7 +29,7 @@
                     <ul>
                         <li v-if="calendar.works.length >= 1">・{{calendar.works[0].member}}</li>
                         <li v-if="calendar.works.length >= 2">・{{calendar.works[1].member}}</li>
-                        <li v-if="calendar.works.length >= 3">　他{{calendar.works.length - 2}}件</li>
+                        <li v-if="calendar.works.length >= 3" style="color:#f3920b;">　他{{calendar.works.length - 2}}件</li>
                     </ul>
                 </li>
 
