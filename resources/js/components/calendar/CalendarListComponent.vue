@@ -24,7 +24,7 @@
             <ul class="content">
                 <li v-for="(n, index) in first_day" :key="index+100" class="content_item blank"></li>
 
-                <li @click="clickcalendar(calendar)" v-for="(calendar, index) in calendars" :key="calendar.date" class="content_item main">
+                <li @click="clickCalendar(calendar)" v-for="(calendar, index) in calendars" :key="calendar.date" class="content_item main">
                     <span class="content_item_icn">{{ index + 1 }}</span>
                     <ul>
                         <li v-if="calendar.works.length >= 1">・{{calendar.works[0].member}}</li>
@@ -36,10 +36,12 @@
                 <li v-for="n in lastDayCount" :key="n" class="content_item blank"></li>
             </ul>
 
+            <pre>{{calendars}}</pre>
+
             <div :class="{active:editmodal}" class="cmn_modal">
                 <div class="cmn_modal_inner">
                     <div @click="closeEditModal()" class="cmn_modal_inner_close">×</div>
-                    <CalendarEditComponent :editmodal="editmodal" ref="calendarEdit" />
+                    <CalendarEditComponent ref="calendarEdit" />
                 </div>
             </div>
 
@@ -60,7 +62,6 @@ export default {
         return {
             loading: false,
             editmodal: false,
-            mode: "",
         };
     },
     computed: {
@@ -111,27 +112,9 @@ export default {
         },
     },
     methods: {
-        clickcalendar(calendar) {
+        clickCalendar(calendar) {
             this.editmodal = true;
-            if (calendar.works.length) {
-                let targetCalendar = {};
-                this.$set(targetCalendar, "date", calendar.date);
-                this.$set(targetCalendar, "works", []);
-                calendar.works
-                    .filter((work) => work.id !== 0)
-                    .forEach((work) => {
-                        let targetWork = {};
-                        this.$set(targetWork, "members_id", work.members_id);
-                        this.$set(targetWork, "member", work.member);
-                        this.$set(targetWork, "places_id", work.places_id);
-                        this.$set(targetWork, "place", work.place);
-                        this.$set(targetWork, "price", work.price);
-                        targetCalendar.works.push(targetWork);
-                    });
-                this.$refs.calendarEdit.setEditCalendar(targetCalendar);
-            } else {
-                this.$refs.calendarEdit.setCreateCalendar(calendar);
-            }
+            this.$refs.calendarEdit.setCalendar(calendar);
         },
         closeEditModal() {
             this.editmodal = false;
