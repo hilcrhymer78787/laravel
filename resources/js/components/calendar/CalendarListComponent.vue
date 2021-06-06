@@ -33,14 +33,13 @@
                     </ul>
                 </li>
 
-                <li v-for="(n, index) in last_day_cnt" :key="index" class="content_item blank"></li>
+                <li v-for="n in lastDayCount" :key="n" class="content_item blank"></li>
             </ul>
 
             <div :class="{active:editmodal}" class="cmn_modal">
                 <div class="cmn_modal_inner">
                     <div @click="closeEditModal()" class="cmn_modal_inner_close">×</div>
-                    <CalendarEditComponent v-show="mode === 'edit'" ref="calendarEdit" />
-                    <CalendarCreateComponent v-show="mode === 'create'" ref="calendarCreate" />
+                    <CalendarEditComponent :editmodal="editmodal" ref="calendarEdit" />
                 </div>
             </div>
 
@@ -51,12 +50,10 @@
     </div>
 </template>
 <script>
-import CalendarCreateComponent from "./CalendarCreateComponent";
 import CalendarEditComponent from "./CalendarEditComponent";
 import moment from "moment";
 export default {
     components: {
-        CalendarCreateComponent,
         CalendarEditComponent,
     },
     data() {
@@ -81,9 +78,10 @@ export default {
 
             if (!this.$store.state.calendarLoading) {
                 outputData.forEach((calendar) => {
-                    let calendarWorksFilterDate = this.$store.state.calendarWorks.filter(
-                        (calendarElm) => calendarElm.date === calendar.date
-                    );
+                    let calendarWorksFilterDate =
+                        this.$store.state.calendarWorks.filter(
+                            (calendarElm) => calendarElm.date === calendar.date
+                        );
                     if (calendarWorksFilterDate.length) {
                         calendar.works.push(
                             ...calendarWorksFilterDate[0].works
@@ -106,7 +104,7 @@ export default {
         first_day() {
             return new Date(this.year, this.month - 1, 1).getDay();
         },
-        last_day_cnt() {
+        lastDayCount() {
             return (
                 6 - new Date(this.year, this.month - 1, this.lastday).getDay()
             );
@@ -115,33 +113,25 @@ export default {
     methods: {
         clickcalendar(calendar) {
             this.editmodal = true;
-            if (!calendar.works.length) {
-                this.create(calendar);
+            if (calendar.works.length) {
+                let targetCalendar = {};
+                this.$set(targetCalendar, "date", calendar.date);
+                this.$set(targetCalendar, "works", []);
+                calendar.works
+                    .filter((work) => work.id !== 0)
+                    .forEach((work) => {
+                        let targetWork = {};
+                        this.$set(targetWork, "members_id", work.members_id);
+                        this.$set(targetWork, "member", work.member);
+                        this.$set(targetWork, "places_id", work.places_id);
+                        this.$set(targetWork, "place", work.place);
+                        this.$set(targetWork, "price", work.price);
+                        targetCalendar.works.push(targetWork);
+                    });
+                this.$refs.calendarEdit.setEditCalendar(targetCalendar);
             } else {
-                this.edit(calendar);
+                this.$refs.calendarEdit.setCreateCalendar(calendar);
             }
-        },
-        edit(calendar) {
-            let targetCalendar = {};
-            this.$set(targetCalendar, "date", calendar.date);
-            this.$set(targetCalendar, "works", []);
-            calendar.works
-                .filter((work) => work.id !== 0)
-                .forEach((work) => {
-                    let targetWork = {};
-                    this.$set(targetWork, "members_id", work.members_id);
-                    this.$set(targetWork, "member", work.member);
-                    this.$set(targetWork, "places_id", work.places_id);
-                    this.$set(targetWork, "place", work.place);
-                    this.$set(targetWork, "price", work.price);
-                    targetCalendar.works.push(targetWork);
-                });
-            this.mode = "edit";
-            this.$refs.calendarEdit.setcalendar(targetCalendar);
-        },
-        create(calendar) {
-            this.mode = "create";
-            this.$refs.calendarCreate.setcalendar(calendar);
         },
         closeEditModal() {
             this.editmodal = false;
