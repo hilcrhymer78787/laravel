@@ -10,8 +10,7 @@
             </ul>
             <ul v-for="place in $store.state.places" :key="place.id" class="table_row">
                 <li class="table_row_list img_name">
-                    <img v-if="place.img_name" @error="noImage" :src="'/storage/' + place.img_name">
-                    <img v-if="!place.img_name" @error="noImage" src="/assets/noimage.png">
+                    <img :src='place.img_name ? "/storage/" + place.img_name : "/assets/noimage.png"'>
                 </li>
                 <li class="table_row_list name">{{ place.name }}</li>
                 <li class="table_row_list tel d-none d-md-block">{{ place.address }}</li>
@@ -24,15 +23,14 @@
 
         <div class="footbar">
             <div class="container">
-                <button class="footbar_btn" @click="create()">新規登録</button>
+                <button class="footbar_btn" @click="edit()">新規登録</button>
             </div>
         </div>
 
         <div :class="{active:editmodal}" class="cmn_modal">
             <div class="cmn_modal_inner">
                 <div @click="closeEditModal()" class="cmn_modal_inner_close">×</div>
-                <PlaceEditComponent v-show="mode === 'edit'" ref="placeEdit" />
-                <PlaceCreateComponent v-show="mode === 'create'" ref="placeCreate" />
+                <PlaceEditComponent ref="placeEdit" />
             </div>
         </div>
 
@@ -44,49 +42,34 @@
 
 <script>
 import PlaceEditComponent from "./PlaceEditComponent";
-import PlaceCreateComponent from "./PlaceCreateComponent";
 export default {
     components: {
         PlaceEditComponent,
-        PlaceCreateComponent,
     },
     data() {
         return {
             editmodal: false,
-            mode: "",
         };
     },
     methods: {
         deleteplace(id, name) {
             if (confirm("「" + name + "」を削除しますか？")) {
                 this.$store.state.placeLoading = true;
-                axios.delete("/api/places/" + id).then((res) => {
-                    this.$store.commit("getplaces");
-                    this.$store.commit("getCalendars");
-                });
+                axios
+                    .delete("/api/places/" + id)
+                    .then((res) => {
+                        this.$store.commit("getplaces");
+                        this.$store.commit("getCalendars");
+                    })
+                    .catch((err) => {
+                        alert("エラーです");
+                    })
+                    .finally(() => (this.$store.state.placeLoading = false));
             }
         },
-        noImage(element) {
-            element.target.src = "/assets/noimage.png";
-        },
-        create() {
-            this.mode = "create";
-            this.editmodal = true;
-            this.$refs.placeCreate.setplace();
-        },
         edit(place) {
-            this.mode = "edit";
-            let editplace = {};
-
-            this.$set(editplace, "id", place.id);
-            this.$set(editplace, "img_name", place.img_name);
-            this.$set(editplace, "img_oldname", place.img_name);
-            this.$set(editplace, "name", place.name);
-            this.$set(editplace, "tel", place.tel);
-            this.$set(editplace, "address", place.address);
-
-            this.$refs.placeEdit.setplace(editplace);
             this.editmodal = true;
+            this.$refs.placeEdit.setplace(place);
         },
         closeEditModal() {
             this.editmodal = false;
@@ -117,16 +100,12 @@ export default {
         &_list {
             padding: 5px;
             @include mq-pc {
-                padding: 5px;
                 font-size: 18px;
             }
             &.img_name {
                 width: 20%;
                 font-weight: bold;
                 padding: 0 5px 0 0;
-                @include mq-pc {
-                    width: 20%;
-                }
                 img {
                     width: 100%;
                     max-width: 70px;
@@ -148,7 +127,6 @@ export default {
                 text-align: right;
                 @include mq-pc {
                     width: 20%;
-                    text-align: right;
                 }
             }
         }

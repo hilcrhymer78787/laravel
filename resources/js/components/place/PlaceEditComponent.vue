@@ -1,15 +1,24 @@
 <template>
-    <form class="form" v-on:submit.prevent="putplace">
-        <div class="form_ttl">出勤先編集</div>
+    <form class="form" v-on:submit.prevent="postplace">
+        <div class="form_ttl">出勤先登録</div>
         <ul class="form_list">
             <li class="form_list_item">
-                <dt class="form_list_item_ttl">IMG</dt>
+                <dt class="form_list_item_ttl">画像</dt>
                 <dd class="form_list_item_main">
-                    <img v-if="!file&&place.img_name" @click="previewImg()" :src="'/storage/' + place.img_name" @error="noImage">
-                    <img v-if="!file&&!place.img_name" @click="previewImg()" src="/assets/noimage.png" @error="noImage">
-                    <img v-if="file" @click="previewImg()" :src="uploadedImage" @error="noImage">
+                    <div @click="$refs.input.click()" class="img_wrap">
+                        <img v-if="!file" :src='place.img_name ? "/storage/" + place.img_name : "/assets/noimage.png"'>
+                        <img v-if="file" :src="uploadedImage">
+                    </div>
                 </dd>
-                <input ref="input" class="d-none" type="file" accept="image/*" v-on:change="fileSelected" @click="fileclicked">
+                <input ref="input" class="d-none" type="file" accept="image/*" @change="fileSelected">
+            </li>
+            <li v-if="place.id" class="form_list_item">
+                <dt class="form_list_item_ttl">登録日時</dt>
+                <dd class="form_list_item_main"><input class="ar" type="text" readonly :value="place.created_at | format"></dd>
+            </li>
+            <li v-if="place.id" class="form_list_item">
+                <dt class="form_list_item_ttl">更新日時</dt>
+                <dd class="form_list_item_main"><input class="ar" type="text" readonly :value="place.updated_at | format"></dd>
             </li>
             <li class="form_list_item">
                 <dt class="form_list_item_ttl">出勤先</dt>
@@ -28,7 +37,7 @@
             </li>
         </ul>
         <div class="form_btn">
-            <button type="submit" class="cmn_btn_sub">編集を確定</button>
+            <button type="submit" class="cmn_btn_sub">登録</button>
         </div>
     </form>
 </template>
@@ -38,66 +47,50 @@ import moment from "moment";
 export default {
     data() {
         return {
-            loading: false,
-            error: {
-                name: false,
-                tel: false,
-                address: false,
-            },
+            error: {},
             uploadedImage: "",
             file: "",
-            place: {
-                id: 0,
-                img_name: "",
-                img_oldname: "",
-                name: "",
-                tel: "",
-                address: "",
-            },
+            place: {},
         };
     },
     methods: {
         setplace(editplace) {
-            this.place = editplace;
             this.file = "";
-            this.$set(this.error, "name", false);
-            this.$set(this.error, "tel", false);
-            this.$set(this.error, "address", false);
+            if (editplace) {
+                this.$set(this.place, "img_oldname", editplace.img_name);
+                Object.keys(editplace).forEach((key) => {
+                    this.$set(this.place, key, editplace[key]);
+                });
+            } else {
+                Object.keys(this.place).forEach((key) => {
+                    this.$set(this.place, key, "");
+                });
+            }
+            Object.keys(this.error).forEach((key) => {
+                this.$set(this.error, key, false);
+            });
         },
-        noImage(element) {
-            element.target.src = "/assets/noimage.png";
-        },
-        previewImg() {
-            this.$refs.input.click();
-        },
-        fileclicked(element) {
-            element.target.value = "";
-        },
-        fileSelected(event) {
+        fileSelected(e) {
+            this.file = e.target.files[0];
             this.$set(
                 this.place,
                 "img_name",
-                moment(new Date()).format("YYYYMMDDHHmmss") +
-                    event.target.files[0].name
+                moment().format("YYYYMMDDHHmmss") + this.file.name
             );
-            this.file = event.target.files[0];
-            let reader = new FileReader(); //File API生成
+            let reader = new FileReader();
             reader.onload = (e) => {
                 this.uploadedImage = e.target.result;
             };
             reader.readAsDataURL(this.file);
         },
-        putplace() {
+        postplace() {
             if (this.validation()) {
                 this.$store.state.placeLoading = true;
                 let postData = new FormData();
                 postData.append("file", this.file);
-                postData.append("id", this.place.id);
-                postData.append("img_name", this.place.img_name);
-                postData.append("img_oldname", this.place.img_oldname);
-                postData.append("name", this.place.name);
-                postData.append("tel", this.place.tel);
-                postData.append("address", this.place.address);
+                Object.keys(this.place).forEach((key) => {
+                    postData.append(key, this.place[key]);
+                });
                 axios
                     .post("/api/placesUpdate", postData)
                     .then((res) => {
@@ -129,6 +122,11 @@ export default {
                 noProblem = false;
             }
             return noProblem;
+        },
+    },
+    filters: {
+        format(value) {
+            return moment(value).format("YYYY/MM/DD HH:mm:ss");
         },
     },
 };
@@ -195,13 +193,17 @@ export default {
                         }
                     }
                 }
-                img {
+                .img_wrap {
                     width: 70px;
                     height: 70px;
                     cursor: pointer;
                     @include mq-pc {
                         width: 120px;
                         height: 120px;
+                    }
+                    img {
+                        width: 100%;
+                        height: 100%;
                     }
                 }
             }

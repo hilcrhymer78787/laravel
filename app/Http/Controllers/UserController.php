@@ -45,7 +45,6 @@ class UserController extends Controller
             $user["email"] = $request->email;
             $user["password"] = $request->password;
             $user["salary"] = $request->salary;
-            $user["img_name"] = $request->img_name;
             $user->save();
         };
     }
