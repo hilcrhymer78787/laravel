@@ -6,9 +6,8 @@ const router = new VueRouter({
     // mode: 'history',
     routes: [
         {
-            path: '/place',
-            name: 'place',
-            component: () => import('./components/place/PlaceListComponent'),
+            path: '/',
+            redirect: `/user`,
         },
         {
             path: '/user',
@@ -16,8 +15,9 @@ const router = new VueRouter({
             component: () => import('./components/user/UserListComponent'),
         },
         {
-            path: '/',
-            redirect: `/calendar/${new Date().getFullYear()}/${new Date().getMonth() + 1}`,
+            path: '/place',
+            name: 'place',
+            component: () => import('./components/place/PlaceListComponent'),
         },
         {
             path: '/calendar',

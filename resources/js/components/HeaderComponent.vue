@@ -9,7 +9,7 @@
                     <img class="header_img" :src='$store.state.loginuser.img_name ? "/storage/" + $store.state.loginuser.img_name : "/assets/noimage.png"'>
                     <div class="header_left">
                         <p>{{$store.state.loginuser.name}}</p>
-                        <a href="/logout">ログアウト</a>
+                        <span @click="logout()">ログアウト</span>
                     </div>
                 </div>
                 <div class="header_nav d-md-flex justify-content-center">
@@ -35,6 +35,11 @@ export default {
         },
         hamburgerFalse() {
             this.hamburger = false;
+        },
+        logout() {
+            if (confirm("ログアウトしますか？")) {
+                window.location.href = "/logout";
+            }
         },
     },
 };
@@ -86,9 +91,10 @@ export default {
     &_left {
         margin-right: 50px;
         font-size: 20px;
-        a {
+        span {
             font-size: 15px;
             color: #f3920b;
+            cursor: pointer;
         }
     }
     &_nav {
