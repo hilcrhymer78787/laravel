@@ -6,18 +6,14 @@
         <div :class="{active:hamburger}" class="header">
             <div class="container">
                 <div class="d-flex align-items-center justify-content-center">
-                    <img class="header_img" v-if="$store.state.loginuser.img_name" @error="noImage" :src="'/storage/' + $store.state.loginuser.img_name">
-                    <img class="header_img" v-if="!$store.state.loginuser.img_name" @error="noImage" src="/assets/noimage.png">
+                    <img class="header_img" :src='$store.state.loginuser.img_name ? "/storage/" + $store.state.loginuser.img_name : "/assets/noimage.png"'>
                     <div class="header_left">
                         <p>{{$store.state.loginuser.name}}</p>
                         <a href="/logout">ログアウト</a>
                     </div>
                 </div>
                 <div class="header_nav d-md-flex justify-content-center">
-                    <router-link @click.native="hamburgerFalse()" :to="{name: 'search'}">search</router-link>
-                    <router-link @click.native="hamburgerFalse()" :to="{name: 'calendar'}">calendar</router-link>
-                    <router-link @click.native="hamburgerFalse()" :to="{name: 'place'}">place</router-link>
-                    <router-link @click.native="hamburgerFalse()" :to="{name: 'user'}">user</router-link>
+                    <router-link v-for="(nav, index) in navs" :key="index" @click.native="hamburgerFalse()" :to="{name: nav}">{{nav}}</router-link>
                 </div>
             </div>
         </div>
@@ -29,13 +25,11 @@
 export default {
     data() {
         return {
+            navs: ["search", "calendar", "place", "user"],
             hamburger: false,
         };
     },
     methods: {
-        noImage(element) {
-            element.target.src = "/assets/noimage.png";
-        },
         hamburgerToggle() {
             this.hamburger = !this.hamburger;
         },

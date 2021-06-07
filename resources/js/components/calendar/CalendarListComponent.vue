@@ -12,17 +12,11 @@
         <!-- カレンダー -->
         <div>
             <ul class="indent">
-                <li class="indent_item">日</li>
-                <li class="indent_item">月</li>
-                <li class="indent_item">火</li>
-                <li class="indent_item">水</li>
-                <li class="indent_item">木</li>
-                <li class="indent_item">金</li>
-                <li class="indent_item">土</li>
+                <li v-for="day in week" :key="day" class="indent_item">{{day}}</li>
             </ul>
 
             <ul class="content">
-                <li v-for="(n, index) in first_day" :key="index+100" class="content_item blank"></li>
+                <li v-for="n in first_day" :key="n" class="content_item blank"></li>
 
                 <li @click="clickCalendar(calendar)" v-for="(calendar, index) in calendars" :key="calendar.date" class="content_item main">
                     <span class="content_item_icn">{{ index + 1 }}</span>
@@ -33,10 +27,8 @@
                     </ul>
                 </li>
 
-                <li v-for="n in lastDayCount" :key="n" class="content_item blank"></li>
+                <li v-for="n in lastDayCount" :key="n + 100" class="content_item blank"></li>
             </ul>
-
-            <pre>{{calendars}}</pre>
 
             <div :class="{active:editmodal}" class="cmn_modal">
                 <div class="cmn_modal_inner">
@@ -60,6 +52,7 @@ export default {
     },
     data() {
         return {
+            week: ["日", "月", "火", "水", "木", "金", "土"],
             loading: false,
             editmodal: false,
         };

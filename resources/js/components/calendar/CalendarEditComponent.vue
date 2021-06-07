@@ -1,5 +1,5 @@
 <template>
-    <form class="form" v-on:submit.prevent="postcalendar">
+    <form class="form" v-on:submit.prevent="postCalendar">
         <div class="form_ttl">
             出勤登録<br>
             {{calendar.date}}
@@ -40,10 +40,9 @@
             <div class="addwork" @click="addwork()">出勤を追加</div>
         </ul>
         <div class="form_btn">
-            <div v-show="deleteBtn" class="cmn_btn_delete" @click="deletecalendar(calendar.date)">全て削除</div>
+            <div v-show="deleteBtn" class="cmn_btn_delete" @click="deleteCalendar(calendar.date)">全て削除</div>
             <button type="submit" class="cmn_btn_sub">登録</button>
         </div>
-        <pre>{{calendar}}</pre>
     </form>
 </template>
 
@@ -76,30 +75,20 @@ export default {
             if (calendar.works.length) {
                 this.deleteBtn = true;
                 calendar.works.forEach((work) => {
-                    let obj = {
-                        members_id: work.members_id,
+                    this.calendar.works.push({
                         member: work.member,
-                        places_id: work.places_id,
+                        members_id: work.member === "（削除済）" ? 0 : work.members_id,
                         place: work.place,
+                        places_id: work.place === "（削除済）" ? 0 : work.places_id,
                         price: work.price,
-                        error_members_id: false,
-                        error_places_id: false,
-                        error_price: false,
-                    };
-                    if (obj.member === "（削除済）") {
-                        obj.members_id = 0;
-                    }
-                    if (obj.place === "（削除済）") {
-                        obj.places_id = 0;
-                    }
-                    this.calendar.works.push(obj);
+                    });
                 });
             } else {
                 this.deleteBtn = false;
                 this.addwork();
             }
         },
-        postcalendar() {
+        postCalendar() {
             if (this.validation()) {
                 this.$parent.loading = true;
                 axios
@@ -116,7 +105,7 @@ export default {
                     });
             }
         },
-        deletecalendar(date) {
+        deleteCalendar(date) {
             if (confirm(date + "のデータを全て削除しますか？")) {
                 this.$parent.loading = true;
                 axios

@@ -10,8 +10,7 @@
             </ul>
             <ul v-for="user in $store.state.users" :key="user.id" class="table_row">
                 <li class="table_row_list img_name">
-                    <img v-if="user.img_name" @error="noImage" :src="'/storage/' + user.img_name">
-                    <img v-if="!user.img_name" @error="noImage" src="/assets/noimage.png">
+                    <img :src='user.img_name ? "/storage/" + user.img_name : "/assets/noimage.png"'>
                 </li>
                 <li class="table_row_list name">{{ user.name }}</li>
                 <li class="table_row_list email d-none d-md-block">{{ user.email }}</li>
@@ -60,15 +59,17 @@ export default {
         deleteuser(id, name) {
             if (confirm("「" + name + "」を削除しますか？")) {
                 this.$store.state.userLoading = true;
-                axios.delete("/api/users/" + id).then((res) => {
-                    this.$store.commit("getusers");
-                    this.$store.commit("getCalendars");
-                    this.$store.state.userLoading = false;
-                });
+                axios
+                    .delete("/api/users/" + id)
+                    .then((res) => {
+                        this.$store.commit("getusers");
+                        this.$store.commit("getCalendars");
+                    })
+                    .catch((err) => {
+                        alert("エラーです");
+                    })
+                    .finally(() => (this.$store.state.userLoading = false));
             }
-        },
-        noImage(element) {
-            element.target.src = "/assets/noimage.png";
         },
         create() {
             this.mode = "create";
