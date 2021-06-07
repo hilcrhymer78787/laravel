@@ -14,24 +14,23 @@
                 </li>
                 <li class="table_row_list name">{{ user.name }}</li>
                 <li class="table_row_list email d-none d-md-block">{{ user.email }}</li>
-                <li class="table_row_list btn" style="text-align:right;">
+                <li class="table_row_list btn">
                     <button class="cmn_btn_sub mr-1" @click="edit(user)">編集</button>
-                    <button class="cmn_btn_delete" @click="deleteuser(user.id, user.name)">削除</button>
+                    <button class="cmn_btn_delete" @click="deleteUser(user.id, user.name)">削除</button>
                 </li>
             </ul>
         </div>
 
         <div class="footbar">
             <div class="container">
-                <button class="footbar_btn" @click="create()">新規登録</button>
+                <button class="footbar_btn" @click="edit()">新規登録</button>
             </div>
         </div>
 
         <div :class="{active:editmodal}" class="cmn_modal">
             <div class="cmn_modal_inner">
                 <div @click="closeEditModal()" class="cmn_modal_inner_close">×</div>
-                <UserEditComponent v-show="mode === 'edit'" ref="userEdit" />
-                <UserCreateComponent v-show="mode === 'create'" ref="userCreate" />
+                <UserEditComponent ref="userEdit" />
             </div>
         </div>
 
@@ -43,20 +42,17 @@
 
 <script>
 import UserEditComponent from "./UserEditComponent";
-import UserCreateComponent from "./UserCreateComponent";
 export default {
     components: {
         UserEditComponent,
-        UserCreateComponent,
     },
     data() {
         return {
             editmodal: false,
-            mode: "",
         };
     },
     methods: {
-        deleteuser(id, name) {
+        deleteUser(id, name) {
             if (confirm("「" + name + "」を削除しますか？")) {
                 this.$store.state.userLoading = true;
                 axios
@@ -71,28 +67,9 @@ export default {
                     .finally(() => (this.$store.state.userLoading = false));
             }
         },
-        create() {
-            this.mode = "create";
-            this.editmodal = true;
-            this.$refs.userCreate.setuser();
-        },
         edit(user) {
-            this.mode = "edit";
-            let edituser = {};
-
-            this.$set(edituser, "id", user.id);
-            this.$set(edituser, "img_name", user.img_name);
-            this.$set(edituser, "img_oldname", user.img_name);
-            this.$set(edituser, "name", user.name);
-            this.$set(edituser, "email", user.email);
-            this.$set(edituser, "email_verified_at", user.email_verified_at);
-            this.$set(edituser, "password", user.password);
-            this.$set(edituser, "salary", user.salary);
-            this.$set(edituser, "created_at", user.created_at);
-            this.$set(edituser, "updated_at", user.updated_at);
-
-            this.$refs.userEdit.setuser(edituser);
             this.editmodal = true;
+            this.$refs.userEdit.setuser(user);
         },
         closeEditModal() {
             this.editmodal = false;

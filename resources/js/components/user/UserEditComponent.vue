@@ -1,21 +1,22 @@
 <template>
-    <form class="form" v-on:submit.prevent="putuser">
-        <div class="form_ttl">出勤者編集</div>
+    <form class="form" v-on:submit.prevent="postuser">
+        <div class="form_ttl">出勤者登録</div>
         <ul class="form_list">
             <li class="form_list_item">
-                <dt class="form_list_item_ttl">ID</dt>
+                <dt class="form_list_item_ttl">画像</dt>
                 <dd class="form_list_item_main">
-                    <img v-if="!file&&user.img_name" @click="previewImg()" :src="'/storage/' + user.img_name" @error="noImage">
-                    <img v-if="!file&&!user.img_name" @click="previewImg()" src="/assets/noimage.png" @error="noImage">
-                    <img v-if="file" @click="previewImg()" :src="uploadedImage" @error="noImage">
+                    <div @click="$refs.input.click()" class="img_wrap">
+                        <img v-if="!file" :src='user.img_name ? "/storage/" + user.img_name : "/assets/noimage.png"'>
+                        <img v-if="file" :src="uploadedImage">
+                    </div>
                 </dd>
-                <input ref="input" class="d-none" type="file" accept="image/*" v-on:change="fileSelected" @click="fileclicked">
+                <input ref="input" class="d-none" type="file" accept="image/*" @change="fileSelected">
             </li>
-            <li class="form_list_item">
+            <li v-if="user.id" class="form_list_item">
                 <dt class="form_list_item_ttl">登録日時</dt>
                 <dd class="form_list_item_main"><input class="ar" type="text" readonly :value="user.created_at | format"></dd>
             </li>
-            <li class="form_list_item">
+            <li v-if="user.id" class="form_list_item">
                 <dt class="form_list_item_ttl">更新日時</dt>
                 <dd class="form_list_item_main"><input class="ar" type="text" readonly :value="user.updated_at | format"></dd>
             </li>
@@ -29,6 +30,11 @@
                 <dd class="form_list_item_main"><input type="text" v-model="user.email"></dd>
                 <div v-if="error.email" class="error">メールアドレスを適切な形で入力してください</div>
             </li>
+            <li v-if="!user.id" class="form_list_item">
+                <dt class="form_list_item_ttl">パスワード</dt>
+                <dd class="form_list_item_main"><input type="text" v-model="user.password"></dd>
+                <div v-if="error.password" class="error">パスワードを8文字以上の英数字で入力してください</div>
+            </li>
             <li class="form_list_item">
                 <dt class="form_list_item_ttl">日給</dt>
                 <dd class="form_list_item_main"><input type="text" v-model="user.salary"></dd>
@@ -36,7 +42,7 @@
             </li>
         </ul>
         <div class="form_btn">
-            <button type="submit" class="cmn_btn_sub">編集を確定</button>
+            <button type="submit" class="cmn_btn_sub">登録</button>
         </div>
     </form>
 </template>
@@ -46,65 +52,50 @@ import moment from "moment";
 export default {
     data() {
         return {
-            loading: false,
-            error: {
-                name: false,
-                email: false,
-                salary: false,
-            },
+            error: {},
             uploadedImage: "",
             file: "",
-            user: {
-                id: 0,
-                img_name: "",
-                img_oldname: "",
-                name: "",
-                email: "",
-                salary: "",
-            },
+            user: {},
         };
     },
     methods: {
         setuser(edituser) {
-            this.user = edituser;
             this.file = "";
-            this.$set(this.error, "name", false);
-            this.$set(this.error, "email", false);
-            this.$set(this.error, "salary", false);
+            if (edituser) {
+                this.$set(this.user, "img_oldname", edituser.img_name);
+                Object.keys(edituser).forEach((key) => {
+                    this.$set(this.user, key, edituser[key]);
+                });
+            } else {
+                Object.keys(this.user).forEach((key) => {
+                    this.$set(this.user, key, "");
+                });
+            }
+            Object.keys(this.error).forEach((key) => {
+                this.$set(this.error, key, false);
+            });
         },
-        noImage(element) {
-            element.target.src = "/assets/noimage.png";
-        },
-        previewImg() {
-            this.$refs.input.click();
-        },
-        fileclicked(element) {
-            element.target.value = "";
-        },
-        fileSelected(event) {
+        fileSelected(e) {
+            this.file = e.target.files[0];
             this.$set(
                 this.user,
                 "img_name",
-                moment(new Date()).format("YYYYMMDDHHmmss") +
-                    event.target.files[0].name
+                moment().format("YYYYMMDDHHmmss") + this.file.name
             );
-            this.file = event.target.files[0];
-            let reader = new FileReader(); //File API生成
+            let reader = new FileReader();
             reader.onload = (e) => {
                 this.uploadedImage = e.target.result;
             };
             reader.readAsDataURL(this.file);
         },
-        putuser() {
+        postuser() {
             if (this.validation()) {
                 this.$store.state.userLoading = true;
                 let postData = new FormData();
                 postData.append("file", this.file);
-                postData.append("id", this.user.id);
-                postData.append("img_name", this.user.img_name);
-                postData.append("name", this.user.name);
-                postData.append("email", this.user.email);
-                postData.append("salary", this.user.salary);
+                Object.keys(this.user).forEach((key) => {
+                    postData.append(key, this.user[key]);
+                });
                 axios
                     .post("/api/usersUpdate", postData)
                     .then((res) => {
@@ -135,6 +126,13 @@ export default {
                 this.$set(this.error, "email", true);
                 noProblem = false;
             }
+            if (!this.user.id) {
+                this.$set(this.error, "password", false);
+                if (!/^([a-zA-Z0-9]{8,})$/.test(this.user.password)) {
+                    this.$set(this.error, "password", true);
+                    noProblem = false;
+                }
+            }
             this.$set(this.error, "salary", false);
             if (!/^([1-9]\d*|0)$/.test(this.user.salary)) {
                 this.$set(this.error, "salary", true);
@@ -143,9 +141,8 @@ export default {
             return noProblem;
         },
     },
-    mounted: function () {},
     filters: {
-        format: function (value) {
+        format(value) {
             return moment(value).format("YYYY/MM/DD HH:mm:ss");
         },
     },
@@ -213,13 +210,17 @@ export default {
                         }
                     }
                 }
-                img {
+                .img_wrap {
                     width: 70px;
                     height: 70px;
                     cursor: pointer;
                     @include mq-pc {
                         width: 120px;
                         height: 120px;
+                    }
+                    img {
+                        width: 100%;
+                        height: 100%;
                     }
                 }
             }
