@@ -21,8 +21,10 @@
     </div>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import Vue from 'vue';
+export default Vue.extend({
+
     data() {
         return {
             navs: ["search", "calendar", "place", "user"],
@@ -30,19 +32,19 @@ export default {
         };
     },
     methods: {
-        hamburgerToggle() {
+        hamburgerToggle(): void {
             this.hamburger = !this.hamburger;
         },
-        hamburgerFalse() {
+        hamburgerFalse(): void {
             this.hamburger = false;
         },
-        logout() {
+        logout(): void {
             if (confirm("ログアウトしますか？")) {
                 window.location.href = "/logout";
             }
         },
     },
-};
+});
 </script>
 <style lang="scss" scoped>
 @mixin mq-pc {

@@ -7,9 +7,10 @@
     </div>
 </template>
 
-<script>
-import HeaderComponent from "./HeaderComponent";
-export default {
+<script lang="ts">
+import Vue from 'vue';
+import HeaderComponent from "./HeaderComponent.vue";
+export default Vue.extend({
     components: {
         HeaderComponent,
     },
@@ -19,7 +20,7 @@ export default {
         this.$store.commit("getusers");
         this.$store.commit("getCalendars");
     },
-};
+});
 </script>
 <style lang="scss">
 @charset "utf-8";
