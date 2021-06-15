@@ -1,5 +1,8 @@
-require('./bootstrap')
 import Vue from 'vue';
+import axios from "axios";
+
+import bootstrap from './bootstrap';
+bootstrap();
 
 import AppComponent from "./components/AppComponent.vue"
 Vue.component('app-component', AppComponent);
@@ -27,11 +30,11 @@ const router = new VueRouter({
             name: 'test',
             component: () => import('./components/TestComponent.vue'),
         },
- 
+
         {
             path: '/user',
             name: 'user',
-            // component: () => import('./components/user/UserListComponent.vue'),
+            component: () => import('./components/user/UserListComponent.vue'),
         },
         {
             path: '/place',
@@ -71,58 +74,58 @@ const store = new Vuex.Store({
         calendarLoading: false,
     },
     mutations: {
-        // getLoginUser(state) {
-        //     axios.get("/api/loginuser").then((res) => {
-        //         state.loginuser = res.data.loginuser;
-        //     });
-        // },
-        // getusers(state) {
-        //     state.userLoading = true;
-        //     axios
-        //         .get("/api/users")
-        //         .then((res) => {
-        //             state.users = res.data;
-        //         })
-        //         .catch((err) => {
-        //             alert("エラーです");
-        //         })
-        //         .finally(() => (state.userLoading = false));
-        // },
-        // getplaces(state) {
-        //     state.placeLoading = true;
-        //     axios
-        //         .get("/api/places")
-        //         .then((res) => {
-        //             state.places = res.data;
-        //         })
-        //         .catch((err) => {
-        //             alert("エラーです");
-        //         })
-        //         .finally(() => (state.placeLoading = false));
-        // },
+        getLoginUser(state) {
+            axios.get("/api/loginuser").then((res: any) => {
+                state.loginuser = res.data.loginuser;
+            });
+        },
+        getusers(state) {
+            state.userLoading = true;
+            axios
+                .get("/api/users")
+                .then((res: any) => {
+                    state.users = res.data;
+                })
+                .catch((err: any) => {
+                    alert("エラーです");
+                })
+                .finally(() => (state.userLoading = false));
+        },
+        getplaces(state) {
+            state.placeLoading = true;
+            axios
+                .get("/api/places")
+                .then((res: any) => {
+                    state.places = res.data;
+                })
+                .catch((err: any) => {
+                    alert("エラーです");
+                })
+                .finally(() => (state.placeLoading = false));
+        },
         // getCalendars(state) {
         //     state.calendarLoading = true;
         //     axios
         //         .get("/api/calendars")
-        //         .then((res) => {
+        //         .then((res: any) => {
         //             state.calendarDatas = res.data;
 
-        //             let dates = [];
-        //             res.data.forEach(element => {
+        //             let dates :any= [];
+        //             res.data.forEach((element:any) => {
         //                 dates.push(element.date)
         //             });
 
         //             state.calendarWorks.splice(0, state.calendarWorks.length);
         //             new Set(dates).forEach(date => {
-        //                 let calendarWork = {
+        //                 let calendarWork: any = {
         //                     date: date,
-        //                     works: [...res.data.filter(data => date === data.date)]
+        //                     works: [...res.data.filter((data:any) => date === data.date)]
         //                 }
         //                 state.calendarWorks.push(calendarWork);
         //             });
 
         //         })
-        //         .catch((err) => {
+        //         .catch((err: any) => {
         //             alert("エラーです");
         //         })
         //         .finally(() => (state.calendarLoading = false));

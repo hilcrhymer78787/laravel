@@ -44,13 +44,23 @@
         <div class="form_btn">
             <button type="submit" class="cmn_btn_sub">登録</button>
         </div>
+        <pre>{{user}}</pre>
     </form>
 </template>
 
-<script>
-import moment from "moment";
-export default {
-    data() {
+<script lang="ts">
+// import moment from "moment";
+import Vue from "vue";
+import axios from "axios";
+
+export type DataType = {
+    error: any;
+    uploadedImage: any;
+    file: any;
+    user: any;
+};
+export default Vue.extend({
+    data(): DataType {
         return {
             error: {},
             uploadedImage: "",
@@ -59,7 +69,7 @@ export default {
         };
     },
     methods: {
-        setuser(edituser) {
+        setuser(edituser: any) {
             this.file = "";
             if (edituser) {
                 this.$set(this.user, "img_oldname", edituser.img_name);
@@ -75,15 +85,16 @@ export default {
                 this.$set(this.error, key, false);
             });
         },
-        fileSelected(e) {
+        fileSelected(e: any) {
             this.file = e.target.files[0];
             this.$set(
                 this.user,
                 "img_name",
-                moment().format("YYYYMMDDHHmmss") + this.file.name
+                this.file.name
+                // moment().format("YYYYMMDDHHmmss") + this.file.name
             );
             let reader = new FileReader();
-            reader.onload = (e) => {
+            reader.onload = (e: any) => {
                 this.uploadedImage = e.target.result;
             };
             reader.readAsDataURL(this.file);
@@ -91,20 +102,20 @@ export default {
         postuser() {
             if (this.validation()) {
                 this.$store.state.userLoading = true;
-                let postData = new FormData();
+                let postData: any = new FormData();
                 postData.append("file", this.file);
-                Object.keys(this.user).forEach((key) => {
+                Object.keys(this.user).forEach((key: any) => {
                     postData.append(key, this.user[key]);
                 });
                 axios
                     .post("/api/usersUpdate", postData)
-                    .then((res) => {
-                        this.$parent.editmodal = false;
+                    .then((res: any) => {
+                        // this.$parent.editmodal = false;
                         this.$store.commit("getLoginUser");
                         this.$store.commit("getusers");
                         this.$store.commit("getCalendars");
                     })
-                    .catch((err) => {
+                    .catch((err: any) => {
                         alert("エラーです");
                     })
                     .finally(() => (this.$store.state.userLoading = false));
@@ -142,11 +153,11 @@ export default {
         },
     },
     filters: {
-        format(value) {
-            return moment(value).format("YYYY/MM/DD HH:mm:ss");
+        format(value: any) {
+            // return moment(value).format("YYYY/MM/DD HH:mm:ss");
         },
     },
-};
+});
 </script>
 <style lang="scss" scoped>
 @mixin mq-pc {

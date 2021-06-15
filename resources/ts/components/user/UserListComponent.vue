@@ -40,42 +40,49 @@
     </div>
 </template>
 
-<script>
-import UserEditComponent from "./UserEditComponent";
-export default {
+<script lang="ts">
+import UserEditComponent from "./UserEditComponent.vue";
+import Vue from "vue";
+import axios from "axios";
+
+export type DataType = {
+    editmodal: Boolean;
+};
+
+export default Vue.extend({
     components: {
         UserEditComponent,
     },
-    data() {
+    data(): DataType {
         return {
             editmodal: false,
         };
     },
     methods: {
-        deleteUser(id, name) {
+        deleteUser(id: any, name: any) {
             if (confirm("「" + name + "」を削除しますか？")) {
                 this.$store.state.userLoading = true;
                 axios
                     .delete("/api/users/" + id)
-                    .then((res) => {
+                    .then((res: any) => {
                         this.$store.commit("getusers");
                         this.$store.commit("getCalendars");
                     })
-                    .catch((err) => {
+                    .catch((err: any) => {
                         alert("エラーです");
                     })
                     .finally(() => (this.$store.state.userLoading = false));
             }
         },
-        edit(user) {
+        edit(user: any) {
             this.editmodal = true;
-            this.$refs.userEdit.setuser(user);
+            // this.$refs.userEdit.setuser(user);
         },
         closeEditModal() {
             this.editmodal = false;
         },
     },
-};
+});
 </script>
 <style lang="scss" scoped>
 @mixin mq-pc {
