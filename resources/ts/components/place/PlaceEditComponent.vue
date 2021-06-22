@@ -1,100 +1,98 @@
 <template>
-    <form class="form" v-on:submit.prevent="postplace">
-        <div class="form_ttl">出勤先登録</div>
-        <ul class="form_list">
-            <li class="form_list_item">
-                <dt class="form_list_item_ttl">画像</dt>
-                <dd class="form_list_item_main">
-                    <div @click="$refs.input.click()" class="img_wrap">
-                        <img v-if="!file" :src='place.img_name ? "/storage/" + place.img_name : "/assets/noimage.png"'>
-                        <img v-if="file" :src="uploadedImage">
-                    </div>
-                </dd>
-                <input ref="input" class="d-none" type="file" accept="image/*" @change="fileSelected">
-            </li>
-            <li v-if="place.id" class="form_list_item">
-                <dt class="form_list_item_ttl">登録日時</dt>
-                <dd class="form_list_item_main"><input class="ar" type="text" readonly :value="place.created_at | format"></dd>
-            </li>
-            <li v-if="place.id" class="form_list_item">
-                <dt class="form_list_item_ttl">更新日時</dt>
-                <dd class="form_list_item_main"><input class="ar" type="text" readonly :value="place.updated_at | format"></dd>
-            </li>
-            <li class="form_list_item">
-                <dt class="form_list_item_ttl">出勤先</dt>
-                <dd class="form_list_item_main"><input type="text" v-model="place.name"></dd>
-                <div v-if="error.name" class="error">出勤先を入力してください</div>
-            </li>
-            <li class="form_list_item">
-                <dt class="form_list_item_ttl">電話番号</dt>
-                <dd class="form_list_item_main"><input type="text" v-model="place.tel"></dd>
-                <div v-if="error.tel" class="error">電話番号を入力してください</div>
-            </li>
-            <li class="form_list_item">
-                <dt class="form_list_item_ttl">住所</dt>
-                <dd class="form_list_item_main"><input type="text" v-model="place.address"></dd>
-                <div v-if="error.address" class="error">住所を入力してください</div>
-            </li>
-        </ul>
-        <div class="form_btn">
-            <button type="submit" class="cmn_btn_sub">登録</button>
-        </div>
-    </form>
+    <div>
+        <div @click="closeEditModal()" class="cmn_modal_inner_close">×</div>
+        <form class="form" v-on:submit.prevent="postplace">
+            <div class="form_ttl">出勤先登録</div>
+            <ul class="form_list">
+                <li class="form_list_item">
+                    <dt class="form_list_item_ttl">画像</dt>
+                    <dd class="form_list_item_main">
+                        <div @click="$refs.input.click()" class="img_wrap">
+                            <img v-if="!file" :src='editPlace.img_name ? "/storage/" + editPlace.img_name : "/assets/noimage.png"'>
+                            <img v-if="file" :src="uploadedImage">
+                        </div>
+                    </dd>
+                    <input ref="input" class="d-none" type="file" accept="image/*" @change="fileSelected">
+                </li>
+                <li v-if="editPlace.id" class="form_list_item">
+                    <dt class="form_list_item_ttl">登録日時</dt>
+                    <dd class="form_list_item_main"><input class="ar" type="text" readonly :value="editPlace.created_at | format"></dd>
+                </li>
+                <li v-if="editPlace.id" class="form_list_item">
+                    <dt class="form_list_item_ttl">更新日時</dt>
+                    <dd class="form_list_item_main"><input class="ar" type="text" readonly :value="editPlace.updated_at | format"></dd>
+                </li>
+                <li class="form_list_item">
+                    <dt class="form_list_item_ttl">出勤先</dt>
+                    <dd class="form_list_item_main"><input type="text" v-model="editPlace.name"></dd>
+                    <div v-if="error.name" class="error">出勤先を入力してください</div>
+                </li>
+                <li class="form_list_item">
+                    <dt class="form_list_item_ttl">電話番号</dt>
+                    <dd class="form_list_item_main"><input type="text" v-model="editPlace.tel"></dd>
+                    <div v-if="error.tel" class="error">電話番号を入力してください</div>
+                </li>
+                <li class="form_list_item">
+                    <dt class="form_list_item_ttl">住所</dt>
+                    <dd class="form_list_item_main"><input type="text" v-model="editPlace.address"></dd>
+                    <div v-if="error.address" class="error">住所を入力してください</div>
+                </li>
+            </ul>
+            <div class="form_btn">
+                <button type="submit" class="cmn_btn_sub">登録</button>
+            </div>
+        </form>
+    </div>
 </template>
 
-<script>
-import moment from "moment";
-export default {
+<script lang="ts">
+import Vue from "vue";
+import axios from "axios";
+const moment = require("moment");
+
+export default Vue.extend({
+    props: {
+        editPlace: {
+            type: Object,
+        },
+    },
     data() {
         return {
-            error: {},
-            uploadedImage: "",
-            file: "",
-            place: {},
+            uploadedImage: "" as string,
+            file: "" as any,
+            error: {
+                name: false as boolean,
+                tel: false as boolean,
+                address: false as boolean,
+            },
         };
     },
     methods: {
-        setplace(editplace) {
-            this.file = "";
-            if (editplace) {
-                this.$set(this.place, "img_oldname", editplace.img_name);
-                Object.keys(editplace).forEach((key) => {
-                    this.$set(this.place, key, editplace[key]);
-                });
-            } else {
-                Object.keys(this.place).forEach((key) => {
-                    this.$set(this.place, key, "");
-                });
-            }
-            Object.keys(this.error).forEach((key) => {
-                this.$set(this.error, key, false);
-            });
-        },
-        fileSelected(e) {
+        fileSelected(e: any): void {
             this.file = e.target.files[0];
             this.$set(
-                this.place,
+                this.editPlace,
                 "img_name",
                 moment().format("YYYYMMDDHHmmss") + this.file.name
             );
             let reader = new FileReader();
-            reader.onload = (e) => {
+            reader.onload = (e: any) => {
                 this.uploadedImage = e.target.result;
             };
             reader.readAsDataURL(this.file);
         },
-        postplace() {
+        postplace(): void {
             if (this.validation()) {
                 this.$store.state.placeLoading = true;
-                let postData = new FormData();
+                let postData: any = new FormData();
                 postData.append("file", this.file);
-                Object.keys(this.place).forEach((key) => {
-                    postData.append(key, this.place[key]);
+                Object.keys(this.editPlace).forEach((key) => {
+                    postData.append(key, this.editPlace[key]);
                 });
                 axios
                     .post("/api/placesUpdate", postData)
                     .then((res) => {
-                        this.$parent.editmodal = false;
+                        this.closeEditModal();
                         this.$store.commit("getplaces");
                         this.$store.commit("getCalendars");
                     })
@@ -104,32 +102,41 @@ export default {
                     .finally(() => (this.$store.state.placeLoading = false));
             }
         },
-        validation() {
+        validation(): boolean {
             let noProblem = true;
             this.$set(this.error, "name", false);
-            if (this.place.name === "") {
+            if (this.editPlace.name === "") {
                 this.$set(this.error, "name", true);
                 noProblem = false;
             }
             this.$set(this.error, "tel", false);
-            if (this.place.tel === "") {
+            if (this.editPlace.tel === "") {
                 this.$set(this.error, "tel", true);
                 noProblem = false;
             }
             this.$set(this.error, "address", false);
-            if (this.place.address === "") {
+            if (this.editPlace.address === "") {
                 this.$set(this.error, "address", true);
                 noProblem = false;
             }
             return noProblem;
         },
+        closeEditModal(): void {
+            this.file = "";
+            let inputRef: any = this.$refs.input;
+            inputRef.value = "";
+            Object.keys(this.error).forEach((key) => {
+                this.$set(this.error, key, false);
+            });
+            this.$emit("closeEditModal");
+        },
     },
     filters: {
-        format(value) {
+        format(value: Date) :Date{
             return moment(value).format("YYYY/MM/DD HH:mm:ss");
         },
     },
-};
+});
 </script>
 <style lang="scss" scoped>
 @mixin mq-pc {
@@ -147,7 +154,7 @@ export default {
 }
 .form {
     height: 100%;
-    padding-top: 50px;
+    padding-top: 120px;
     &_ttl {
         font-size: 25px;
         font-weight: bold;

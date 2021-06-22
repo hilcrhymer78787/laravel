@@ -43,38 +43,39 @@
         </div>
     </div>
 </template>
-<script>
-import CalendarEditComponent from "./CalendarEditComponent";
-import moment from "moment";
-export default {
+<script lang="ts">
+import Vue from "vue";
+import CalendarEditComponent from "./CalendarEditComponent.vue";
+const moment = require("moment");
+export default Vue.extend({
     components: {
         CalendarEditComponent,
     },
     data() {
         return {
-            week: ["日", "月", "火", "水", "木", "金", "土"],
-            loading: false,
-            editmodal: false,
+            week: ["日", "月", "火", "水", "木", "金", "土"] as any[string],
+            loading: false as boolean,
+            editmodal: false as boolean,
         };
     },
     computed: {
-        calendars() {
-            let outputData = [];
+        calendars() :any{
+            let outputData :any = [];
 
             for (let day = 1; day <= this.lastday; day++) {
                 outputData.push({
                     date: moment(
                         new Date(this.year, this.month - 1, day)
                     ).format("YYYY-MM-DD"),
-                    works: [],
+                    works: [] as never,
                 });
             }
 
             if (!this.$store.state.calendarLoading) {
-                outputData.forEach((calendar) => {
+                outputData.forEach((calendar:any) => {
                     let calendarWorksFilterDate =
                         this.$store.state.calendarWorks.filter(
-                            (calendarElm) => calendarElm.date === calendar.date
+                            (calendarElm:any) => calendarElm.date === calendar.date
                         );
                     if (calendarWorksFilterDate.length) {
                         calendar.works.push(
@@ -86,34 +87,33 @@ export default {
 
             return outputData;
         },
-        year() {
+        year() :any{
             return this.$route.params.year;
         },
-        month() {
+        month() :any{
             return this.$route.params.month;
         },
-        lastday() {
+        lastday() :any{
             return new Date(this.year, this.month, 0).getDate();
         },
-        first_day() {
+        first_day() :any{
             return new Date(this.year, this.month - 1, 1).getDay();
         },
-        lastDayCount() {
-            return (
-                6 - new Date(this.year, this.month - 1, this.lastday).getDay()
-            );
+        lastDayCount() :any{
+            return  6 - new Date(this.year, this.month - 1, this.lastday).getDay()
+            
         },
     },
     methods: {
-        clickCalendar(calendar) {
+        clickCalendar(calendar:any) {
             this.editmodal = true;
-            this.$refs.calendarEdit.setCalendar(calendar);
+            // this.$refs.calendarEdit.setCalendar(calendar);
         },
         closeEditModal() {
             this.editmodal = false;
         },
     },
-};
+});
 </script>
 
 <style lang="scss" scoped>

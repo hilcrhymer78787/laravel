@@ -30,7 +30,7 @@
         <div :class="{active:editmodal}" class="cmn_modal">
             <div class="cmn_modal_inner">
                 <div @click="closeEditModal()" class="cmn_modal_inner_close">×</div>
-                <UserEditComponent ref="userEdit" />
+                <UserEditComponent @closeEditModal="closeEditModal" :editUser="editUser" ref="userEdit" />
             </div>
         </div>
 
@@ -44,39 +44,56 @@
 import UserEditComponent from "./UserEditComponent.vue";
 import Vue from "vue";
 import axios from "axios";
-
-export type DataType = {
-    editmodal: Boolean;
-};
-
 export default Vue.extend({
     components: {
         UserEditComponent,
     },
-    data(): DataType {
+    data() {
         return {
-            editmodal: false,
+            editmodal: false as boolean,
+            file: "" as any,
+            editUser: {
+                img_oldname: "" as string,
+                id: 0 as number,
+                img_name: "" as string,
+                name: "" as string,
+                email: "" as string,
+                email_verified_at: "" as string,
+                password: "" as string,
+                salary: 0 as number,
+                created_at: "" as string,
+                updated_at: "" as string,
+            },
         };
     },
     methods: {
-        deleteUser(id: any, name: any) {
+        deleteUser(id: number, name: string): void {
             if (confirm("「" + name + "」を削除しますか？")) {
                 this.$store.state.userLoading = true;
                 axios
                     .delete("/api/users/" + id)
-                    .then((res: any) => {
+                    .then((res): void => {
                         this.$store.commit("getusers");
                         this.$store.commit("getCalendars");
                     })
-                    .catch((err: any) => {
+                    .catch((err): void => {
                         alert("エラーです");
                     })
                     .finally(() => (this.$store.state.userLoading = false));
             }
         },
-        edit(user: any) {
+        edit(editUser: any): void {
             this.editmodal = true;
-            // this.$refs.userEdit.setuser(user);
+            if (editUser) {
+                this.$set(this.editUser, "img_oldname", editUser.img_name);
+                Object.keys(editUser).forEach((key) => {
+                    this.$set(this.editUser, key, editUser[key]);
+                });
+            } else {
+                Object.keys(this.editUser).forEach((key) => {
+                    this.$set(this.editUser, key, "");
+                });
+            }
         },
         closeEditModal() {
             this.editmodal = false;

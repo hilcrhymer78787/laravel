@@ -46,12 +46,16 @@
     </form>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import Vue from "vue";
+import axios from "axios";
+
+export default Vue.extend({
+
     data() {
         return {
-            deleteBtn: false,
-            calendar: {},
+            deleteBtn: false as boolean,
+            calendar: {} as any,
         };
     },
     methods: {
@@ -63,18 +67,18 @@ export default {
                 price: 0,
             });
         },
-        deletelist(index) {
+        deletelist(index:any) {
             this.calendar.works.splice(index, 1);
             if (!this.calendar.works.length) {
                 this.addwork();
             }
         },
-        setCalendar(calendar) {
+        setCalendar(calendar:any) {
             this.$set(this.calendar, "date", calendar.date);
             this.$set(this.calendar, "works", []);
             if (calendar.works.length) {
                 this.deleteBtn = true;
-                calendar.works.forEach((work) => {
+                calendar.works.forEach((work:any) => {
                     this.calendar.works.push({
                         member: work.member,
                         members_id: work.member === "（削除済）" ? 0 : work.members_id,
@@ -90,41 +94,41 @@ export default {
         },
         postCalendar() {
             if (this.validation()) {
-                this.$parent.loading = true;
+                // this.$parent.loading = true;
                 axios
                     .post("/api/calendars", this.calendar)
                     .then((res) => {
-                        this.$parent.editmodal = false;
+                        // this.$parent.editmodal = false;
                         this.$store.commit("getCalendars");
                     })
                     .catch((err) => {
                         alert("エラーです");
                     })
                     .finally(() => {
-                        this.$parent.loading = false;
+                        // this.$parent.loading = false;
                     });
             }
         },
-        deleteCalendar(date) {
+        deleteCalendar(date:any) {
             if (confirm(date + "のデータを全て削除しますか？")) {
-                this.$parent.loading = true;
+                // this.$parent.loading = true;
                 axios
                     .delete("/api/calendars/" + date)
                     .then((res) => {
-                        this.$parent.editmodal = false;
+                        // this.$parent.editmodal = false;
                         this.$store.commit("getCalendars");
                     })
                     .catch((err) => {
                         alert("エラーです");
                     })
                     .finally(() => {
-                        this.$parent.loading = false;
+                        // this.$parent.loading = false;
                     });
             }
         },
         validation() {
             let noProblem = true;
-            this.calendar.works.forEach((work) => {
+            this.calendar.works.forEach((work:any) => {
                 this.$set(work, "error_members_id", false);
                 if (Number(work.members_id) === 0) {
                     this.$set(work, "error_members_id", true);
@@ -144,7 +148,7 @@ export default {
             return noProblem;
         },
     },
-};
+});
 </script>
 <style lang="scss" scoped>
 @mixin mq-pc {

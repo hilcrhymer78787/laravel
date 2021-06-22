@@ -1,5 +1,6 @@
 <template>
     <div>
+        <pre>{{$store.state.calendarWorks}}</pre>
         <input type="text" v-model="newTask.content" @keyup.enter="createTask">
         <ul>
             <li v-for="(task, index) in tasks" :key="index">
@@ -13,32 +14,21 @@
 </template>
 <script lang="ts">
 import Vue from 'vue';
-export type DataType = {
-    tasks: any[];
-    newTask: {
-        state: Boolean,
-        content: String,
-    };
-};
 export default Vue.extend({
-    data(): DataType {
+    data() {
         return {
-            tasks: [],
+            tasks: [] as any,
             newTask: {
-                state: false,
-                content: ""
+                state: false as boolean,
+                content: "" as string
             },
         };
     },
     methods: {
         createTask(): void {
-            let task: any = {
-                state: Boolean,
-                content: String
-            }
-            task = {
-                state: this.newTask.state,
-                content: this.newTask.content
+            let task = {
+                state: this.newTask.state as boolean,
+                content: this.newTask.content as string
             }
             this.tasks.push(task);
         },

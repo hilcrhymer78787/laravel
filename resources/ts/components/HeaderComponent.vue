@@ -23,15 +23,11 @@
 
 <script lang="ts">
 import Vue from "vue";
-export type DataType = {
-    navs: any[];
-    hamburger: Boolean;
-};
 export default Vue.extend({
-    data(): DataType {
+    data() {
         return {
-            navs: ["search", "calendar", "place", "user"],
-            hamburger: false,
+            navs: ["search", "calendar", "place", "user"] as any[string],
+            hamburger: false as boolean,
         };
     },
     methods: {

@@ -68,11 +68,12 @@
     </div>
 </template>
 
-<script>
-import Datepicker from "vuejs-datepicker";
-import { ja } from "vuejs-datepicker/dist/locale";
-import moment from "moment";
-export default {
+<script lang="ts">
+import Vue from "vue";
+const Datepicker = require("vuejs-datepicker").default;
+const ja = require("vuejs-datepicker/dist/locale").ja;
+const moment = require("moment");
+export default Vue.extend({
     components: {
         Datepicker,
     },
@@ -93,55 +94,55 @@ export default {
         };
     },
     computed: {
-        calendars() {
-            return this.searchCalendars.filter((value, index) => {
+        calendars() :any{
+            return this.searchCalendars.filter((value: any, index: number) => {
                 return (
                     this.perPage * (this.currentPage - 1) <= index &&
                     index < this.perPage * this.currentPage
                 );
             });
         },
-        searchCalendars() {
+        searchCalendars(): any {
             this.currentPage = 1;
             let outputDatas = this.$store.state.calendarDatas;
             if (this.members_id != 0) {
                 outputDatas = outputDatas.filter(
-                    (value) => value.members_id === this.members_id
+                    (value: any) => value.members_id === this.members_id
                 );
             }
             if (this.places_id != 0) {
                 outputDatas = outputDatas.filter(
-                    (value) => value.places_id === this.places_id
+                    (value: any) => value.places_id === this.places_id
                 );
             }
             if (this.date_min != "Invalid date") {
                 outputDatas = outputDatas.filter(
-                    (value) => value.date >= this.date_min
+                    (value: any) => value.date >= this.date_min
                 );
             }
             if (this.date_max != "Invalid date") {
                 outputDatas = outputDatas.filter(
-                    (value) => value.date <= this.date_max
+                    (value: any) => value.date <= this.date_max
                 );
             }
             if (this.price_min != "") {
                 outputDatas = outputDatas.filter(
-                    (value) => value.price >= this.price_min
+                    (value: any) => value.price >= this.price_min
                 );
             }
             if (this.price_max != "") {
                 outputDatas = outputDatas.filter(
-                    (value) => value.price <= this.price_max
+                    (value: any) => value.price <= this.price_max
                 );
             }
             return outputDatas;
         },
-        maxPages() {
+        maxPages() :any{
             return Math.ceil(this.searchCalendars.length / this.perPage);
         },
     },
     methods: {
-        format(value) {
+        format(value: Date | string): string {
             return moment(value).format("YYYY-MM-DD");
         },
     },
@@ -156,7 +157,7 @@ export default {
             this.date_max = this.format(this.date_max);
         },
     },
-};
+});
 </script>
 <style lang="scss" scoped>
 @mixin mq-pc {

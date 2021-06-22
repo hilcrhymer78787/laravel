@@ -39,7 +39,7 @@ const router = new VueRouter({
         {
             path: '/place',
             name: 'place',
-            // component: () => import('./components/place/PlaceListComponent.vue'),
+            component: () => import('./components/place/PlaceListComponent.vue'),
         },
         {
             path: '/calendar',
@@ -48,13 +48,13 @@ const router = new VueRouter({
         },
         {
             path: '/calendar/:year/:month',
-            // component: () => import('./components/calendar/CalendarListComponent.vue'),
+            component: () => import('./components/calendar/CalendarListComponent.vue'),
             props: true
         },
         {
             path: '/search',
             name: 'search',
-            // component: () => import('./components/search/SearchListComponent.vue'),
+            component: () => import('./components/search/SearchListComponent.vue'),
         },
     ]
 });
@@ -64,72 +64,129 @@ Vue.use(Vuex)
 
 const store = new Vuex.Store({
     state: {
-        loginuser: {},
-        users: [],
-        places: [],
-        calendarDatas: [],
-        calendarWorks: [],
-        userLoading: false,
-        placeLoading: false,
-        calendarLoading: false,
+        loginuser: {
+            id: 0 as number,
+            img_name: null as string | null,
+            name: "" as string,
+            email: "" as string,
+            email_verified_at: null as string | null,
+            password: "" as string,
+            salary: 0 as number,
+            created_at: "" as string,
+            updated_at: "" as string
+        },
+
+        users: [{
+            id: 0 as number,
+            img_name: null as string | null,
+            name: "" as string,
+            email: "" as string,
+            email_verified_at: null as string | null,
+            password: "" as string,
+            salary: 0 as number,
+            created_at: "" as string,
+            updated_at: "" as string
+        } as object],
+
+        places: [{
+            id: 0 as number,
+            img_name: "" as string,
+            name: "" as string,
+            address: "" as string,
+            tel: "" as string,
+            updated_at: "" as string,
+            created_at: "" as string
+        } as object],
+
+        calendarDatas: [{
+            id: 0 as number,
+            date: "" as string,
+            price: 0 as number,
+            members_id: 0 as number,
+            places_id: 0 as number,
+            updated_at: "" as string,
+            created_at: "" as string,
+            place: "" as string,
+            member: "" as string
+        } as object],
+
+        calendarWorks: [{
+            date: "" as string,
+            works: {
+                id: 0 as number,
+                date: "" as string,
+                price: 0 as number,
+                members_id: 0 as number,
+                places_id: 0 as number,
+                updated_at: "" as string,
+                created_at: "" as string,
+                place: "" as string,
+                member: "" as string
+            }
+        }] as any,
+
+        userLoading: false as boolean,
+        placeLoading: false as boolean,
+        calendarLoading: false as boolean,
     },
     mutations: {
-        getLoginUser(state) {
-            axios.get("/api/loginuser").then((res: any) => {
+        getLoginUser(state): void {
+            axios.get("/api/loginuser").then((res) => {
                 state.loginuser = res.data.loginuser;
             });
         },
-        getusers(state) {
+        getusers(state): void {
             state.userLoading = true;
             axios
                 .get("/api/users")
-                .then((res: any) => {
+                .then((res) => {
                     state.users = res.data;
                 })
-                .catch((err: any) => {
+                .catch((err) => {
                     alert("エラーです");
                 })
                 .finally(() => (state.userLoading = false));
         },
-        getplaces(state) {
+        getplaces(state): void {
             state.placeLoading = true;
             axios
                 .get("/api/places")
-                .then((res: any) => {
+                .then((res) => {
                     state.places = res.data;
                 })
-                .catch((err: any) => {
+                .catch((err) => {
                     alert("エラーです");
                 })
                 .finally(() => (state.placeLoading = false));
         },
-        // getCalendars(state) {
-        //     state.calendarLoading = true;
-        //     axios
-        //         .get("/api/calendars")
-        //         .then((res: any) => {
-        //             state.calendarDatas = res.data;
+        getCalendars(state): void {
+            state.calendarLoading = true;
+            axios
+                .get("/api/calendars")
+                .then((res) => {
+                    state.calendarDatas = res.data;
 
-        //             let dates :any= [];
-        //             res.data.forEach((element:any) => {
-        //                 dates.push(element.date)
-        //             });
+                    let dates: any = [];
+                    res.data.forEach((element: any) => {
+                        dates.push(element.date)
+                    });
 
-        //             state.calendarWorks.splice(0, state.calendarWorks.length);
-        //             new Set(dates).forEach(date => {
-        //                 let calendarWork: any = {
-        //                     date: date,
-        //                     works: [...res.data.filter((data:any) => date === data.date)]
-        //                 }
-        //                 state.calendarWorks.push(calendarWork);
-        //             });
+                    state.calendarWorks.splice(0, state.calendarWorks.length);
+                    new Set(dates).forEach(date => {
 
-        //         })
-        //         .catch((err: any) => {
-        //             alert("エラーです");
-        //         })
-        //         .finally(() => (state.calendarLoading = false));
-        // },
+                        let calendarWork = {
+                            date: date,
+                            works: [...res.data.filter((data: any) => date === data.date)]
+                        }
+                        state.calendarWorks.push(calendarWork);
+                    });
+
+                })
+                .catch((err: any) => {
+                    alert("エラーです");
+                })
+                .finally(() => (state.calendarLoading = false));
+        },
     }
 });
 

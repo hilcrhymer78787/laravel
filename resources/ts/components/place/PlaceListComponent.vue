@@ -30,7 +30,7 @@
         <div :class="{active:editmodal}" class="cmn_modal">
             <div class="cmn_modal_inner">
                 <div @click="closeEditModal()" class="cmn_modal_inner_close">×</div>
-                <PlaceEditComponent ref="placeEdit" />
+                <PlaceEditComponent @closeEditModal="closeEditModal" :editPlace="editPlace" ref="placeEdit" />
             </div>
         </div>
 
@@ -39,43 +39,64 @@
         </div>
     </div>
 </template>
-
-<script>
-import PlaceEditComponent from "./PlaceEditComponent";
-export default {
+<script lang="ts">
+import Vue from "vue";
+import PlaceEditComponent from "./PlaceEditComponent.vue";
+import axios from "axios";
+export default Vue.extend({
     components: {
         PlaceEditComponent,
     },
     data() {
         return {
-            editmodal: false,
+            editmodal: false as boolean,
+            file: "" as any,
+            editPlace: {
+                img_oldname: "" as string,
+                id: 0 as number,
+                img_name: "" as string,
+                name: "" as string,
+                address: "" as string,
+                tel: "" as string,
+                created_at: "" as string,
+                updated_at: "" as string,
+            },
         };
     },
     methods: {
-        deleteplace(id, name) {
+        deleteplace(id: number, name: string): void {
             if (confirm("「" + name + "」を削除しますか？")) {
                 this.$store.state.placeLoading = true;
                 axios
                     .delete("/api/places/" + id)
-                    .then((res) => {
+                    .then((res): void => {
                         this.$store.commit("getplaces");
                         this.$store.commit("getCalendars");
                     })
-                    .catch((err) => {
+                    .catch((err): void => {
                         alert("エラーです");
                     })
                     .finally(() => (this.$store.state.placeLoading = false));
             }
         },
-        edit(place) {
+        edit(editPlace: any): void {
             this.editmodal = true;
-            this.$refs.placeEdit.setplace(place);
+            if (editPlace) {
+                this.$set(this.editPlace, "img_oldname", editPlace.img_name);
+                Object.keys(editPlace).forEach((key) => {
+                    this.$set(this.editPlace, key, editPlace[key]);
+                });
+            } else {
+                Object.keys(this.editPlace).forEach((key) => {
+                    this.$set(this.editPlace, key, "");
+                });
+            }
         },
         closeEditModal() {
             this.editmodal = false;
         },
     },
-};
+});
 </script>
 <style lang="scss" scoped>
 @mixin mq-pc {

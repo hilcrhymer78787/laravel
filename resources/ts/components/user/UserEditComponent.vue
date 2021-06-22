@@ -1,97 +1,85 @@
 <template>
-    <form class="form" v-on:submit.prevent="postuser">
-        <div class="form_ttl">出勤者登録</div>
-        <ul class="form_list">
-            <li class="form_list_item">
-                <dt class="form_list_item_ttl">画像</dt>
-                <dd class="form_list_item_main">
-                    <div @click="$refs.input.click()" class="img_wrap">
-                        <img v-if="!file" :src='user.img_name ? "/storage/" + user.img_name : "/assets/noimage.png"'>
-                        <img v-if="file" :src="uploadedImage">
-                    </div>
-                </dd>
-                <input ref="input" class="d-none" type="file" accept="image/*" @change="fileSelected">
-            </li>
-            <li v-if="user.id" class="form_list_item">
-                <dt class="form_list_item_ttl">登録日時</dt>
-                <dd class="form_list_item_main"><input class="ar" type="text" readonly :value="user.created_at | format"></dd>
-            </li>
-            <li v-if="user.id" class="form_list_item">
-                <dt class="form_list_item_ttl">更新日時</dt>
-                <dd class="form_list_item_main"><input class="ar" type="text" readonly :value="user.updated_at | format"></dd>
-            </li>
-            <li class="form_list_item">
-                <dt class="form_list_item_ttl">名前</dt>
-                <dd class="form_list_item_main"><input type="text" v-model="user.name"></dd>
-                <div v-if="error.name" class="error">名前を入力してください</div>
-            </li>
-            <li class="form_list_item">
-                <dt class="form_list_item_ttl">メール</dt>
-                <dd class="form_list_item_main"><input type="text" v-model="user.email"></dd>
-                <div v-if="error.email" class="error">メールアドレスを適切な形で入力してください</div>
-            </li>
-            <li v-if="!user.id" class="form_list_item">
-                <dt class="form_list_item_ttl">パスワード</dt>
-                <dd class="form_list_item_main"><input type="text" v-model="user.password"></dd>
-                <div v-if="error.password" class="error">パスワードを8文字以上の英数字で入力してください</div>
-            </li>
-            <li class="form_list_item">
-                <dt class="form_list_item_ttl">日給</dt>
-                <dd class="form_list_item_main"><input type="text" v-model="user.salary"></dd>
-                <div v-if="error.salary" class="error">日給を数値で入力してください</div>
-            </li>
-        </ul>
-        <div class="form_btn">
-            <button type="submit" class="cmn_btn_sub">登録</button>
-        </div>
-        <pre>{{user}}</pre>
-    </form>
+    <div>
+        <div @click="closeEditModal()" class="cmn_modal_inner_close">×</div>
+        <form class="form" v-on:submit.prevent="postuser">
+            <div class="form_ttl">出勤者登録</div>
+            <ul class="form_list">
+                <li class="form_list_item">
+                    <dt class="form_list_item_ttl">画像</dt>
+                    <dd class="form_list_item_main">
+                        <div @click="$refs.input.click()" class="img_wrap">
+                            <img v-if="!file" :src='editUser.img_name ? "/storage/" + editUser.img_name : "/assets/noimage.png"'>
+                            <img v-if="file" :src="uploadedImage">
+                        </div>
+                    </dd>
+                    <input ref="input" class="d-none" type="file" accept="image/*" @change="fileSelected">
+                </li>
+                <li v-if="editUser.id" class="form_list_item">
+                    <dt class="form_list_item_ttl">登録日時</dt>
+                    <dd class="form_list_item_main"><input class="ar" type="text" readonly :value="editUser.created_at | format"></dd>
+                </li>
+                <li v-if="editUser.id" class="form_list_item">
+                    <dt class="form_list_item_ttl">更新日時</dt>
+                    <dd class="form_list_item_main"><input class="ar" type="text" readonly :value="editUser.updated_at | format"></dd>
+                </li>
+                <li class="form_list_item">
+                    <dt class="form_list_item_ttl">名前</dt>
+                    <dd class="form_list_item_main"><input type="text" v-model="editUser.name"></dd>
+                    <div v-if="error.name" class="error">名前を入力してください</div>
+                </li>
+                <li class="form_list_item">
+                    <dt class="form_list_item_ttl">メール</dt>
+                    <dd class="form_list_item_main"><input type="text" v-model="editUser.email"></dd>
+                    <div v-if="error.email" class="error">メールアドレスを適切な形で入力してください</div>
+                </li>
+                <li v-if="!editUser.id" class="form_list_item">
+                    <dt class="form_list_item_ttl">パスワード</dt>
+                    <dd class="form_list_item_main"><input type="text" v-model="editUser.password"></dd>
+                    <div v-if="error.password" class="error">パスワードを8文字以上の英数字で入力してください</div>
+                </li>
+                <li class="form_list_item">
+                    <dt class="form_list_item_ttl">日給</dt>
+                    <dd class="form_list_item_main"><input type="text" v-model="editUser.salary"></dd>
+                    <div v-if="error.salary" class="error">日給を数値で入力してください</div>
+                </li>
+            </ul>
+            <div class="form_btn">
+                <button type="submit" class="cmn_btn_sub">登録</button>
+            </div>
+        </form>
+    </div>
 </template>
 
 <script lang="ts">
-// import moment from "moment";
 import Vue from "vue";
 import axios from "axios";
+const moment = require("moment");
 
-export type DataType = {
-    error: any;
-    uploadedImage: any;
-    file: any;
-    user: any;
-};
 export default Vue.extend({
-    data(): DataType {
+    props: {
+        editUser: {
+            type: Object,
+        },
+    },
+    data() {
         return {
-            error: {},
-            uploadedImage: "",
-            file: "",
-            user: {},
+            uploadedImage: "" as string,
+            file: "" as any,
+            error: {
+                name: false as boolean,
+                email: false as boolean,
+                salary: false as boolean,
+                password: false as boolean,
+            },
         };
     },
     methods: {
-        setuser(edituser: any) {
-            this.file = "";
-            if (edituser) {
-                this.$set(this.user, "img_oldname", edituser.img_name);
-                Object.keys(edituser).forEach((key) => {
-                    this.$set(this.user, key, edituser[key]);
-                });
-            } else {
-                Object.keys(this.user).forEach((key) => {
-                    this.$set(this.user, key, "");
-                });
-            }
-            Object.keys(this.error).forEach((key) => {
-                this.$set(this.error, key, false);
-            });
-        },
-        fileSelected(e: any) {
+        fileSelected(e: any): void {
             this.file = e.target.files[0];
             this.$set(
-                this.user,
+                this.editUser,
                 "img_name",
-                this.file.name
-                // moment().format("YYYYMMDDHHmmss") + this.file.name
+                moment().format("YYYYMMDDHHmmss") + this.file.name
             );
             let reader = new FileReader();
             reader.onload = (e: any) => {
@@ -99,62 +87,71 @@ export default Vue.extend({
             };
             reader.readAsDataURL(this.file);
         },
-        postuser() {
+        postuser(): void {
             if (this.validation()) {
                 this.$store.state.userLoading = true;
                 let postData: any = new FormData();
                 postData.append("file", this.file);
-                Object.keys(this.user).forEach((key: any) => {
-                    postData.append(key, this.user[key]);
+                Object.keys(this.editUser).forEach((key) => {
+                    postData.append(key, this.editUser[key]);
                 });
                 axios
                     .post("/api/usersUpdate", postData)
-                    .then((res: any) => {
-                        // this.$parent.editmodal = false;
+                    .then((res) => {
+                        this.closeEditModal();
                         this.$store.commit("getLoginUser");
                         this.$store.commit("getusers");
                         this.$store.commit("getCalendars");
                     })
-                    .catch((err: any) => {
+                    .catch((err) => {
                         alert("エラーです");
                     })
                     .finally(() => (this.$store.state.userLoading = false));
             }
         },
-        validation() {
+        validation(): boolean {
             let noProblem = true;
             this.$set(this.error, "name", false);
-            if (this.user.name === "") {
+            if (this.editUser.name === "") {
                 this.$set(this.error, "name", true);
                 noProblem = false;
             }
             this.$set(this.error, "email", false);
             if (
                 !/^[a-zA-Z0-9_.+-]+@([a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9]*\.)+[a-zA-Z]{2,}$/.test(
-                    this.user.email
+                    this.editUser.email
                 )
             ) {
                 this.$set(this.error, "email", true);
                 noProblem = false;
             }
-            if (!this.user.id) {
+            if (!this.editUser.id) {
                 this.$set(this.error, "password", false);
-                if (!/^([a-zA-Z0-9]{8,})$/.test(this.user.password)) {
+                if (!/^([a-zA-Z0-9]{8,})$/.test(this.editUser.password)) {
                     this.$set(this.error, "password", true);
                     noProblem = false;
                 }
             }
             this.$set(this.error, "salary", false);
-            if (!/^([1-9]\d*|0)$/.test(this.user.salary)) {
+            if (!/^([1-9]\d*|0)$/.test(this.editUser.salary)) {
                 this.$set(this.error, "salary", true);
                 noProblem = false;
             }
             return noProblem;
         },
+        closeEditModal(): void {
+            this.file = "";
+            let inputRef: any = this.$refs.input;
+            inputRef.value = "";
+            Object.keys(this.error).forEach((key) => {
+                this.$set(this.error, key, false);
+            });
+            this.$emit("closeEditModal");
+        },
     },
     filters: {
         format(value: any) {
-            // return moment(value).format("YYYY/MM/DD HH:mm:ss");
+            return moment(value).format("YYYY/MM/DD HH:mm:ss");
         },
     },
 });
@@ -175,7 +172,7 @@ export default Vue.extend({
 }
 .form {
     height: 100%;
-    padding-top: 50px;
+    padding-top: 120px;
     &_ttl {
         font-size: 25px;
         font-weight: bold;
