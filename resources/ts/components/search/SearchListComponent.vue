@@ -2,8 +2,6 @@
     <div>
         <div class="cmn_pageTitle">出勤検索</div>
 
-        <pre>{{$data}}</pre>
-
         <form class="form" v-on:submit.prevent>
             <ul class="form_list">
                 <li class="form_list_item">
