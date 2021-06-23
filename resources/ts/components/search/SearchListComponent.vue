@@ -65,6 +65,8 @@
         <div v-if="$store.state.userLoading || $store.state.placeLoading || $store.state.calendarLoading" class="vue-loading-wrap">
             <vue-loading type="spin" color="#333" :size="{ width: '80px', height: '80px'}"></vue-loading>
         </div>
+
+        <pre>{{$store.state.calendarDatas}}</pre>
     </div>
 </template>
 
@@ -140,12 +142,12 @@ export default Vue.extend({
             }
             if (this.price_min != undefined) {
                 outputDatas = outputDatas.filter(
-                    (value: worksType) => value.price >= Number(this.price_min)
+                    (value: worksType) => Number(value.price) >= Number(this.price_min)
                 );
             }
             if (this.price_max != undefined) {
                 outputDatas = outputDatas.filter(
-                    (value: worksType) => value.price <= Number(this.price_max)
+                    (value: worksType) => Number(value.price) <= Number(this.price_max)
                 );
             }
             return outputDatas;

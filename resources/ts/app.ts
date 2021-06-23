@@ -162,7 +162,6 @@ const store = new Vuex.Store({
 
                     let dates: string[] = [];
                     res.data.forEach((element: any) => {
-                        console.log(element)
                         dates.push(element.date)
                     });
 
