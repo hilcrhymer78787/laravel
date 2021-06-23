@@ -2,6 +2,8 @@
     <div>
         <div class="cmn_pageTitle">出勤検索</div>
 
+        <pre>{{$data}}</pre>
+
         <form class="form" v-on:submit.prevent>
             <ul class="form_list">
                 <li class="form_list_item">
@@ -73,76 +75,89 @@ import Vue from "vue";
 const Datepicker = require("vuejs-datepicker").default;
 const ja = require("vuejs-datepicker/dist/locale").ja;
 const moment = require("moment");
+export type worksType = {
+    id: number;
+    date: string;
+    price: number;
+    members_id: number;
+    places_id: number;
+    updated_at: string;
+    created_at: string;
+    place: string;
+    member: string;
+};
 export default Vue.extend({
     components: {
         Datepicker,
     },
     data() {
         return {
-            currentPage: 1,
-            perPage: 10,
+            currentPage: 1 as number,
+            perPage: 10 as number,
 
-            members_id: 0,
-            places_id: 0,
-            date_min: "Invalid date",
-            date_max: "Invalid date",
-            price_min: "",
-            price_max: "",
+            members_id: 0 as number,
+            places_id: 0 as number,
+            date_min: "Invalid date" as string,
+            date_max: "Invalid date" as string,
+            price_min: "" as string,
+            price_max: "" as string,
 
-            DatePickerFormat: "yyyy.MM.dd",
-            ja: ja,
+            DatePickerFormat: "yyyy.MM.dd" as string,
+            ja: ja as any,
         };
     },
     computed: {
-        calendars() :any{
-            return this.searchCalendars.filter((value: any, index: number) => {
-                return (
-                    this.perPage * (this.currentPage - 1) <= index &&
-                    index < this.perPage * this.currentPage
-                );
-            });
+        calendars(): worksType[] {
+            return this.searchCalendars.filter(
+                (value: worksType, index: number) => {
+                    return (
+                        this.perPage * (this.currentPage - 1) <= index &&
+                        index < this.perPage * this.currentPage
+                    );
+                }
+            );
         },
-        searchCalendars(): any {
+        searchCalendars(): worksType[] {
             this.currentPage = 1;
             let outputDatas = this.$store.state.calendarDatas;
             if (this.members_id != 0) {
                 outputDatas = outputDatas.filter(
-                    (value: any) => value.members_id === this.members_id
+                    (value: worksType) => value.members_id === this.members_id
                 );
             }
             if (this.places_id != 0) {
                 outputDatas = outputDatas.filter(
-                    (value: any) => value.places_id === this.places_id
+                    (value: worksType) => value.places_id === this.places_id
                 );
             }
             if (this.date_min != "Invalid date") {
                 outputDatas = outputDatas.filter(
-                    (value: any) => value.date >= this.date_min
+                    (value: worksType) => value.date >= this.date_min
                 );
             }
             if (this.date_max != "Invalid date") {
                 outputDatas = outputDatas.filter(
-                    (value: any) => value.date <= this.date_max
+                    (value: worksType) => value.date <= this.date_max
                 );
             }
-            if (this.price_min != "") {
+            if (this.price_min != undefined) {
                 outputDatas = outputDatas.filter(
-                    (value: any) => value.price >= this.price_min
+                    (value: worksType) => value.price >= Number(this.price_min)
                 );
             }
-            if (this.price_max != "") {
+            if (this.price_max != undefined) {
                 outputDatas = outputDatas.filter(
-                    (value: any) => value.price <= this.price_max
+                    (value: worksType) => value.price <= Number(this.price_max)
                 );
             }
             return outputDatas;
         },
-        maxPages() :any{
+        maxPages(): number {
             return Math.ceil(this.searchCalendars.length / this.perPage);
         },
     },
     methods: {
-        format(value: Date | string): string {
+        format(value: Date | string) {
             return moment(value).format("YYYY-MM-DD");
         },
     },

@@ -26,7 +26,7 @@ import Vue from "vue";
 export default Vue.extend({
     data() {
         return {
-            navs: ["search", "calendar", "place", "user"] as any[string],
+            navs: ["search", "calendar", "place", "user"] as string[],
             hamburger: false as boolean,
         };
     },

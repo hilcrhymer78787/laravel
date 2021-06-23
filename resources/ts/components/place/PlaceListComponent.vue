@@ -29,8 +29,9 @@
 
         <div :class="{active:editmodal}" class="cmn_modal">
             <div class="cmn_modal_inner">
-                <div @click="closeEditModal()" class="cmn_modal_inner_close">×</div>
-                <PlaceEditComponent @closeEditModal="closeEditModal" :editPlace="editPlace" ref="placeEdit" />
+                <div class="cmn_modal_inner_container">
+                    <PlaceEditComponent @closeEditModal="closeEditModal" :editPlace="editPlace" ref="placeEdit" />
+                </div>
             </div>
         </div>
 

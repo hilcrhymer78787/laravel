@@ -1,62 +1,79 @@
 <template>
-    <form class="form" v-on:submit.prevent="postCalendar">
-        <div class="form_ttl">
-            出勤登録<br>
-            {{calendar.date}}
-        </div>
-        <ul class="work">
-            <li class="work_list" v-for="(work, index) in calendar.works" :key="index">
-                <div class="form_list_wrap">
-                    <ul class="form_list">
-                        <li class="form_list_item">
-                            <dt class="form_list_item_ttl">出勤者</dt>
-                            <dd class="form_list_item_main">
-                                <select v-model="work.members_id">
-                                    <option value="0">選択してください</option>
-                                    <option v-for="user in $store.state.users" :key="user.id" :value="user.id">{{user.name}}</option>
-                                </select>
-                            </dd>
-                            <div v-if="work.error_members_id" class="error">出勤者を入力してください</div>
-                        </li>
-                        <li class="form_list_item">
-                            <dt class="form_list_item_ttl">出勤場所</dt>
-                            <dd class="form_list_item_main">
-                                <select v-model="work.places_id">
-                                    <option value="0">選択してください</option>
-                                    <option v-for="place in $store.state.places" :key="place.id" :value="place.id">{{place.name}}</option>
-                                </select>
-                            </dd>
-                            <div v-if="work.error_places_id" class="error">出勤場所を入力してください</div>
-                        </li>
-                        <li class="form_list_item">
-                            <dt class="form_list_item_ttl">日給</dt>
-                            <dd class="form_list_item_main"><input type="text" v-model="work.price"></dd>
-                            <div v-if="work.error_price" class="error">日給を数値で入力してください</div>
-                        </li>
-                    </ul>
-                    <div class="delete_list" @click="deletelist(index)">×</div>
-                </div>
-            </li>
-            <div class="addwork" @click="addwork()">出勤を追加</div>
-        </ul>
-        <div class="form_btn">
-            <div v-show="deleteBtn" class="cmn_btn_delete" @click="deleteCalendar(calendar.date)">全て削除</div>
-            <button type="submit" class="cmn_btn_sub">登録</button>
-        </div>
-    </form>
+    <div>
+        <div @click="$emit('closeEditModal')" class="cmn_modal_inner_close">×</div>
+        <form class="form" v-on:submit.prevent="postCalendar">
+            <div class="form_ttl">
+                出勤登録<br>
+                {{calendar.date}}
+            </div>
+            <ul class="work">
+                <li class="work_list" v-for="(work, index) in calendar.works" :key="index">
+                    <div class="form_list_wrap">
+                        <ul class="form_list">
+                            <li class="form_list_item">
+                                <dt class="form_list_item_ttl">出勤者</dt>
+                                <dd class="form_list_item_main">
+                                    <select v-model="work.members_id">
+                                        <option value="0">選択してください</option>
+                                        <option v-for="user in $store.state.users" :key="user.id" :value="user.id">{{user.name}}</option>
+                                    </select>
+                                </dd>
+                                <div v-if="work.error_members_id" class="error">出勤者を入力してください</div>
+                            </li>
+                            <li class="form_list_item">
+                                <dt class="form_list_item_ttl">出勤場所</dt>
+                                <dd class="form_list_item_main">
+                                    <select v-model="work.places_id">
+                                        <option value="0">選択してください</option>
+                                        <option v-for="place in $store.state.places" :key="place.id" :value="place.id">{{place.name}}</option>
+                                    </select>
+                                </dd>
+                                <div v-if="work.error_places_id" class="error">出勤場所を入力してください</div>
+                            </li>
+                            <li class="form_list_item">
+                                <dt class="form_list_item_ttl">日給</dt>
+                                <dd class="form_list_item_main"><input type="text" v-model="work.price"></dd>
+                                <div v-if="work.error_price" class="error">日給を数値で入力してください</div>
+                            </li>
+                        </ul>
+                        <div class="delete_list" @click="deletelist(index)">×</div>
+                    </div>
+                </li>
+                <div class="addwork" @click="addwork()">出勤を追加</div>
+            </ul>
+            <div class="form_btn">
+                <div v-show="deleteBtn" class="cmn_btn_delete" @click="deleteCalendar(calendar.date)">全て削除</div>
+                <button type="submit" class="cmn_btn_sub">登録</button>
+            </div>
+        </form>
+    </div>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
 import axios from "axios";
-
+export type workType = {
+    id: number;
+    date: string;
+    price: number;
+    members_id: number;
+    places_id: number;
+    updated_at: string;
+    created_at: string;
+    place: string;
+    member: string;
+};
 export default Vue.extend({
-
+    props: {
+        calendar: {
+            type: Object,
+        },
+        deleteBtn: {
+            type: Boolean,
+        },
+    },
     data() {
-        return {
-            deleteBtn: false as boolean,
-            calendar: {} as any,
-        };
+        return {};
     },
     methods: {
         addwork() {
@@ -67,68 +84,43 @@ export default Vue.extend({
                 price: 0,
             });
         },
-        deletelist(index:any) {
+        deletelist(index: number) {
             this.calendar.works.splice(index, 1);
             if (!this.calendar.works.length) {
                 this.addwork();
             }
         },
-        setCalendar(calendar:any) {
-            this.$set(this.calendar, "date", calendar.date);
-            this.$set(this.calendar, "works", []);
-            if (calendar.works.length) {
-                this.deleteBtn = true;
-                calendar.works.forEach((work:any) => {
-                    this.calendar.works.push({
-                        member: work.member,
-                        members_id: work.member === "（削除済）" ? 0 : work.members_id,
-                        place: work.place,
-                        places_id: work.place === "（削除済）" ? 0 : work.places_id,
-                        price: work.price,
-                    });
-                });
-            } else {
-                this.deleteBtn = false;
-                this.addwork();
-            }
-        },
         postCalendar() {
             if (this.validation()) {
-                // this.$parent.loading = true;
                 axios
                     .post("/api/calendars", this.calendar)
                     .then((res) => {
-                        // this.$parent.editmodal = false;
+                        this.$emit("closeEditModal");
                         this.$store.commit("getCalendars");
                     })
                     .catch((err) => {
                         alert("エラーです");
                     })
-                    .finally(() => {
-                        // this.$parent.loading = false;
-                    });
+                    .finally(() => {});
             }
         },
-        deleteCalendar(date:any) {
+        deleteCalendar(date: string) {
             if (confirm(date + "のデータを全て削除しますか？")) {
-                // this.$parent.loading = true;
                 axios
                     .delete("/api/calendars/" + date)
                     .then((res) => {
-                        // this.$parent.editmodal = false;
+                        this.$emit("closeEditModal");
                         this.$store.commit("getCalendars");
                     })
                     .catch((err) => {
                         alert("エラーです");
                     })
-                    .finally(() => {
-                        // this.$parent.loading = false;
-                    });
+                    .finally(() => {});
             }
         },
         validation() {
             let noProblem = true;
-            this.calendar.works.forEach((work:any) => {
+            this.calendar.works.forEach((work: workType) => {
                 this.$set(work, "error_members_id", false);
                 if (Number(work.members_id) === 0) {
                     this.$set(work, "error_members_id", true);
@@ -140,7 +132,7 @@ export default Vue.extend({
                     noProblem = false;
                 }
                 this.$set(work, "error_price", false);
-                if (!/^([1-9]\d*|0)$/.test(work.price)) {
+                if (!/^([1-9]\d*|0)$/.test(String(work.price))) {
                     this.$set(work, "error_price", true);
                     noProblem = false;
                 }

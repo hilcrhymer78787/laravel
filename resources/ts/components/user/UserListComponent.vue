@@ -29,8 +29,9 @@
 
         <div :class="{active:editmodal}" class="cmn_modal">
             <div class="cmn_modal_inner">
-                <div @click="closeEditModal()" class="cmn_modal_inner_close">×</div>
-                <UserEditComponent @closeEditModal="closeEditModal" :editUser="editUser" ref="userEdit" />
+                <div class="cmn_modal_inner_container">
+                    <UserEditComponent @closeEditModal="closeEditModal" :editUser="editUser" ref="userEdit" />
+                </div>
             </div>
         </div>
 

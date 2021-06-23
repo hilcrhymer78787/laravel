@@ -32,8 +32,9 @@
 
             <div :class="{active:editmodal}" class="cmn_modal">
                 <div class="cmn_modal_inner">
-                    <div @click="closeEditModal()" class="cmn_modal_inner_close">×</div>
-                    <CalendarEditComponent ref="calendarEdit" />
+                    <div class="cmn_modal_inner_container">
+                        <CalendarEditComponent :deleteBtn="deleteBtn" :calendar="calendar" @closeEditModal="closeEditModal" ref="calendarEdit" />
+                    </div>
                 </div>
             </div>
 
@@ -47,35 +48,65 @@
 import Vue from "vue";
 import CalendarEditComponent from "./CalendarEditComponent.vue";
 const moment = require("moment");
+
+export type newcalendarType = {
+    date: string;
+    works: [
+        {
+            id:number
+            member: string;
+            members_id: number;
+            place: string;
+            places_id: number;
+            price: number;
+        }
+    ];
+};
+
+export type calendarType = {
+    date: string;
+    works: workType[];
+};
+export type workType = {
+    id: number;
+    member: string;
+    members_id: number;
+    place: string;
+    places_id: number;
+    price: number;
+};
 export default Vue.extend({
     components: {
         CalendarEditComponent,
     },
     data() {
         return {
-            week: ["日", "月", "火", "水", "木", "金", "土"] as any[string],
+            week: ["日", "月", "火", "水", "木", "金", "土"] as string[],
             loading: false as boolean,
             editmodal: false as boolean,
+            calendar: {} as calendarType,
+            deleteBtn: false as boolean,
         };
     },
     computed: {
-        calendars() :any{
-            let outputData :any = [];
+        calendars(): calendarType[] {
+            let outputData: calendarType[] = [];
 
             for (let day = 1; day <= this.lastday; day++) {
                 outputData.push({
                     date: moment(
                         new Date(this.year, this.month - 1, day)
                     ).format("YYYY-MM-DD"),
-                    works: [] as never,
+                    works: [] as workType[],
                 });
             }
 
             if (!this.$store.state.calendarLoading) {
-                outputData.forEach((calendar:any) => {
+                outputData.forEach((calendar: calendarType) => {
                     let calendarWorksFilterDate =
                         this.$store.state.calendarWorks.filter(
-                            (calendarElm:any) => calendarElm.date === calendar.date
+                            (calendarElm: calendarType) =>
+                                calendarElm.date === calendar.date
                         );
                     if (calendarWorksFilterDate.length) {
                         calendar.works.push(
@@ -87,27 +118,54 @@ export default Vue.extend({
 
             return outputData;
         },
-        year() :any{
-            return this.$route.params.year;
+        year(): number {
+            return Number(this.$route.params.year);
         },
-        month() :any{
-            return this.$route.params.month;
+        month(): number {
+            return Number(this.$route.params.month);
         },
-        lastday() :any{
+        lastday(): number {
             return new Date(this.year, this.month, 0).getDate();
         },
-        first_day() :any{
+        first_day(): number {
             return new Date(this.year, this.month - 1, 1).getDay();
         },
-        lastDayCount() :any{
-            return  6 - new Date(this.year, this.month - 1, this.lastday).getDay()
-            
+        lastDayCount(): number {
+            return (
+                6 - new Date(this.year, this.month - 1, this.lastday).getDay()
+            );
         },
     },
     methods: {
-        clickCalendar(calendar:any) {
+        clickCalendar(calendar: calendarType) {
             this.editmodal = true;
-            // this.$refs.calendarEdit.setCalendar(calendar);
+            this.$set(this.calendar, "date", calendar.date);
+            this.$set(this.calendar, "works", []);
+            if (calendar.works.length) {
+                this.deleteBtn = true;
+                calendar.works.forEach((work: workType) => {
+                    this.calendar.works.push({
+                        id:work.id,
+                        member: work.member,
+                        members_id:
+                            work.member === "（削除済）" ? 0 : work.members_id,
+                        place: work.place,
+                        places_id:
+                            work.place === "（削除済）" ? 0 : work.places_id,
+                        price: work.price,
+                    });
+                });
+            } else {
+                this.deleteBtn = false;
+                this.calendar.works.push({
+                    id: 0,
+                    member: "",
+                    members_id: 0,
+                    place: "",
+                    places_id: 0,
+                    price: 0,
+                });
+            }
         },
         closeEditModal() {
             this.editmodal = false;

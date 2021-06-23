@@ -26,12 +26,6 @@ const router = new VueRouter({
             redirect: `/user`,
         },
         {
-            path: '/test',
-            name: 'test',
-            component: () => import('./components/TestComponent.vue'),
-        },
-
-        {
             path: '/user',
             name: 'user',
             component: () => import('./components/user/UserListComponent.vue'),
@@ -74,7 +68,7 @@ const store = new Vuex.Store({
             salary: 0 as number,
             created_at: "" as string,
             updated_at: "" as string
-        },
+        } as object,
 
         users: [{
             id: 0 as number,
@@ -86,7 +80,7 @@ const store = new Vuex.Store({
             salary: 0 as number,
             created_at: "" as string,
             updated_at: "" as string
-        } as object],
+        } as object] as object[],
 
         places: [{
             id: 0 as number,
@@ -96,7 +90,7 @@ const store = new Vuex.Store({
             tel: "" as string,
             updated_at: "" as string,
             created_at: "" as string
-        } as object],
+        } as object] as object[],
 
         calendarDatas: [{
             id: 0 as number,
@@ -108,7 +102,7 @@ const store = new Vuex.Store({
             created_at: "" as string,
             place: "" as string,
             member: "" as string
-        } as object],
+        } as object] as object[],
 
         calendarWorks: [{
             date: "" as string,
@@ -122,8 +116,8 @@ const store = new Vuex.Store({
                 created_at: "" as string,
                 place: "" as string,
                 member: "" as string
-            }
-        }] as any,
+            } as object
+        } as object] as object[],
 
         userLoading: false as boolean,
         placeLoading: false as boolean,
@@ -166,8 +160,9 @@ const store = new Vuex.Store({
                 .then((res) => {
                     state.calendarDatas = res.data;
 
-                    let dates: any = [];
+                    let dates: string[] = [];
                     res.data.forEach((element: any) => {
+                        console.log(element)
                         dates.push(element.date)
                     });
 

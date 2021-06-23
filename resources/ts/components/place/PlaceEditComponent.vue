@@ -154,7 +154,7 @@ export default Vue.extend({
 }
 .form {
     height: 100%;
-    padding-top: 120px;
+    padding-top: 50px;
     &_ttl {
         font-size: 25px;
         font-weight: bold;

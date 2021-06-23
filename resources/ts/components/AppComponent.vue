@@ -96,6 +96,7 @@ input {
         .cmn_modal_inner {
             transform: scale(1);
             opacity: 1;
+
         }
     }
     &_inner {
@@ -104,14 +105,15 @@ input {
         opacity: 0;
         transition: 0.5s;
         position: relative;
-        display: flex;
-        justify-content: center;
-        align-items: center;
         width: 80%;
         max-width: 870px;
         height: 80%;
         background-color: white;
         padding: 0 20px;
+        &_container {
+            max-width: 570px;
+            margin: 0 auto;
+        }
         &_close {
             display: flex;
             justify-content: center;
